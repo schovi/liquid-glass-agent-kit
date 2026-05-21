@@ -1,0 +1,73 @@
+# Material approximation tokens for the three renderers.
+#
+# These are NOT Apple-published values. They are a community-derived web
+# approximation chosen to look correct in HTML/CSS/SVG/WebGL across light
+# and dark backgrounds. Renderers should consume only the values listed here.
+
+glass:
+  regular:
+    css:
+      background:
+        light: "rgba(255,255,255,0.70)"
+        dark:  "rgba(16,16,16,0.45)"
+      backdropBlur: 40         # px
+      saturation: 180          # %
+      border:
+        light: "rgba(255,255,255,0.18)"
+        dark:  "rgba(255,255,255,0.12)"
+      shadow: "0 8px 32px rgba(0,0,0,0.12)"
+      highlight: "linear-gradient(135deg, rgba(255,255,255,0.40) 0%, transparent 55%)"
+
+    svg:
+      displacementScale: 70
+      blurAmount: 0.0625
+      saturation: 140          # %
+      aberrationIntensity: 2
+      elasticity: 0.15
+
+    webgl:
+      refraction: 0.06
+      edgeDistance: 0.04
+      rimIntensity: 0.025
+      rimDistance: 0.12
+      baseIntensity: 0.012
+      baseDistance: 0.008
+      cornerBoost: 0.02
+      blur: 4                  # px
+      chromaticAberration: 0.4
+      tint: "#ffffff"
+      tintOpacity: 0.06
+      ambientTint: true
+      specular: 0.6
+      lightDirection: [0.5, -0.7]
+
+  clear:
+    css:
+      background:
+        light: "rgba(255,255,255,0.18)"
+        dark:  "rgba(16,16,16,0.22)"
+      backdropBlur: 28
+      saturation: 160
+      border:
+        light: "rgba(255,255,255,0.22)"
+        dark:  "rgba(255,255,255,0.16)"
+      shadow: "0 6px 24px rgba(0,0,0,0.10)"
+      requiresBackgroundDimming: true
+      backgroundDim: "rgba(0,0,0,0.24)"
+
+# Accessibility fallbacks. Renderers MUST emit these alongside the material.
+fallbacks:
+  reducedTransparency:
+    css:
+      background:
+        light: "rgba(255,255,255,0.92)"
+        dark:  "rgba(20,20,20,0.92)"
+      backdropBlur: 0
+      saturation: 100
+  increasedContrast:
+    css:
+      border:
+        light: "rgba(0,0,0,0.45)"
+        dark:  "rgba(255,255,255,0.55)"
+  reducedMotion:
+    description: Disable elasticity, displacement animation, parallax.

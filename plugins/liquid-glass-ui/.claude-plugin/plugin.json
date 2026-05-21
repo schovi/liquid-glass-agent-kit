@@ -1,0 +1,8 @@
+{
+  "name": "liquid-glass-ui",
+  "description": "Apple-inspired Liquid Glass web UI generation, auditing, and token extraction for HTML, CSS, React, JSX, and design-agent output.",
+  "version": "0.1.0",
+  "author": { "name": "liquid-glass-agent-kit contributors" },
+  "repository": "https://github.com/OWNER/liquid-glass-agent-kit",
+  "license": "MIT"
+}

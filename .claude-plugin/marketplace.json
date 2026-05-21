@@ -1,0 +1,20 @@
+{
+  "name": "liquid-glass-agent-kit",
+  "owner": { "name": "liquid-glass-agent-kit contributors" },
+  "plugins": [
+    {
+      "name": "liquid-glass-ui",
+      "source": {
+        "source": "git-subdir",
+        "url": "OWNER/liquid-glass-agent-kit",
+        "path": "plugins/liquid-glass-ui",
+        "ref": "main"
+      },
+      "description": "Liquid Glass UI generation, auditing, and token extraction",
+      "version": "0.1.0",
+      "license": "MIT",
+      "category": "Design",
+      "tags": ["liquid-glass", "ui", "html", "css", "react", "design-system"]
+    }
+  ]
+}

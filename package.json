@@ -1,0 +1,13 @@
+{
+  "name": "liquid-glass-agent-kit",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Spec-first kit for Apple-inspired Liquid Glass web UI: canonical tokens, a portable skill, a single shared Codex/Claude plugin, and a heuristic auditor.",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "audit:examples": "node plugins/liquid-glass-ui/skills/liquid-glass-web-ui/scripts/audit-liquid-glass-html.mjs examples",
+    "validate": "npm run audit:examples"
+  },
+  "engines": { "node": ">=18" }
+}

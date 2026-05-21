@@ -1,0 +1,22 @@
+{
+  "name": "liquid-glass-agent-kit",
+  "interface": {
+    "displayName": "Liquid Glass Agent Kit"
+  },
+  "plugins": [
+    {
+      "name": "liquid-glass-ui",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/OWNER/liquid-glass-agent-kit.git",
+        "path": "./plugins/liquid-glass-ui",
+        "ref": "main"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Design"
+    }
+  ]
+}
