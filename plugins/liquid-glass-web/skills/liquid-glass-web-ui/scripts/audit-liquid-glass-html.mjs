@@ -32,7 +32,11 @@ function walk(target) {
     return;
   }
   const ext = extname(target);
-  if (ext !== ".html" && ext !== ".htm" && ext !== ".css") return;
+  // HTML and CSS are the original scan targets. ES modules (.js / .mjs)
+  // are scanned too because data-driven showcases (see examples/macos-web)
+  // keep repeating glass markup in template strings — the same regex
+  // patterns work on those strings, so audit coverage stays intact.
+  if (![".html", ".htm", ".css", ".js", ".mjs"].includes(ext)) return;
   audit(target, readFileSync(target, "utf8"));
 }
 

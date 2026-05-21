@@ -6,8 +6,13 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "audit:examples": "node plugins/liquid-glass-web/skills/liquid-glass-web-ui/scripts/audit-liquid-glass-html.mjs examples/macos-web",
-    "validate": "npm run audit:examples"
+    "example:web":          "node scripts/serve.mjs",
+    "example:native":       "examples/macos-native-swift/scripts/run.sh",
+    "example:native:build": "examples/macos-native-swift/scripts/build.sh",
+    "example:native:xcode": "examples/macos-native-swift/scripts/xcode.sh",
+    "example:native:clean": "examples/macos-native-swift/scripts/clean.sh",
+    "audit:examples":       "node plugins/liquid-glass-web/skills/liquid-glass-web-ui/scripts/audit-liquid-glass-html.mjs examples/macos-web",
+    "validate":             "npm run audit:examples"
   },
   "engines": { "node": ">=18" }
 }

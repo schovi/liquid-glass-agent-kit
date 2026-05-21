@@ -9,17 +9,21 @@
   <body class="lg-stage">
     <div class="lg-stage__wallpaper" aria-hidden="true"></div>
 
-    <!-- =====================================================================
-         WINDOW
-         Outer radius 28px wraps concentrically around the inner toolbar pill.
-         The titlebar+toolbar is one Regular-glass surface (Tahoe unified mode).
-         ===================================================================== -->
+    <!--
+      Static shell only. Glass surfaces (titlebar, sidebar, sheet, material
+      cards) are written by hand so audit-liquid-glass-html.mjs can still
+      scan them. Repeating inner content (sidebar items, token rows,
+      section bodies, inspector fields) is mounted at runtime by app.js.
+
+      File map mirrors examples/macos-native-swift/Sources/LiquidGlassShowcase/:
+        tokens.js     ↔ Tokens.swift
+        sidebar.js    ↔ Sidebar.swift
+        sections.js   ↔ Sections.swift
+        inspector.js  ↔ Inspector.swift
+        app.js        ↔ App.swift + ContentView.swift
+    -->
     <main class="lg-window" aria-label="Liquid Glass design system showcase">
 
-      <!-- =====================================================================
-           SIDEBAR — floating Regular-glass panel. Traffic lights live here,
-           not in the toolbar, matching the native macOS 26 sidebar layout.
-           ===================================================================== -->
       <aside class="lg-sidebar lg-glass--regular" data-renderer="css" aria-label="Navigation">
         <div class="lg-sidebar__header">
           <div class="lg-traffic-lights" aria-hidden="true">
@@ -35,630 +39,57 @@
             </svg>
           </button>
         </div>
-        <nav class="lg-sidebar__sections">
-
-            <div class="lg-sidebar__section">
-              <h2 class="lg-sidebar__heading">Foundations</h2>
-              <a class="lg-sidebar__item" href="#materials" aria-current="page">
-                <span class="lg-sidebar__icon" aria-hidden="true">◐</span>
-                <span>Materials</span>
-                <span class="lg-sidebar__badge">2</span>
-              </a>
-              <a class="lg-sidebar__item" href="#shape">
-                <span class="lg-sidebar__icon" aria-hidden="true">◯</span>
-                <span>Shape</span>
-              </a>
-              <a class="lg-sidebar__item" href="#spacing">
-                <span class="lg-sidebar__icon" aria-hidden="true">▤</span>
-                <span>Spacing</span>
-              </a>
-              <a class="lg-sidebar__item" href="#typography">
-                <span class="lg-sidebar__icon" aria-hidden="true">Aa</span>
-                <span>Typography</span>
-              </a>
-              <a class="lg-sidebar__item" href="#motion">
-                <span class="lg-sidebar__icon" aria-hidden="true">⤳</span>
-                <span>Motion</span>
-              </a>
-            </div>
-
-            <div class="lg-sidebar__section">
-              <h2 class="lg-sidebar__heading">Components</h2>
-              <a class="lg-sidebar__item" href="#buttons">
-                <span class="lg-sidebar__icon" aria-hidden="true">▣</span>
-                <span>Buttons</span>
-              </a>
-              <a class="lg-sidebar__item" href="#controls">
-                <span class="lg-sidebar__icon" aria-hidden="true">▥</span>
-                <span>Controls</span>
-              </a>
-              <a class="lg-sidebar__item" href="#surfaces">
-                <span class="lg-sidebar__icon" aria-hidden="true">▦</span>
-                <span>Surfaces</span>
-              </a>
-              <a class="lg-sidebar__item" href="#sheet-section">
-                <span class="lg-sidebar__icon" aria-hidden="true">⤒</span>
-                <span>Sheet</span>
-              </a>
-            </div>
-
-            <div class="lg-sidebar__section">
-              <h2 class="lg-sidebar__heading">Reference</h2>
-              <a class="lg-sidebar__item" href="#rules">
-                <span class="lg-sidebar__icon" aria-hidden="true">✓</span>
-                <span>Rules</span>
-              </a>
-              <a class="lg-sidebar__item" href="#anti-patterns">
-                <span class="lg-sidebar__icon" aria-hidden="true">✕</span>
-                <span>Anti-patterns</span>
-              </a>
-              <a class="lg-sidebar__item" href="#clear-variant">
-                <span class="lg-sidebar__icon" aria-hidden="true">◌</span>
-                <span>Clear variant</span>
-              </a>
-            </div>
-
-          </nav>
-
+        <nav class="lg-sidebar__sections"></nav>
         <footer class="lg-sidebar__footer">
           <div class="lg-sidebar__avatar" aria-hidden="true"></div>
           <span>Liquid Glass v0.1</span>
         </footer>
       </aside>
 
-      <!-- =====================================================================
-           TITLEBAR — sits on the window surface; items inside are individual
-           glass capsules. No background of its own.
-           ===================================================================== -->
       <header class="lg-titlebar">
-          <div class="lg-titlebar__left">
-            <div class="lg-titlebar__title">Liquid Glass — macOS 26 Showcase</div>
+        <div class="lg-titlebar__left">
+          <div class="lg-titlebar__title">Liquid Glass — macOS 26 Showcase</div>
+        </div>
+        <div class="lg-titlebar__center">
+          <div class="lg-segmented" data-renderer="css" role="tablist" aria-label="View mode">
+            <button class="lg-segmented__item" role="tab" aria-selected="true">Tokens</button>
+            <button class="lg-segmented__item" role="tab" aria-selected="false">Components</button>
+            <button class="lg-segmented__item" role="tab" aria-selected="false">Motion</button>
           </div>
-
-          <div class="lg-titlebar__center">
-            <div class="lg-segmented" data-renderer="css" role="tablist" aria-label="View mode">
-              <button class="lg-segmented__item" role="tab" aria-selected="true">Tokens</button>
-              <button class="lg-segmented__item" role="tab" aria-selected="false">Components</button>
-              <button class="lg-segmented__item" role="tab" aria-selected="false">Motion</button>
-            </div>
-          </div>
-
-          <div class="lg-titlebar__right">
-            <details class="lg-popover">
-              <summary class="lg-toolbar-button" data-renderer="css" aria-label="More">
-                <span aria-hidden="true" class="lg-toolbar-button__dots">⋯</span>
-                <svg viewBox="0 0 10 6" width="10" height="6" aria-hidden="true" class="lg-toolbar-button__caret">
-                  <path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-              </summary>
-              <div class="lg-popover__panel lg-popover__panel--right" data-renderer="css" role="menu">
-                <div class="lg-popover__item" role="menuitem"><span aria-hidden="true">◐</span> Toggle appearance</div>
-                <div class="lg-popover__item" role="menuitem"><span aria-hidden="true">⤓</span> Export tokens</div>
-                <div class="lg-popover__item" role="menuitem"><span aria-hidden="true">★</span> Add to favorites</div>
-              </div>
-            </details>
-            <button type="button" class="lg-button lg-button--prominent lg-button--pink">Share</button>
-            <a class="lg-button lg-button--prominent lg-button--blue" href="#open-sheet">New</a>
-            <label class="lg-toolbar-search" aria-label="Search">
-              <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" class="lg-toolbar-search__icon">
-                <circle cx="7" cy="7" r="5" fill="none" stroke="currentColor" stroke-width="1.5"/>
-                <line x1="10.5" y1="10.5" x2="14" y2="14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </div>
+        <div class="lg-titlebar__right">
+          <details class="lg-popover">
+            <summary class="lg-toolbar-button" data-renderer="css" aria-label="More">
+              <span aria-hidden="true" class="lg-toolbar-button__dots">⋯</span>
+              <svg viewBox="0 0 10 6" width="10" height="6" aria-hidden="true" class="lg-toolbar-button__caret">
+                <path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
-              <input type="search" placeholder="Search tokens…" />
-            </label>
-          </div>
-        </header>
+            </summary>
+            <div class="lg-popover__panel lg-popover__panel--right" data-renderer="css" role="menu">
+              <div class="lg-popover__item" role="menuitem"><span aria-hidden="true">◐</span> Toggle appearance</div>
+              <div class="lg-popover__item" role="menuitem"><span aria-hidden="true">⤓</span> Export tokens</div>
+              <div class="lg-popover__item" role="menuitem"><span aria-hidden="true">★</span> Add to favorites</div>
+            </div>
+          </details>
+          <button type="button" class="lg-button lg-button--prominent lg-button--pink">Share</button>
+          <a class="lg-button lg-button--prominent lg-button--blue" href="#open-sheet">New</a>
+          <label class="lg-toolbar-search" aria-label="Search">
+            <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" class="lg-toolbar-search__icon">
+              <circle cx="7" cy="7" r="5" fill="none" stroke="currentColor" stroke-width="1.5"/>
+              <line x1="10.5" y1="10.5" x2="14" y2="14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            <input type="search" placeholder="Search tokens…" />
+          </label>
+        </div>
+      </header>
 
       <div class="lg-main__body">
-
-          <!-- =====================================================================
-               CONTENT — solid surface. Glass forbidden here.
-               ===================================================================== -->
-          <section class="lg-content">
-
-          <!-- Materials -->
-          <section class="lg-section" id="materials">
-            <header class="lg-section__header">
-              <span class="lg-section__eyebrow">Foundations</span>
-              <h1 class="lg-section__title">Materials</h1>
-              <p class="lg-section__lede">
-                Two variants: <strong>Regular</strong> (default, auto-legible) and
-                <strong>Clear</strong> (more transparent — requires a dim layer behind for contrast).
-                The native APIs are <code>.glassEffect(.regular, in: …)</code> and
-                <code>.glassEffect(.clear, in: …)</code>.
-              </p>
-            </header>
-
-            <div class="lg-materials">
-              <article class="lg-material-card" aria-label="Regular glass over busy photo">
-                <div class="lg-material-card__photo lg-material-card__photo--photo" aria-hidden="true"></div>
-                <div class="lg-material-card__pane lg-glass--regular" data-renderer="css">
-                  <span class="lg-material-card__label">Regular</span>
-                  <span class="lg-material-card__detail">.glassEffect(.regular, in: rect)</span>
-                </div>
-              </article>
-
-              <article class="lg-material-card" aria-label="Regular glass tinted indigo over calmer backdrop">
-                <div class="lg-material-card__photo lg-material-card__photo--tinted" aria-hidden="true"></div>
-                <div class="lg-material-card__pane lg-glass--regular lg-glass--tint-indigo" data-renderer="css">
-                  <span class="lg-material-card__label">Regular · tinted</span>
-                  <span class="lg-material-card__detail">.glassEffect(.regular.tint(.indigo))</span>
-                </div>
-              </article>
-            </div>
-            <p class="lg-section__lede">
-              Clear variant is demonstrated separately at the bottom of this page —
-              mixing variants in one group is an anti-pattern.
-            </p>
-          </section>
-
-          <!-- Shape -->
-          <section class="lg-section" id="shape">
-            <header class="lg-section__header">
-              <span class="lg-section__eyebrow">Foundations</span>
-              <h1 class="lg-section__title">Shape</h1>
-              <p class="lg-section__lede">
-                Fixed radii: 12, 16, 24, 28. Capsule = <code>height / 2</code>.
-                Concentric: <code>child = parent − inset</code>.
-                <code>ConcentricRectangle()</code> resolves its radius from the nearest
-                <code>.containerShape</code> so insets stay parallel as the parent reflows.
-              </p>
-            </header>
-
-            <div class="lg-token-grid">
-              <div class="lg-radius-swatch">
-                <div class="lg-radius-swatch__shape lg-radius-swatch__shape--sm"></div>
-                <div class="lg-radius-swatch__name">sm</div>
-                <div class="lg-radius-swatch__value">12 px</div>
-              </div>
-              <div class="lg-radius-swatch">
-                <div class="lg-radius-swatch__shape lg-radius-swatch__shape--md"></div>
-                <div class="lg-radius-swatch__name">md</div>
-                <div class="lg-radius-swatch__value">16 px</div>
-              </div>
-              <div class="lg-radius-swatch">
-                <div class="lg-radius-swatch__shape lg-radius-swatch__shape--lg"></div>
-                <div class="lg-radius-swatch__name">lg</div>
-                <div class="lg-radius-swatch__value">24 px</div>
-              </div>
-              <div class="lg-radius-swatch">
-                <div class="lg-radius-swatch__shape lg-radius-swatch__shape--xl"></div>
-                <div class="lg-radius-swatch__name">xl</div>
-                <div class="lg-radius-swatch__value">28 px</div>
-              </div>
-              <div class="lg-radius-swatch">
-                <div class="lg-radius-swatch__shape lg-radius-swatch__shape--capsule"></div>
-                <div class="lg-radius-swatch__name">capsule</div>
-                <div class="lg-radius-swatch__value">height / 2</div>
-              </div>
-            </div>
-
-            <div class="lg-concentric" aria-label="Concentric radius example">
-              <div class="lg-concentric__parent">
-                <div class="lg-concentric__child"></div>
-              </div>
-              <p class="lg-concentric__caption">
-                Parent 28, inset 8, child 20. <code>ConcentricRectangle()</code> reads
-                its radius from <code>.containerShape</code>.
-              </p>
-            </div>
-          </section>
-
-          <!-- Spacing -->
-          <section class="lg-section" id="spacing">
-            <header class="lg-section__header">
-              <span class="lg-section__eyebrow">Foundations</span>
-              <h1 class="lg-section__title">Spacing</h1>
-              <p class="lg-section__lede">
-                One scale: 8 · 12 · 16 · 24 · 32. Apply by role —
-                control gap, group gap, panel gap, screen margin, section gap.
-              </p>
-            </header>
-
-            <div class="lg-spacing-swatch">
-              <div class="lg-spacing-swatch__name">controlGap</div>
-              <div class="lg-spacing-swatch__bar" style="width: 8px"></div>
-              <div class="lg-spacing-swatch__value">8 px</div>
-            </div>
-            <div class="lg-spacing-swatch">
-              <div class="lg-spacing-swatch__name">groupGap</div>
-              <div class="lg-spacing-swatch__bar" style="width: 12px"></div>
-              <div class="lg-spacing-swatch__value">12 px</div>
-            </div>
-            <div class="lg-spacing-swatch">
-              <div class="lg-spacing-swatch__name">panelGap</div>
-              <div class="lg-spacing-swatch__bar" style="width: 16px"></div>
-              <div class="lg-spacing-swatch__value">16 px</div>
-            </div>
-            <div class="lg-spacing-swatch">
-              <div class="lg-spacing-swatch__name">screenMargin</div>
-              <div class="lg-spacing-swatch__bar" style="width: 24px"></div>
-              <div class="lg-spacing-swatch__value">24 px (regular)</div>
-            </div>
-            <div class="lg-spacing-swatch">
-              <div class="lg-spacing-swatch__name">sectionGap</div>
-              <div class="lg-spacing-swatch__bar" style="width: 32px"></div>
-              <div class="lg-spacing-swatch__value">32 px</div>
-            </div>
-          </section>
-
-          <!-- Typography -->
-          <section class="lg-section" id="typography">
-            <header class="lg-section__header">
-              <span class="lg-section__eyebrow">Foundations</span>
-              <h1 class="lg-section__title">Typography</h1>
-              <p class="lg-section__lede">
-                Falls through to the system font. Eleven steps from caption2 (11) to
-                largeTitle (34). Headlines and titles carry the heavier weight.
-              </p>
-            </header>
-
-            <div class="lg-type-row">
-              <div class="lg-type-row__label">caption2</div>
-              <div class="lg-type-row__sample lg-type-row__sample--caption2">Glass refraction at scroll edges.</div>
-              <div class="lg-type-row__meta">11 / 13 / 400</div>
-            </div>
-            <div class="lg-type-row">
-              <div class="lg-type-row__label">caption1</div>
-              <div class="lg-type-row__sample lg-type-row__sample--caption1">Glass refraction at scroll edges.</div>
-              <div class="lg-type-row__meta">12 / 16 / 400</div>
-            </div>
-            <div class="lg-type-row">
-              <div class="lg-type-row__label">footnote</div>
-              <div class="lg-type-row__sample lg-type-row__sample--footnote">Glass refraction at scroll edges.</div>
-              <div class="lg-type-row__meta">13 / 18 / 400</div>
-            </div>
-            <div class="lg-type-row">
-              <div class="lg-type-row__label">subheadline</div>
-              <div class="lg-type-row__sample lg-type-row__sample--subheadline">Glass refraction at scroll edges.</div>
-              <div class="lg-type-row__meta">15 / 20 / 400</div>
-            </div>
-            <div class="lg-type-row">
-              <div class="lg-type-row__label">callout</div>
-              <div class="lg-type-row__sample lg-type-row__sample--callout">Glass refraction at scroll edges.</div>
-              <div class="lg-type-row__meta">16 / 21 / 400</div>
-            </div>
-            <div class="lg-type-row">
-              <div class="lg-type-row__label">body</div>
-              <div class="lg-type-row__sample lg-type-row__sample--body">Glass refraction at scroll edges.</div>
-              <div class="lg-type-row__meta">17 / 22 / 400</div>
-            </div>
-            <div class="lg-type-row">
-              <div class="lg-type-row__label">headline</div>
-              <div class="lg-type-row__sample lg-type-row__sample--headline">Glass refraction at scroll edges.</div>
-              <div class="lg-type-row__meta">17 / 22 / 600</div>
-            </div>
-            <div class="lg-type-row">
-              <div class="lg-type-row__label">title3</div>
-              <div class="lg-type-row__sample lg-type-row__sample--title3">Glass refraction at scroll edges.</div>
-              <div class="lg-type-row__meta">20 / 25 / 600</div>
-            </div>
-            <div class="lg-type-row">
-              <div class="lg-type-row__label">title2</div>
-              <div class="lg-type-row__sample lg-type-row__sample--title2">Glass refraction at scroll edges.</div>
-              <div class="lg-type-row__meta">22 / 28 / 700</div>
-            </div>
-            <div class="lg-type-row">
-              <div class="lg-type-row__label">title1</div>
-              <div class="lg-type-row__sample lg-type-row__sample--title1">Glass refraction at scroll edges.</div>
-              <div class="lg-type-row__meta">28 / 34 / 700</div>
-            </div>
-            <div class="lg-type-row">
-              <div class="lg-type-row__label">largeTitle</div>
-              <div class="lg-type-row__sample lg-type-row__sample--largeTitle">Glass refraction.</div>
-              <div class="lg-type-row__meta">34 / 41 / 700</div>
-            </div>
-          </section>
-
-          <!-- Motion -->
-          <section class="lg-section" id="motion">
-            <header class="lg-section__header">
-              <span class="lg-section__eyebrow">Foundations</span>
-              <h1 class="lg-section__title">Motion</h1>
-              <p class="lg-section__lede">
-                Hover any chip to play its duration and easing. Sheet uses spring;
-                everything else defaults to the standard curve.
-              </p>
-            </header>
-
-            <div class="lg-motion-grid">
-              <div class="lg-motion-chip lg-motion-chip--instant">
-                <span class="lg-motion-chip__name">instant</span>
-                <span class="lg-motion-chip__value">80 ms · standard</span>
-                <span class="lg-motion-chip__bar"></span>
-              </div>
-              <div class="lg-motion-chip lg-motion-chip--fast">
-                <span class="lg-motion-chip__name">fast</span>
-                <span class="lg-motion-chip__value">160 ms · standard</span>
-                <span class="lg-motion-chip__bar"></span>
-              </div>
-              <div class="lg-motion-chip lg-motion-chip--base">
-                <span class="lg-motion-chip__name">base</span>
-                <span class="lg-motion-chip__value">240 ms · standard</span>
-                <span class="lg-motion-chip__bar"></span>
-              </div>
-              <div class="lg-motion-chip lg-motion-chip--slow">
-                <span class="lg-motion-chip__name">slow</span>
-                <span class="lg-motion-chip__value">360 ms · standard</span>
-                <span class="lg-motion-chip__bar"></span>
-              </div>
-              <div class="lg-motion-chip lg-motion-chip--sheet">
-                <span class="lg-motion-chip__name">sheet</span>
-                <span class="lg-motion-chip__value">420 ms · spring</span>
-                <span class="lg-motion-chip__bar"></span>
-              </div>
-            </div>
-          </section>
-
-          <!-- Buttons -->
-          <section class="lg-section" id="buttons">
-            <header class="lg-section__header">
-              <span class="lg-section__eyebrow">Components</span>
-              <h1 class="lg-section__title">Buttons</h1>
-              <p class="lg-section__lede">
-                Capsule shape, 44 px minimum height. Use <code>.glassProminent</code> for the
-                primary action and <code>.glass</code> for secondary; <code>.borderless</code>
-                for ghost. Subheadline weight 600.
-              </p>
-            </header>
-
-            <div class="lg-component-grid">
-              <article class="lg-component-card">
-                <h2 class="lg-component-card__title">Glass · GlassProminent · Borderless</h2>
-                <div class="lg-component-card__demo">
-                  <button type="button" class="lg-button lg-button--prominent lg-button--blue">Continue</button>
-                  <button type="button" class="lg-button" data-renderer="css">Secondary</button>
-                  <button type="button" class="lg-button lg-button--ghost">Ghost</button>
-                </div>
-              </article>
-
-              <article class="lg-component-card">
-                <h2 class="lg-component-card__title">Icon button · 44pt capsule</h2>
-                <div class="lg-component-card__demo">
-                  <button type="button" class="lg-icon-button" data-renderer="css" aria-label="Add"><span aria-hidden="true">+</span></button>
-                  <button type="button" class="lg-icon-button" data-renderer="css" aria-label="Share"><span aria-hidden="true">↑</span></button>
-                  <button type="button" class="lg-icon-button" data-renderer="css" aria-label="More"><span aria-hidden="true">⋯</span></button>
-                </div>
-              </article>
-
-              <article class="lg-component-card">
-                <h2 class="lg-component-card__title">Toolbar pill · GlassEffectContainer groups items</h2>
-                <div class="lg-component-card__demo">
-                  <div class="lg-toolbar-pill" data-renderer="css">
-                    <button type="button" class="lg-toolbar-pill__item" aria-label="Reply" title="Reply"><span aria-hidden="true">↩</span></button>
-                    <button type="button" class="lg-toolbar-pill__item" aria-label="Forward" title="Forward"><span aria-hidden="true">↪</span></button>
-                    <button type="button" class="lg-toolbar-pill__item" aria-label="Archive" title="Archive"><span aria-hidden="true">▤</span></button>
-                    <button type="button" class="lg-toolbar-pill__item" aria-label="Delete" title="Delete"><span aria-hidden="true">⌫</span></button>
-                  </div>
-                </div>
-              </article>
-            </div>
-          </section>
-
-          <!-- Controls -->
-          <section class="lg-section" id="controls">
-            <header class="lg-section__header">
-              <span class="lg-section__eyebrow">Components</span>
-              <h1 class="lg-section__title">Controls</h1>
-              <p class="lg-section__lede">
-                Segmented picker rides Regular glass. Text fields are
-                <strong>always solid</strong> — glass behind text reduces readability.
-              </p>
-            </header>
-
-            <div class="lg-component-grid">
-              <article class="lg-component-card">
-                <h2 class="lg-component-card__title">Segmented control · 32 tall, 2-5 items</h2>
-                <div class="lg-component-card__demo">
-                  <div class="lg-segmented" data-renderer="css" role="tablist" aria-label="Density">
-                    <button class="lg-segmented__item" role="tab" aria-selected="true">Compact</button>
-                    <button class="lg-segmented__item" role="tab" aria-selected="false">Regular</button>
-                    <button class="lg-segmented__item" role="tab" aria-selected="false">Large</button>
-                  </div>
-                </div>
-              </article>
-
-              <article class="lg-component-card">
-                <h2 class="lg-component-card__title">Text field · 44 min, solid</h2>
-                <label class="lg-text-field-wrap">
-                  <span class="lg-text-field-label">Search</span>
-                  <input class="lg-text-field" type="search" placeholder="Type to search…" />
-                </label>
-              </article>
-
-              <article class="lg-component-card">
-                <h2 class="lg-component-card__title">Popover · floating Regular glass</h2>
-                <div class="lg-component-card__demo">
-                  <details class="lg-popover">
-                    <summary class="lg-button" data-renderer="css">Open menu</summary>
-                    <div class="lg-popover__panel" data-renderer="css" role="menu">
-                      <div class="lg-popover__item" role="menuitem"><span aria-hidden="true">★</span> Favorite</div>
-                      <div class="lg-popover__item" role="menuitem"><span aria-hidden="true">⤓</span> Download</div>
-                      <div class="lg-popover__item" role="menuitem"><span aria-hidden="true">⌫</span> Delete</div>
-                    </div>
-                  </details>
-                </div>
-              </article>
-            </div>
-          </section>
-
-          <!-- Surfaces -->
-          <section class="lg-section" id="surfaces">
-            <header class="lg-section__header">
-              <span class="lg-section__eyebrow">Components</span>
-              <h1 class="lg-section__title">Content surfaces</h1>
-              <p class="lg-section__lede">
-                Cards stay <strong>solid</strong>. Glass is reserved for the floating layer —
-                titlebar, sidebar, toolbar, popover, sheet. Content lives below it.
-              </p>
-            </header>
-
-            <article class="lg-content-card">
-              <h2 class="lg-content-card__title">Why cards aren't glass</h2>
-              <p class="lg-content-card__body">
-                Glass behind body text shimmers under scroll and pulls contrast below
-                WCAG AA on busy backgrounds. The macOS 26 layout rule is the same as
-                ours: glass in the navigation layer, content in the content layer.
-                Cards use the radius (24) and padding (24) from the spec on a solid surface.
-              </p>
-              <p class="lg-content-card__body">
-                In SwiftUI the card is a plain <code>RoundedRectangle</code> filled with
-                <code>controlBackgroundColor</code> and a hairline overlay — no
-                <code>.glassEffect()</code> in sight.
-              </p>
-            </article>
-
-            <article class="lg-content-card">
-              <h2 class="lg-content-card__title">Concentric children</h2>
-              <p class="lg-content-card__body">
-                A radius-24 card with 12 px of inset wants a radius-12 child
-                (24 − 12 = 12). Anything else breaks the parallel curve the eye expects.
-              </p>
-              <p class="lg-content-card__body">
-                Natively, <code>.containerShape(RoundedRectangle(cornerRadius: 24))</code>
-                plus a child <code>ConcentricRectangle()</code> keeps the radii in lock-step
-                if the parent reflows.
-              </p>
-            </article>
-          </section>
-
-          <!-- Sheet -->
-          <section class="lg-section" id="sheet-section">
-            <header class="lg-section__header">
-              <span class="lg-section__eyebrow">Components</span>
-              <h1 class="lg-section__title">Sheet</h1>
-              <p class="lg-section__lede">
-                Bottom-anchored modal that slides up with the spring easing.
-                SwiftUI <code>.sheet</code> with
-                <code>.presentationDetents([.medium, .large])</code> picks up Liquid Glass
-                automatically.
-              </p>
-            </header>
-
-            <a class="lg-button" href="#open-sheet" data-renderer="css">Open sheet</a>
-          </section>
-
-          <!-- Rules -->
-          <section class="lg-section" id="rules">
-            <header class="lg-section__header">
-              <span class="lg-section__eyebrow">Reference</span>
-              <h1 class="lg-section__title">Where glass belongs</h1>
-              <p class="lg-section__lede">
-                Glass in the functional / navigation layer. Solid in the content layer.
-                One glass surface per layered region — never glass-on-glass.
-              </p>
-            </header>
-
-            <article class="lg-content-card">
-              <h2 class="lg-content-card__title">Allowed</h2>
-              <p class="lg-content-card__body">
-                Titlebar + toolbar, sidebar, popover, menu, sheet, floating action button,
-                primary action surfaces. The macOS 26 sidebar and toolbar pick up glass
-                automatically from <code>NavigationSplitView</code> +
-                <code>.listStyle(.sidebar)</code> and <code>.windowToolbarStyle(.unified)</code>.
-              </p>
-            </article>
-          </section>
-
-          <section class="lg-section" id="anti-patterns">
-            <header class="lg-section__header">
-              <span class="lg-section__eyebrow">Reference</span>
-              <h1 class="lg-section__title">Anti-patterns</h1>
-              <p class="lg-section__lede">
-                The auditor in <code>scripts/audit-liquid-glass-html.mjs</code> flags these
-                for the web profile. The same rules apply natively.
-              </p>
-            </header>
-
-            <article class="lg-content-card">
-              <h2 class="lg-content-card__title">Don't</h2>
-              <p class="lg-content-card__body">
-                Stack two glass surfaces. Put glass behind body text. Invent a blur,
-                opacity, or radius outside the token table. Use a 12 px radius on a 44 px
-                capsule. Mix Regular and Clear in one group. Ship without
-                reduced-transparency, reduced-motion, or increased-contrast fallbacks.
-                Claim Apple endorsement.
-              </p>
-            </article>
-          </section>
-
-          <section class="lg-section" id="clear-variant">
-            <header class="lg-section__header">
-              <span class="lg-section__eyebrow">Foundations · advanced</span>
-              <h1 class="lg-section__title">Clear variant</h1>
-              <p class="lg-section__lede">
-                Clear is more transparent — only safe over rich media with a dim layer
-                behind it. The demo below uses Clear <strong>alone</strong>; mixing
-                variants in one group is an anti-pattern.
-              </p>
-            </header>
-
-            <article class="lg-material-card lg-material-card--tall" aria-label="Clear glass with required dim">
-              <div class="lg-material-card__photo lg-material-card__photo--photo" aria-hidden="true"></div>
-              <div class="lg-material-card__dim" aria-hidden="true"></div>
-              <div class="lg-material-card__pane lg-glass--clear" data-renderer="css" data-dim="true">
-                <span class="lg-material-card__label">Clear</span>
-                <span class="lg-material-card__detail">.glassEffect(.clear, in: rect)</span>
-              </div>
-            </article>
-          </section>
-
-          <footer class="lg-footer">
-            Inspired by Apple's Liquid Glass, not Apple-endorsed. Tokens trace to
-            <code>spec/tokens/*.yaml</code>; for the real macOS rendering see
-            <code>examples/macos-native-swift/</code>.
-          </footer>
-        </section>
-
-        <!-- =====================================================================
-             INSPECTOR — solid metadata pane. Selection-driven, mirrors the
-             native NavigationSplitView inspector (App.swift / Inspector.swift).
-             ===================================================================== -->
-        <aside class="lg-inspector" aria-label="Inspector">
-          <div class="lg-inspector__group">
-            <div class="lg-inspector__label">Section</div>
-            <div class="lg-inspector__value" data-inspector="section">Materials</div>
-          </div>
-          <div class="lg-inspector__group">
-            <div class="lg-inspector__label">Renderer</div>
-            <div class="lg-inspector__value">css (backdrop-filter)</div>
-          </div>
-          <div class="lg-inspector__group">
-            <div class="lg-inspector__label">Variant</div>
-            <div class="lg-inspector__value" data-inspector="variant">Regular</div>
-          </div>
-          <div class="lg-inspector__group">
-            <div class="lg-inspector__label">Blur</div>
-            <div class="lg-inspector__value" data-inspector="blur">40 px</div>
-          </div>
-          <div class="lg-inspector__group">
-            <div class="lg-inspector__label">Saturation</div>
-            <div class="lg-inspector__value" data-inspector="saturation">180 %</div>
-          </div>
-          <div class="lg-inspector__group">
-            <div class="lg-inspector__label">Outer radius</div>
-            <div class="lg-inspector__value">28 px (concentric to toolbar pill)</div>
-          </div>
-          <div class="lg-inspector__group">
-            <div class="lg-inspector__label">Surface rule</div>
-            <div class="lg-inspector__value" data-inspector="surfaceRule">Foundational tokens; renderer-agnostic.</div>
-          </div>
-          <div class="lg-inspector__group">
-            <div class="lg-inspector__label">Accessibility</div>
-            <div class="lg-inspector__value">reduced-transparency · prefers-contrast · reduced-motion</div>
-          </div>
-          <div class="lg-inspector__group">
-            <div class="lg-inspector__label">Source spec</div>
-            <div class="lg-inspector__value">spec/liquid-glass.profile.yaml</div>
-          </div>
-        </aside>
-
+        <section class="lg-content"></section>
+        <aside class="lg-inspector" aria-label="Inspector"></aside>
       </div>
     </main>
 
-    <!-- =====================================================================
-         SHEET — bottom-anchored modal. :target trigger keeps it JS-free.
-         ===================================================================== -->
+    <!-- Sheet — bottom-anchored modal. :target trigger keeps it JS-free. -->
     <div class="lg-sheet" id="open-sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title">
       <a class="lg-sheet__scrim" href="#" aria-label="Close sheet"></a>
       <div class="lg-sheet__panel" data-renderer="css">
@@ -679,6 +110,6 @@
       </div>
     </div>
 
-    <script type="module" src="./showcase.js"></script>
+    <script type="module" src="./app.js"></script>
   </body>
 </html>

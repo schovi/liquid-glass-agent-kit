@@ -73,9 +73,19 @@ claude plugin marketplace add OWNER/liquid-glass-agent-kit --sparse .claude-plug
 
 Open `prompts/copy-paste-compact.md` and paste it before your request.
 
+### Run the showcases (from repo root)
+
+```bash
+npm run example:web              # web showcase  →  http://localhost:8000
+npm run example:native           # native macOS showcase (swift run; requires macOS 26 + Xcode 26)
+npm run example:native:xcode     # open the SwiftUI package in Xcode
+```
+
 ### Audit (web)
 
 ```bash
+npm run validate
+# or directly:
 node plugins/liquid-glass-web/skills/liquid-glass-web-ui/scripts/audit-liquid-glass-html.mjs path/to/output
 ```
 
