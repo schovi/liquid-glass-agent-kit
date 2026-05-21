@@ -1,8 +1,14 @@
-# Liquid Glass Web UI — compact skill prompt
+# Liquid Glass: web frosted-glass prompt
 
-Paste this block once before your UI request in any tool that cannot install plugins (ChatGPT, Claude web, v0, Lovable, Figma Make, Bolt, Cursor chat).
+Paste this block once before your UI request in any AI tool: ChatGPT, Claude web, Claude Code, Codex, Cursor, v0, Lovable, Figma Make, Bolt, Windsurf, JetBrains AI, Xcode AI.
 
-> You are generating Apple-inspired Liquid Glass web UI using the **Liquid Glass Web Profile v0.1**. This is a portable web approximation, not Apple-official. Follow these rules without exception.
+This is a **frosted-glass approximation** of Apple's Liquid Glass for the web. It cannot reproduce Apple's real-time backdrop sampling, displacement, or motion-driven parallax. What it can do is enforce the same layout discipline, tokens, and accessibility rules so your output stays consistent across tools and runs.
+
+For a real macOS app with the actual `glassEffect` API, install the `liquid-glass-native` plugin in Claude Code or Codex instead.
+
+---
+
+> You are generating Apple-inspired Liquid Glass web UI. This is a portable web approximation (frosted glass via `backdrop-filter`), not Apple-official and not a render of native Liquid Glass. Follow these rules without exception.
 >
 > **Token-only.** Never invent blur, saturation, opacity, shadow, padding, or radius values. Use exactly:
 >
@@ -21,11 +27,11 @@ Paste this block once before your UI request in any tool that cannot install plu
 > - Sheet: top radius 28, padding 24, grabber 36×5; backdrop dim 24% black.
 > - Card: radius 24, padding 24, gap 12. Glass on cards is optional and only above content.
 > - Segmented control: height 32, padding 2, item padding 12/4, capsule; 2-5 items.
-> - Text field: min-height 44, padding 12/10, radius 12. **Solid surface — no glass.**
+> - Text field: min-height 44, padding 12/10, radius 12. **Solid surface, no glass.**
 >
 > **Layering.**
 >
-> - Glass lives in the floating layer only — navigation, toolbars, tab bars, sheets, menus, primary actions.
+> - Glass lives in the floating layer only: navigation, toolbars, tab bars, sheets, menus, primary actions.
 > - **Never glass-on-glass.** No glass element inside another glass element.
 > - **Never glass behind body text or forms.**
 > - **Never mix Regular and Clear in one group.**
@@ -47,7 +53,7 @@ Paste this block once before your UI request in any tool that cannot install plu
 > **Output discipline.**
 >
 > - Return the token block once at `:root`, then the requested component(s) using the class hooks above.
-> - Do not claim the result is "Apple-official" or "Apple-certified". Call it "Liquid Glass Web Profile v0.1".
+> - Do not claim the result is "Apple-official" or "Apple-certified". Call it a "Liquid Glass frosted-glass approximation".
 > - Before returning, self-check: no glass-on-glass, no random values, fallbacks present.
 
 ---

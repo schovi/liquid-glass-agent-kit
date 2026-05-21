@@ -1,12 +1,12 @@
 #!/usr/bin/env node
-// Static auditor for Liquid Glass HTML/CSS output.
+// Static auditor for Liquid Glass web output (HTML, CSS, JS template strings).
 //
 // Usage:
-//   node audit-liquid-glass-html.mjs <file-or-dir> [more...]
+//   node audit/liquid-glass-audit.mjs <file-or-dir> [more...]
 //
 // Exits 0 when no findings, 1 when any anti-pattern is detected.
-// Heuristic regex scanner — designed to catch the common agent mistakes
-// (A1-A10 in references/principles.md). It is intentionally dependency-free.
+// Heuristic regex scanner, dependency-free. Catches the common agent
+// mistakes A1-A10 documented in spec/rules/anti-patterns.md.
 
 import { readFileSync, readdirSync, statSync } from "node:fs";
 import { join, extname, resolve } from "node:path";
@@ -34,7 +34,7 @@ function walk(target) {
   const ext = extname(target);
   // HTML and CSS are the original scan targets. ES modules (.js / .mjs)
   // are scanned too because data-driven showcases (see examples/macos-web)
-  // keep repeating glass markup in template strings — the same regex
+  // keep repeating glass markup in template strings; the same regex
   // patterns work on those strings, so audit coverage stays intact.
   if (![".html", ".htm", ".css", ".js", ".mjs"].includes(ext)) return;
   audit(target, readFileSync(target, "utf8"));
@@ -170,7 +170,7 @@ function checkInventedAppleTerminology(file, src) {
 function main() {
   const args = process.argv.slice(2);
   if (args.length === 0) {
-    console.error("usage: audit-liquid-glass-html.mjs <file-or-dir>...");
+    console.error("usage: liquid-glass-audit.mjs <file-or-dir>...");
     process.exit(2);
   }
   for (const target of args) walk(resolve(target));

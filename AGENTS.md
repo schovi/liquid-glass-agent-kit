@@ -4,87 +4,83 @@ You are an agent making changes to this repo. Read this before editing.
 
 ## Source of truth
 
-This repo hosts **two sibling plugins** sharing one canonical spec:
+This repo ships Apple-inspired Liquid Glass guidance in **two delivery modes** from one canonical spec:
 
-- `plugins/liquid-glass-web/`    — Liquid Glass web UI (HTML, CSS, React, JSX, Tailwind).
-- `plugins/liquid-glass-native/` — Liquid Glass native macOS UI (SwiftUI, AppKit).
+- **Web** — a paste-once prompt (`prompts/web-frosted-glass.md`) that any AI tool can consume, plus a showcase (`examples/macos-web/`) and a standalone audit (`audit/`).
+- **Native macOS 26** — a Codex + Claude Code plugin (`plugins/liquid-glass-native/`) wrapping the real `glassEffect` / `NavigationSplitView` / `ConcentricRectangle` APIs, plus a showcase (`examples/macos-native-swift/`).
 
-Each plugin folder serves both Codex (`.codex-plugin/`) and Claude (`.claude-plugin/`) from one place. There is no build step.
+There is no build step. The plugin folder serves both Codex (`.codex-plugin/`) and Claude Code (`.claude-plugin/`) from one place.
 
 Edit only:
 
 - `spec/`
-- `plugins/liquid-glass-web/skills/liquid-glass-web-ui/`
-- `plugins/liquid-glass-web/agents/`            (Claude subagents)
+- `prompts/web-frosted-glass.md`
 - `plugins/liquid-glass-native/skills/liquid-glass-native-ui/`
-- `plugins/liquid-glass-native/agents/`         (Claude subagents)
-- `prompts/copy-paste-compact.md`               (web only, for now)
+- `plugins/liquid-glass-native/agents/` (Claude subagents)
 - `examples/`
+- `audit/`
 - `docs/`
-- `.claude/skills/liquid-glass-sync/`           (local sync workflow)
+- `.claude/skills/liquid-glass-sync/` (local sync workflow)
 
-## Cross-cutting changes — design system inventory
+## Cross-cutting changes
 
-The repo has three representations of the same design system and they
-must never drift. The single human-readable inventory that maps
-everything together lives at:
+`docs/design-system.md` is the human-readable inventory mapping every token, component, pattern, and rule to its spec entry, web showcase pointer, native showcase pointer, native plugin reference, Apple API, and caveats.
 
-- `docs/design-system.md` — every token, component, pattern, and rule with side-by-side pointers to its spec entry, web rendering, native rendering, Apple API, and caveats.
-
-For any change that touches tokens, components, rules, or cross-cutting
-patterns, route through the local sync skill instead of editing
-ad-hoc:
+For any change that touches tokens, components, rules, or cross-cutting patterns, route through:
 
 - `.claude/skills/liquid-glass-sync/SKILL.md`
 
-Order of operations is fixed: **spec → docs/design-system.md → examples/macos-web → examples/macos-native-swift**, with a self-audit (`npm run validate` for web, `swift build` for native) before declaring done. Single-rendering bug fixes (CSS typo, Swift compile error that doesn't touch the design system) do NOT need this skill — fix them in place.
+Order of operations: **spec → docs/design-system.md → prompts/web-frosted-glass.md (token block) → examples/macos-web → plugins/liquid-glass-native (references) → examples/macos-native-swift**. Self-audit with `npm run audit` for web and `swift build` for native before declaring done.
+
+Single-rendering bug fixes (CSS typo in the showcase, Swift compile error that doesn't touch the design system) do NOT need this skill. Fix them in place.
 
 ## After every change
 
-If you touched the web skill, the audit script, or `examples/macos-web`, run:
+If you touched the audit, the web prompt token block, or `examples/macos-web/`, run:
 
 ```bash
-npm run validate
+npm run audit
 ```
 
-That runs the heuristic auditor against `examples/macos-web`.
+That runs the standalone auditor against `examples/macos-web`.
 
-The native side has no audit script yet — its skill is consumed by an LLM and verified by building `examples/macos-native-swift`.
+The native side has no audit script yet. The native plugin skill is consumed by an LLM and verified by building `examples/macos-native-swift` (`swift build` or `npm run example:native:build`).
 
 ## Token discipline (web)
 
-Never invent a blur, saturation, opacity, shadow, padding, or radius value. If a value is missing, add it to `spec/tokens/*.yaml` and `references/tokens.md` first, then reference it.
+Never invent a blur, saturation, opacity, shadow, padding, or radius value. If a value is missing, add it to `spec/tokens/*.yaml` first, then propagate to the prompt token block and the showcase CSS.
 
 ## Token discipline (native)
 
-Use the native materials and view modifiers documented in `plugins/liquid-glass-native/skills/liquid-glass-native-ui/references/`. Do not hard-code colors or blur values — use the SwiftUI / AppKit material APIs.
+Use the native materials and view modifiers documented in `plugins/liquid-glass-native/skills/liquid-glass-native-ui/references/`. Do not hard-code colors or blur values. Use the SwiftUI / AppKit material APIs.
 
 ## Apple
 
-Do not claim any output is "Apple-official" or "Apple-certified". The web profile is an inspired-by approximation; the native side wraps real Apple APIs but the kit itself is not endorsed. Do not commit Apple fonts, Apple UI-kit exports, or Apple-owned screenshots.
+Do not claim any output is "Apple-official" or "Apple-certified". The web prompt produces a frosted-glass approximation; the native side wraps real Apple APIs but the kit itself is not endorsed. Do not commit Apple fonts, Apple UI-kit exports, or Apple-owned screenshots.
 
-## Why one folder per plugin for both ecosystems
+## Native plugin layout
 
-Each `plugins/<plugin>/` folder contains:
+`plugins/liquid-glass-native/` contains:
 
 - `.claude-plugin/plugin.json` — Claude reads this.
 - `.codex-plugin/plugin.json` — Codex reads this; declares `skills = "./skills/"`.
-- `skills/<canonical-skill>/` — ONE copy used by both Codex and Claude.
+- `skills/liquid-glass-native-ui/` — ONE skill folder used by both Codex and Claude.
 - `agents/` — Claude-only subagents; Codex ignores.
 
-Both marketplace catalogs (`.agents/plugins/marketplace.json`, `.claude-plugin/marketplace.json`) point at the same folders. The two dotfile manifests do not collide, so there is no need to duplicate skills.
+Both marketplace catalogs (`.agents/plugins/marketplace.json`, `.claude-plugin/marketplace.json`) point at this folder. The two dotfile manifests do not collide, so there is no need to duplicate the skill.
 
 ## Slash command naming
 
-| Plugin                | Codex                       | Claude                                             |
-| --------------------- | --------------------------- | -------------------------------------------------- |
-| `liquid-glass-web`    | `$liquid-glass-web-ui …`    | `/liquid-glass-web:liquid-glass-web-ui …`         |
-| `liquid-glass-native` | `$liquid-glass-native-ui …` | `/liquid-glass-native:liquid-glass-native-ui …`   |
+| Codex                       | Claude Code                                       |
+| --------------------------- | ------------------------------------------------- |
+| `$liquid-glass-native-ui …` | `/liquid-glass-native:liquid-glass-native-ui …`   |
 
-The Claude form is slightly repetitive (plugin name then skill name); that is the cost of eliminating duplication.
+## Subagent boundaries (native)
 
-## Subagent boundaries
+- `liquid-glass-native-auditor` is read-only (`disallowedTools: Write, Edit`). Keep it that way.
+- `liquid-glass-native-implementer` may write.
+- Both reference the canonical `liquid-glass-native-ui` skill.
 
-- `liquid-glass-web-auditor` and `liquid-glass-native-auditor` are read-only (`disallowedTools: Write, Edit`). Keep them that way.
-- `liquid-glass-web-implementer` and `liquid-glass-native-implementer` may write.
-- Each pair of agents references the same-named canonical skill.
+## History
+
+Earlier versions of this kit also shipped a `liquid-glass-web` plugin (Codex + Claude). That plugin was removed in v0.2 in favor of the portable web prompt; native stays a plugin because skill-supporting tools are where native devs work. See `CHANGELOG.md`.

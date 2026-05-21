@@ -3,20 +3,6 @@
   "owner": { "name": "liquid-glass-agent-kit contributors" },
   "plugins": [
     {
-      "name": "liquid-glass-web",
-      "source": {
-        "source": "git-subdir",
-        "url": "OWNER/liquid-glass-agent-kit",
-        "path": "plugins/liquid-glass-web",
-        "ref": "main"
-      },
-      "description": "Build Liquid Glass *web* UI in HTML, CSS, React, JSX, or Tailwind. Token-strict generation, auditing, and design-tool prompts.",
-      "version": "0.1.0",
-      "license": "MIT",
-      "category": "Design",
-      "tags": ["liquid-glass", "ui", "html", "css", "react", "design-system"]
-    },
-    {
       "name": "liquid-glass-native",
       "source": {
         "source": "git-subdir",
@@ -25,7 +11,7 @@
         "ref": "main"
       },
       "description": "Build authentic macOS 26 (Tahoe) Liquid Glass apps with SwiftUI and AppKit",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "license": "MIT",
       "category": "Design",
       "tags": ["liquid-glass", "macos", "tahoe", "swiftui", "appkit", "design-system"]

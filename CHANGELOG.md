@@ -1,6 +1,33 @@
 # Changelog
 
-## Unreleased
+## 0.2.0 — prompt-first pivot
+
+### Changed
+
+- **Repositioned the web side as a portable prompt, not a plugin.** Anyone targeting web Liquid Glass UI now pastes `prompts/web-frosted-glass.md` into their AI tool (ChatGPT, Claude web, Cursor, v0, Lovable, Figma Make, Bolt, Windsurf, JetBrains AI, Xcode AI, Claude Code, Codex). One artifact, every tool.
+- The native side stays a Codex + Claude Code plugin (`plugins/liquid-glass-native/`). Skill-supporting tools are where native devs work, so a plugin keeps the multi-file reference loading that makes the native skill effective.
+- Web prompt header reframed: it now declares itself a **frosted-glass approximation**, not a render of native Liquid Glass.
+
+### Added
+
+- `audit/` — standalone web audit CLI. The audit script that used to live inside the web plugin is now a top-level tool: `node audit/liquid-glass-audit.mjs <path>` or `npm run audit`.
+- `audit/README.md` — documents the checks and known gaps.
+- `docs/web-prompt.md` — usage guide for the portable web prompt.
+
+### Removed
+
+- `plugins/liquid-glass-web/` — the entire web plugin (skills, agents, Codex + Claude manifests).
+- `docs/install-copy-paste.md` — superseded by `docs/web-prompt.md`.
+
+### Migration
+
+If you previously installed the web plugin:
+
+- **Codex / Claude Code users:** uninstall `liquid-glass-web`. For web tasks, paste `prompts/web-frosted-glass.md` instead.
+- **CI users running the audit script:** the path moved. Update `node plugins/liquid-glass-web/skills/liquid-glass-web-ui/scripts/audit-liquid-glass-html.mjs ...` to `node audit/liquid-glass-audit.mjs ...` or `npm run audit`.
+- **The native plugin is unchanged.** Install paths, slash commands, and subagent names are identical.
+
+## 0.1.1 — native sibling
 
 ### Added
 

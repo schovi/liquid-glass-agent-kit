@@ -1,8 +1,0 @@
-{
-  "name": "liquid-glass-web",
-  "description": "Build Apple-inspired Liquid Glass *web* UI in HTML, CSS, React, JSX, or Tailwind. Token-strict generation, auditing, and design-tool prompts. Sibling plugin liquid-glass-native covers SwiftUI and AppKit.",
-  "version": "0.1.0",
-  "author": { "name": "liquid-glass-agent-kit contributors" },
-  "repository": "https://github.com/OWNER/liquid-glass-agent-kit",
-  "license": "MIT"
-}

@@ -2,8 +2,9 @@
 
 Unified inventory across spec, web, and native renderings. This file is
 the single source of truth for cross-cutting changes. Modifications go
-through `.claude/skills/liquid-glass-sync/`, which orchestrates updates
-to all three (this doc, web example, native example) in lockstep.
+through `.claude/skills/liquid-glass-sync/`, which orchestrates lockstep
+updates to this doc, the web prompt token block, the web showcase, the
+native plugin references, and the native showcase.
 
 ## How to read this doc
 
@@ -163,7 +164,7 @@ Floating capsule group of icon-buttons. Min height 52, item 40.
 Bottom navigation, 2-5 items, height 64, radius 32. iOS pattern — macOS uses sidebar + toolbar instead.
 
 - spec: `spec/components/tab-bar.yaml`
-- web: not rendered in `examples/macos-web` (macOS context); see `examples/vanilla-html` for the iOS-style demo
+- web: not rendered in `examples/macos-web` (macOS context); the web prompt covers iOS-style tab bars when targeted at mobile
 - native: not rendered in `examples/macos-native-swift` (macOS context)
 - apple: SwiftUI `TabView` (iOS) — Liquid Glass tabs float in the toolbar
 - caveats: don't ship a tab bar in a macOS layout; that's an iOS pattern.
@@ -265,7 +266,7 @@ Page background, long-form text containers, forms / text fields, dense data tabl
 
 ### Anti-patterns (A1-A10)
 
-The auditor in `plugins/liquid-glass-web/skills/liquid-glass-web-ui/scripts/audit-liquid-glass-html.mjs` enforces these for the web profile. The native side relies on the implementer and auditor agents to enforce by review.
+The auditor in `audit/liquid-glass-audit.mjs` enforces these for the web profile. The native side relies on the implementer and auditor agents to enforce by review.
 
 - A1 Glass-on-glass
 - A2 Glass behind body text
@@ -301,8 +302,9 @@ independent reviews, screenshot URLs — lives in `docs/resources.md`.
 
 ---
 
-## Plugin map
+## Delivery map
 
-- `plugins/liquid-glass-web/` — web UI generation, auditing, design-tool prompts (consumed by `liquid-glass-web-implementer` + `liquid-glass-web-auditor` Claude subagents).
-- `plugins/liquid-glass-native/` — native macOS UI guidance (consumed by `liquid-glass-native-implementer` + `liquid-glass-native-auditor` Claude subagents).
-- `.claude/skills/liquid-glass-sync/` — local repo skill that orchestrates cross-cutting changes to spec + this doc + both examples.
+- `prompts/web-frosted-glass.md` — paste-once prompt for any AI tool that produces web output. Compresses the spec's web tokens, geometry, and accessibility rules into one block.
+- `audit/liquid-glass-audit.mjs` — standalone static check on web output (HTML/CSS/JS).
+- `plugins/liquid-glass-native/` — Codex + Claude Code plugin for native macOS UI guidance (consumed by `liquid-glass-native-implementer` + `liquid-glass-native-auditor` Claude subagents).
+- `.claude/skills/liquid-glass-sync/` — local repo skill that orchestrates cross-cutting changes across spec, this doc, the web prompt, the web showcase, the native plugin references, and the native showcase.

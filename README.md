@@ -1,49 +1,41 @@
 # Liquid Glass Agent Kit
 
-Build Apple-inspired Liquid Glass user interfaces with AI agents, plugins, copy-paste prompts, or local tooling. Two sibling plugins share one canonical spec:
+Build Apple-inspired Liquid Glass UI with any AI tool. Stop agents inventing random blur, radius, shadow, and spacing values. Fixed tokens, fixed component sizes, fixed layering rules.
 
-- **`liquid-glass-web`** — Liquid Glass *web* UI in HTML, CSS, React, JSX, or Tailwind.
-- **`liquid-glass-native`** — Liquid Glass *native* macOS UI in SwiftUI or AppKit (macOS 26 Tahoe).
+Two delivery modes, one spec:
 
-The goal in both cases: stop agents from inventing random blur, radius, shadow, and spacing values.
-
-## Choose your path
-
-| I want…                                                              | Plugin                  |
-| -------------------------------------------------------------------- | ----------------------- |
-| HTML/CSS, React, JSX, Tailwind, or a design-tool prompt              | `liquid-glass-web`      |
-| A real macOS app in SwiftUI or AppKit                                | `liquid-glass-native`   |
-| ChatGPT / Claude web / v0 / Lovable / Figma Make / Cursor chat (web) | paste `prompts/copy-paste-compact.md` |
-| Just the audit, in CI                                                | the web plugin ships a Node audit script |
+- **Web**: a paste-once prompt. Works in any AI tool, including ones that can't install plugins (ChatGPT, v0, Figma Make, Lovable).
+- **Native macOS 26**: a skill/plugin installed into Claude Code or Codex. Wraps the real `glassEffect` / `NavigationSplitView` / `ConcentricRectangle` APIs.
 
 ## What this is
 
-- Component sizes, shape rules, material approximation tokens (CSS / SVG / WebGL for web; SwiftUI / AppKit references for native).
-- Renderer recipes.
-- Accessibility rules.
-- A heuristic auditor (web).
+- **`spec/`**: canonical tokens, component dimensions, layering rules, accessibility fallbacks. Single source of truth.
+- **`prompts/web-frosted-glass.md`**: paste-once block for any web-output AI tool.
+- **`plugins/liquid-glass-native/`**: Codex + Claude Code plugin for SwiftUI / AppKit on macOS 26.
+- **`examples/macos-web/`**: showcase of what a web design tool produces when you paste the web prompt. HTML, CSS, vanilla JS.
+- **`examples/macos-native-swift/`**: showcase of what the native plugin produces. SwiftUI app using real Apple APIs.
+- **`audit/`**: standalone CLI that statically checks web output for the most common hallucinations.
 
 ## What this is not
 
-- Not an Apple-official design system.
-- Not a 1:1 copy of Apple's private rendering internals.
-- The **web** profile is an approximation — adaptive native material cannot be reproduced exactly in HTML.
+- Not Apple-official, Apple-certified, or Apple-endorsed.
+- The web side is **not** a render of native Liquid Glass. It's frosted glass that obeys the same layout discipline. Real Liquid Glass needs Apple APIs on macOS 26.
+- Earlier versions also shipped a `liquid-glass-web` plugin for Claude Code / Codex. That plugin was removed in v0.2 in favor of the portable web prompt; native stays a plugin because skill-supporting tools (Claude Code, Codex, Cursor) are where native devs already work.
 
-## Quick start
-
-### Codex — web
-
-```bash
-codex plugin marketplace add OWNER/liquid-glass-agent-kit --sparse .agents/plugins plugins/liquid-glass-web
-```
-
-Open Codex and run `/plugins`. Install **Liquid Glass Web UI**, then:
+## Quick start, web
 
 ```text
-$liquid-glass-web-ui Build a settings screen in plain HTML/CSS.
+1. Open prompts/web-frosted-glass.md
+2. Copy its contents into your AI tool, before your UI request
+3. Ask for the UI you want
+4. (Optional) audit the output: node audit/liquid-glass-audit.mjs ./output
 ```
 
-### Codex — native
+Tested with: ChatGPT, Claude (web + Code), Codex, Cursor, v0, Lovable, Figma Make, Bolt, Windsurf, JetBrains AI, Xcode AI.
+
+## Quick start, native macOS 26
+
+### Codex
 
 ```bash
 codex plugin marketplace add OWNER/liquid-glass-agent-kit --sparse .agents/plugins plugins/liquid-glass-native
@@ -53,15 +45,7 @@ codex plugin marketplace add OWNER/liquid-glass-agent-kit --sparse .agents/plugi
 $liquid-glass-native-ui Build a SwiftUI sidebar app with NavigationSplitView.
 ```
 
-### Claude Code — web
-
-```bash
-claude plugin marketplace add OWNER/liquid-glass-agent-kit --sparse .claude-plugin plugins/liquid-glass-web
-/plugin install liquid-glass-web@liquid-glass-agent-kit
-/liquid-glass-web:liquid-glass-web-ui Build a compact mobile onboarding screen.
-```
-
-### Claude Code — native
+### Claude Code
 
 ```bash
 claude plugin marketplace add OWNER/liquid-glass-agent-kit --sparse .claude-plugin plugins/liquid-glass-native
@@ -69,64 +53,50 @@ claude plugin marketplace add OWNER/liquid-glass-agent-kit --sparse .claude-plug
 /liquid-glass-native:liquid-glass-native-ui Build a SwiftUI inspector pane.
 ```
 
-### Copy/paste (web only, for now)
-
-Open `prompts/copy-paste-compact.md` and paste it before your request.
-
-### Run the showcases (from repo root)
+## Run the showcases
 
 ```bash
-npm run example:web              # web showcase  →  http://localhost:8000
-npm run example:native           # native macOS showcase (swift run; requires macOS 26 + Xcode 26)
+npm run example:web              # web showcase  http://localhost:8000
+npm run example:native           # native macOS showcase (requires macOS 26 + Xcode 26)
 npm run example:native:xcode     # open the SwiftUI package in Xcode
 ```
 
-### Audit (web)
+## Audit (web)
 
 ```bash
-npm run validate
-# or directly:
-node plugins/liquid-glass-web/skills/liquid-glass-web-ui/scripts/audit-liquid-glass-html.mjs path/to/output
+npm run audit                              # audits examples/macos-web
+node audit/liquid-glass-audit.mjs <path>   # audit arbitrary output
 ```
 
-## Layout
+Regex-based static check, dependency-free. Catches glass-on-glass, glass behind body text, off-token blur / saturation / radius / opacity, capsule miscalculation, mixed Regular + Clear, missing accessibility fallbacks, and "Apple-official" claims. See `audit/README.md` for the full list and known gaps.
+
+Exit 0 = clean, 1 = findings.
+
+## Repo layout
 
 ```
-spec/                                          canonical source of truth (tokens, components, rules, schemas)
+spec/                            canonical tokens, components, rules
+prompts/
+└── web-frosted-glass.md         the portable web prompt
 plugins/
-├── liquid-glass-web/                          WEB plugin (shared by Codex and Claude)
-│   ├── .codex-plugin/plugin.json
-│   ├── .claude-plugin/plugin.json
-│   ├── skills/liquid-glass-web-ui/            HTML / CSS / React / JSX / Tailwind
-│   └── agents/                                Claude subagents (Codex ignores)
-└── liquid-glass-native/                       NATIVE plugin (shared by Codex and Claude)
-    ├── .codex-plugin/plugin.json
-    ├── .claude-plugin/plugin.json
-    ├── skills/liquid-glass-native-ui/         SwiftUI / AppKit
-    └── agents/                                Claude subagents (Codex ignores)
-.agents/plugins/marketplace.json               Codex marketplace listing both plugins
-.claude-plugin/marketplace.json                Claude marketplace listing both plugins
-prompts/                                       copy/paste prompt for plugin-less web tools
-examples/macos-web/                            HTML/CSS reference showcase (passes the web audit)
-examples/macos-native-swift/                   SwiftUI showcase app
-docs/                                          install + usage docs
+└── liquid-glass-native/         native macOS 26 plugin (Codex + Claude)
+examples/
+├── macos-web/                   showcase: produced from the web prompt
+└── macos-native-swift/          showcase: produced via the native plugin
+audit/                           standalone web audit CLI
+docs/                            design-system inventory + install guides + resources
 ```
-
-Why one folder per plugin? Codex reads `.codex-plugin/`, Claude reads `.claude-plugin/`. Their dotfolders do not collide, so a single plugin folder can serve both without duplicating skills or agents.
 
 ## Editing
 
-Edit:
+`spec/` is canonical. When tokens change, propagate to:
 
-- `spec/`
-- `plugins/liquid-glass-web/skills/liquid-glass-web-ui/`
-- `plugins/liquid-glass-native/skills/liquid-glass-native-ui/`
-- `plugins/*/agents/` (Claude-only)
-- `prompts/copy-paste-compact.md`
-- `examples/`
-- `docs/`
+- The token block inside `prompts/web-frosted-glass.md`
+- `examples/macos-web/tokens.js`
+- `examples/macos-native-swift/Sources/.../Tokens.swift`
+- The native plugin references under `plugins/liquid-glass-native/skills/liquid-glass-native-ui/references/`
 
-There is no build step.
+There is no build step. The local `.claude/skills/liquid-glass-sync/` skill orchestrates these updates.
 
 ## License
 
