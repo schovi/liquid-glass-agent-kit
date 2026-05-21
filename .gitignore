@@ -4,3 +4,6 @@ dist/
 .idea/
 .vscode/
 *.log
+
+*.swp
+examples/macos-native-swift/.build

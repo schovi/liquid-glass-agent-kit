@@ -1,97 +1,117 @@
 # Liquid Glass Agent Kit
 
-Build Apple-inspired Liquid Glass web UI with AI agents, plugins, copy-paste prompts, or local tooling.
+Build Apple-inspired Liquid Glass user interfaces with AI agents, plugins, copy-paste prompts, or local tooling. Two sibling plugins share one canonical spec:
 
-The kit ships **one canonical spec** plus **one shared plugin** that serves both Codex and Claude Code from the same skill folder. The goal is to stop agents from inventing random blur, radius, shadow, and spacing values.
+- **`liquid-glass-web`** — Liquid Glass *web* UI in HTML, CSS, React, JSX, or Tailwind.
+- **`liquid-glass-native`** — Liquid Glass *native* macOS UI in SwiftUI or AppKit (macOS 26 Tahoe).
+
+The goal in both cases: stop agents from inventing random blur, radius, shadow, and spacing values.
 
 ## Choose your path
 
-| I use…                                                       | Recommended path                              |
-| ------------------------------------------------------------ | --------------------------------------------- |
-| Codex                                                        | Install the plugin                            |
-| Claude Code                                                  | Install the plugin                            |
-| ChatGPT, Claude web, v0, Lovable, Figma Make, Bolt, Cursor   | Paste the compact prompt                      |
-| A frontend repo with normal Node tooling                     | Run the audit script in CI                    |
+| I want…                                                              | Plugin                  |
+| -------------------------------------------------------------------- | ----------------------- |
+| HTML/CSS, React, JSX, Tailwind, or a design-tool prompt              | `liquid-glass-web`      |
+| A real macOS app in SwiftUI or AppKit                                | `liquid-glass-native`   |
+| ChatGPT / Claude web / v0 / Lovable / Figma Make / Cursor chat (web) | paste `prompts/copy-paste-compact.md` |
+| Just the audit, in CI                                                | the web plugin ships a Node audit script |
 
 ## What this is
 
-A portable Liquid Glass Web Profile:
-
-- component sizes
-- shape rules
-- material approximation tokens (CSS / SVG / WebGL)
-- renderer recipes
-- accessibility rules
-- a heuristic auditor
+- Component sizes, shape rules, material approximation tokens (CSS / SVG / WebGL for web; SwiftUI / AppKit references for native).
+- Renderer recipes.
+- Accessibility rules.
+- A heuristic auditor (web).
 
 ## What this is not
 
 - Not an Apple-official design system.
-- Not a native SwiftUI replacement.
 - Not a 1:1 copy of Apple's private rendering internals.
+- The **web** profile is an approximation — adaptive native material cannot be reproduced exactly in HTML.
 
 ## Quick start
 
-### Codex
+### Codex — web
 
 ```bash
-codex plugin marketplace add OWNER/liquid-glass-agent-kit --sparse .agents/plugins plugins/liquid-glass-ui
+codex plugin marketplace add OWNER/liquid-glass-agent-kit --sparse .agents/plugins plugins/liquid-glass-web
 ```
 
-Open Codex and run `/plugins`. Install **Liquid Glass UI**, then:
+Open Codex and run `/plugins`. Install **Liquid Glass Web UI**, then:
 
 ```text
 $liquid-glass-web-ui Build a settings screen in plain HTML/CSS.
 ```
 
-### Claude Code
+### Codex — native
 
 ```bash
-claude plugin marketplace add OWNER/liquid-glass-agent-kit --sparse .claude-plugin plugins/liquid-glass-ui
-/plugin install liquid-glass-ui@liquid-glass-agent-kit
+codex plugin marketplace add OWNER/liquid-glass-agent-kit --sparse .agents/plugins plugins/liquid-glass-native
 ```
-
-Then:
 
 ```text
-/liquid-glass-ui:liquid-glass-web-ui Build a compact mobile onboarding screen.
+$liquid-glass-native-ui Build a SwiftUI sidebar app with NavigationSplitView.
 ```
 
-### Copy/paste
+### Claude Code — web
+
+```bash
+claude plugin marketplace add OWNER/liquid-glass-agent-kit --sparse .claude-plugin plugins/liquid-glass-web
+/plugin install liquid-glass-web@liquid-glass-agent-kit
+/liquid-glass-web:liquid-glass-web-ui Build a compact mobile onboarding screen.
+```
+
+### Claude Code — native
+
+```bash
+claude plugin marketplace add OWNER/liquid-glass-agent-kit --sparse .claude-plugin plugins/liquid-glass-native
+/plugin install liquid-glass-native@liquid-glass-agent-kit
+/liquid-glass-native:liquid-glass-native-ui Build a SwiftUI inspector pane.
+```
+
+### Copy/paste (web only, for now)
 
 Open `prompts/copy-paste-compact.md` and paste it before your request.
 
-### Audit
+### Audit (web)
 
 ```bash
-node plugins/liquid-glass-ui/skills/liquid-glass-web-ui/scripts/audit-liquid-glass-html.mjs path/to/output
+node plugins/liquid-glass-web/skills/liquid-glass-web-ui/scripts/audit-liquid-glass-html.mjs path/to/output
 ```
 
 ## Layout
 
 ```
-spec/                                    canonical source of truth (tokens, components, rules, schemas)
-plugins/liquid-glass-ui/                 ONE plugin, shared by Codex and Claude
-├── .codex-plugin/plugin.json            Codex manifest (skills = "./skills/")
-├── .claude-plugin/plugin.json           Claude manifest
-├── skills/liquid-glass-web-ui/          ONE skill (SKILL.md + references + audit script)
-└── agents/                              Claude subagents (Codex ignores)
-.agents/plugins/marketplace.json         Codex marketplace catalog
-.claude-plugin/marketplace.json          Claude marketplace catalog
-prompts/                                 copy/paste prompt for plugin-less tools
-examples/vanilla-html/                   reference HTML/CSS that passes the audit
-docs/                                    install + usage docs
+spec/                                          canonical source of truth (tokens, components, rules, schemas)
+plugins/
+├── liquid-glass-web/                          WEB plugin (shared by Codex and Claude)
+│   ├── .codex-plugin/plugin.json
+│   ├── .claude-plugin/plugin.json
+│   ├── skills/liquid-glass-web-ui/            HTML / CSS / React / JSX / Tailwind
+│   └── agents/                                Claude subagents (Codex ignores)
+└── liquid-glass-native/                       NATIVE plugin (shared by Codex and Claude)
+    ├── .codex-plugin/plugin.json
+    ├── .claude-plugin/plugin.json
+    ├── skills/liquid-glass-native-ui/         SwiftUI / AppKit
+    └── agents/                                Claude subagents (Codex ignores)
+.agents/plugins/marketplace.json               Codex marketplace listing both plugins
+.claude-plugin/marketplace.json                Claude marketplace listing both plugins
+prompts/                                       copy/paste prompt for plugin-less web tools
+examples/macos-web/                            HTML/CSS reference showcase (passes the web audit)
+examples/macos-native-swift/                   SwiftUI showcase app
+docs/                                          install + usage docs
 ```
 
-Why one folder? Codex reads `.codex-plugin/`, Claude reads `.claude-plugin/`. Their dotfiles do not collide, so a single plugin folder can serve both without duplicating skills or agents.
+Why one folder per plugin? Codex reads `.codex-plugin/`, Claude reads `.claude-plugin/`. Their dotfolders do not collide, so a single plugin folder can serve both without duplicating skills or agents.
 
 ## Editing
 
-Edit only:
+Edit:
 
 - `spec/`
-- `plugins/liquid-glass-ui/skills/liquid-glass-web-ui/`
-- `plugins/liquid-glass-ui/agents/` (Claude-only)
+- `plugins/liquid-glass-web/skills/liquid-glass-web-ui/`
+- `plugins/liquid-glass-native/skills/liquid-glass-native-ui/`
+- `plugins/*/agents/` (Claude-only)
 - `prompts/copy-paste-compact.md`
 - `examples/`
 - `docs/`

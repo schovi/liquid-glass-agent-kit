@@ -5,11 +5,25 @@
   },
   "plugins": [
     {
-      "name": "liquid-glass-ui",
+      "name": "liquid-glass-web",
       "source": {
         "source": "git-subdir",
         "url": "https://github.com/OWNER/liquid-glass-agent-kit.git",
-        "path": "./plugins/liquid-glass-ui",
+        "path": "./plugins/liquid-glass-web",
+        "ref": "main"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Design"
+    },
+    {
+      "name": "liquid-glass-native",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/OWNER/liquid-glass-agent-kit.git",
+        "path": "./plugins/liquid-glass-native",
         "ref": "main"
       },
       "policy": {

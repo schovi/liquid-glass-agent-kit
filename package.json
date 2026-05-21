@@ -6,7 +6,7 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "audit:examples": "node plugins/liquid-glass-ui/skills/liquid-glass-web-ui/scripts/audit-liquid-glass-html.mjs examples",
+    "audit:examples": "node plugins/liquid-glass-web/skills/liquid-glass-web-ui/scripts/audit-liquid-glass-html.mjs examples/macos-web",
     "validate": "npm run audit:examples"
   },
   "engines": { "node": ">=18" }

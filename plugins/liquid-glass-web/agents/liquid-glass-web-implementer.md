@@ -1,6 +1,6 @@
 ---
-name: liquid-glass-implementer
-description: Generates Liquid Glass HTML/CSS or React code for a specified surface. Uses only the token set; emits accessibility fallbacks.
+name: liquid-glass-web-implementer
+description: Generates Liquid Glass *web* UI code (HTML, CSS, React, JSX, Tailwind) for a specified surface. Uses only the token set; emits accessibility fallbacks. Use the native sibling `liquid-glass-native-implementer` for SwiftUI or AppKit.
 model: sonnet
 effort: medium
 skills:

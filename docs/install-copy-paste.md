@@ -29,7 +29,7 @@ Build a settings screen with a bottom tab bar and a floating action button.
 Paste the generated HTML/CSS into a file, then:
 
 ```bash
-node plugins/liquid-glass-ui/skills/liquid-glass-web-ui/scripts/audit-liquid-glass-html.mjs ./generated.html ./generated.css
+node plugins/liquid-glass-web/skills/liquid-glass-web-ui/scripts/audit-liquid-glass-html.mjs ./generated.html ./generated.css
 ```
 
 The auditor exits non-zero on any anti-pattern.

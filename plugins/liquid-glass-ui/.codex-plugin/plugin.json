@@ -1,6 +1,0 @@
-{
-  "name": "liquid-glass-ui",
-  "version": "0.1.0",
-  "description": "Apple-inspired Liquid Glass web UI generation, auditing, and token extraction for HTML, CSS, React, JSX, and design-agent output.",
-  "skills": "./skills/"
-}

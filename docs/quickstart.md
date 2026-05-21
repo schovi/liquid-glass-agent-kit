@@ -5,13 +5,13 @@ Pick the path that matches your tool. Each path takes about a minute.
 ## Codex
 
 ```bash
-codex plugin marketplace add OWNER/liquid-glass-agent-kit --sparse .agents/plugins plugins/liquid-glass-ui
+codex plugin marketplace add OWNER/liquid-glass-agent-kit --sparse .agents/plugins plugins/liquid-glass-web
 ```
 
 Then in Codex:
 
 ```
-/plugins        # install "Liquid Glass UI"
+/plugins        # install "Liquid Glass Web UI"
 $liquid-glass-web-ui Build a settings screen.
 ```
 
@@ -20,9 +20,9 @@ See `docs/install-codex.md`.
 ## Claude Code
 
 ```bash
-claude plugin marketplace add OWNER/liquid-glass-agent-kit --sparse .claude-plugin plugins/liquid-glass-ui
-/plugin install liquid-glass-ui@liquid-glass-agent-kit
-/liquid-glass-ui:liquid-glass-web-ui Build a mobile onboarding screen.
+claude plugin marketplace add OWNER/liquid-glass-agent-kit --sparse .claude-plugin plugins/liquid-glass-web
+/plugin install liquid-glass-web@liquid-glass-agent-kit
+/liquid-glass-web:liquid-glass-web-ui Build a mobile onboarding screen.
 ```
 
 See `docs/install-claude.md`.
@@ -36,7 +36,7 @@ See `docs/install-copy-paste.md`.
 ## Just the audit, locally
 
 ```bash
-node plugins/liquid-glass-ui/skills/liquid-glass-web-ui/scripts/audit-liquid-glass-html.mjs path/to/output
+node plugins/liquid-glass-web/skills/liquid-glass-web-ui/scripts/audit-liquid-glass-html.mjs path/to/output
 ```
 
 Exits non-zero on any anti-pattern. Wire it into CI.
@@ -47,4 +47,4 @@ Exits non-zero on any anti-pattern. Wire it into CI.
 npm run validate
 ```
 
-Runs the audit against `examples/`. There is no build step — both Codex and Claude read the same skill folder.
+Runs the web audit against `examples/macos-web`. There is no build step — both Codex and Claude read the same skill folders. The native plugin has no audit script (yet); the native example is verified by building it.
