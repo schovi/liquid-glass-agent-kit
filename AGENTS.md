@@ -21,6 +21,23 @@ Edit only:
 - `prompts/copy-paste-compact.md`               (web only, for now)
 - `examples/`
 - `docs/`
+- `.claude/skills/liquid-glass-sync/`           (local sync workflow)
+
+## Cross-cutting changes — design system inventory
+
+The repo has three representations of the same design system and they
+must never drift. The single human-readable inventory that maps
+everything together lives at:
+
+- `docs/design-system.md` — every token, component, pattern, and rule with side-by-side pointers to its spec entry, web rendering, native rendering, Apple API, and caveats.
+
+For any change that touches tokens, components, rules, or cross-cutting
+patterns, route through the local sync skill instead of editing
+ad-hoc:
+
+- `.claude/skills/liquid-glass-sync/SKILL.md`
+
+Order of operations is fixed: **spec → docs/design-system.md → examples/macos-web → examples/macos-native-swift**, with a self-audit (`npm run validate` for web, `swift build` for native) before declaring done. Single-rendering bug fixes (CSS typo, Swift compile error that doesn't touch the design system) do NOT need this skill — fix them in place.
 
 ## After every change
 

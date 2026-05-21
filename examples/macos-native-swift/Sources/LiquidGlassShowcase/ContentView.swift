@@ -125,7 +125,7 @@ struct DetailView: View {
             .scrollContentBackground(.hidden)
             .background(Color(nsColor: .controlBackgroundColor))
             .onChange(of: section) { _, new in
-                withAnimation(.easeOut(duration: Tokens.Duration.base)) {
+                withAnimation(Tokens.Easing.standard(duration: Tokens.Duration.base)) {
                     proxy.scrollTo(new, anchor: .top)
                 }
             }

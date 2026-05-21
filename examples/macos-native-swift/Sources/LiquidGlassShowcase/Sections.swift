@@ -329,7 +329,7 @@ struct MotionChip: View {
                                      startPoint: .leading, endPoint: .trailing))
                 .frame(height: 6)
                 .scaleEffect(x: isHovering ? 1 : 0.25, y: 1, anchor: .leading)
-                .animation(name == "sheet" ? Tokens.Easing.spring : .easeOut(duration: duration),
+                .animation(name == "sheet" ? Tokens.Easing.spring : Tokens.Easing.standard(duration: duration),
                            value: isHovering)
                 .padding(.top, 6)
         }

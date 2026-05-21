@@ -29,18 +29,18 @@ enum Tokens {
     }
 
     enum Easing {
-        static let standard = UnitCurve.bezier(
-            startControlPoint: .init(x: 0.2, y: 0),
-            endControlPoint: .init(x: 0, y: 1)
-        )
-        static let decelerate = UnitCurve.bezier(
-            startControlPoint: .init(x: 0, y: 0),
-            endControlPoint: .init(x: 0, y: 1)
-        )
-        static let accelerate = UnitCurve.bezier(
-            startControlPoint: .init(x: 0.3, y: 0),
-            endControlPoint: .init(x: 1, y: 1)
-        )
+        // Curves come from spec/tokens/motion.yaml. Each helper returns a ready
+        // SwiftUI Animation so call sites can write `.animation(Tokens.Easing.standard(duration: ...))`
+        // instead of redeclaring control points.
+        static func standard(duration: Double) -> Animation {
+            .timingCurve(0.2, 0, 0, 1, duration: duration)
+        }
+        static func decelerate(duration: Double) -> Animation {
+            .timingCurve(0, 0, 0, 1, duration: duration)
+        }
+        static func accelerate(duration: Double) -> Animation {
+            .timingCurve(0.3, 0, 1, 1, duration: duration)
+        }
         static let spring = Animation.spring(
             response: 0.42,
             dampingFraction: 0.65,
