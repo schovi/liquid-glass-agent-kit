@@ -436,6 +436,87 @@ function sheetBody() {
   return `<a class="lg-button" href="#open-sheet" data-renderer="css">Open sheet</a>`;
 }
 
+function morphingBody() {
+  return `
+    <div class="lg-morph-stage">
+      <div class="lg-morph-stage__backdrop" aria-hidden="true"></div>
+      <button
+        type="button"
+        class="lg-morph-pill lg-glass--regular"
+        data-renderer="css"
+        aria-label="Toolbar — hover to expand"
+      >
+        <span class="lg-morph-pill__compact" aria-hidden="true">⋯</span>
+        <span class="lg-morph-pill__expanded" aria-hidden="true">
+          <span class="lg-morph-pill__icon">↩</span>
+          <span class="lg-morph-pill__icon">↪</span>
+          <span class="lg-morph-pill__icon">▤</span>
+          <span class="lg-morph-pill__icon">⌫</span>
+        </span>
+      </button>
+    </div>
+    <p class="lg-section__lede">
+      Web approximation. <strong>Hover</strong> the capsule — its width,
+      contents, and corner radius animate together via a single CSS
+      <code>transition</code>. The whole morph stays inside one glass
+      surface (one <code>backdrop-filter</code> sample) — that's what
+      makes it honest. Native uses
+      <code>glassEffectID</code> in a shared
+      <code>GlassEffectContainer</code> with a <code>@Namespace</code>.
+    </p>
+    <p class="lg-section__lede lg-section__lede--caveat">
+      <strong>Native-only.</strong> The multi-capsule metaball emergence
+      (one capsule sprouting several with gooey tail tension between
+      them) is not approximated here. SVG goo filters fight
+      <code>backdrop-filter</code> and produce a worse result than the
+      single-capsule morph above. Use the native plugin for that.
+    </p>
+  `;
+}
+
+function scrollEdgeEffectsBody() {
+  const ROW_COUNT = 24;
+  const rows = Array.from({ length: ROW_COUNT }, (_, i) => `
+    <li class="lg-edge-demo__row">
+      <span>Row ${i + 1}</span>
+      <span class="lg-edge-demo__meta">${60 - i * 2} min ago</span>
+    </li>
+  `).join("");
+
+  function variant(title, modifier, copy) {
+    return `
+      <article class="lg-edge-demo lg-edge-demo--${modifier}">
+        <h2 class="lg-edge-demo__title">${title}</h2>
+        <div class="lg-edge-demo__frame">
+          <div class="lg-toolbar-pill lg-edge-demo__pill" data-renderer="css">
+            <button type="button" class="lg-toolbar-pill__item" aria-label="Filter"><span aria-hidden="true">≡</span></button>
+            <span class="lg-edge-demo__pill-title">Inbox</span>
+            <button type="button" class="lg-toolbar-pill__item" aria-label="More"><span aria-hidden="true">⋯</span></button>
+          </div>
+          <ol class="lg-edge-demo__list lg-edge-demo__list--${modifier}">${rows}</ol>
+        </div>
+        <p class="lg-edge-demo__note">${copy}</p>
+      </article>
+    `;
+  }
+
+  return `
+    <div class="lg-edge-demo-grid">
+      ${variant("Soft · default fade", "soft",
+        "Wide <code>mask-image: linear-gradient(...)</code> with a 24 px transparent band. iOS/iPadOS default and most macOS scrolling content.")}
+      ${variant("Hard · sharp shelf", "hard",
+        "Narrow 6 px gradient — reads as a clear boundary. Used on macOS for pinned headers, text editors, and inspector panes.")}
+    </div>
+    <p class="lg-section__lede">
+      Web approximation only. Native uses
+      <code>.scrollEdgeEffectStyle(.soft | .hard, for: .top)</code> (SwiftUI) or
+      <code>scrollView.topEdgeEffect.style</code> (AppKit). One style per edge —
+      never mix soft + hard on adjacent edges. Apply only where chrome actually
+      overlaps that edge.
+    </p>
+  `;
+}
+
 function rulesBody() {
   return `
     <article class="lg-content-card">
@@ -574,6 +655,25 @@ export const SECTIONS = [
            <code>.presentationDetents([.medium, .large])</code> picks up Liquid Glass
            automatically.`,
     body: sheetBody,
+  },
+  {
+    id: "morphing",
+    eyebrow: "Patterns",
+    title: "Morphing",
+    lede: `Single-capsule shape morph — width, border-radius, and content
+           crossfade together in one CSS transition, inside one glass
+           surface. Multi-capsule metaball emergence is native-only.`,
+    body: morphingBody,
+  },
+  {
+    id: "scroll-edge-effects",
+    eyebrow: "Patterns",
+    title: "Scroll edge effects",
+    lede: `How scrolling content fades or hardens beneath floating chrome.
+           Web approximation uses <code>mask-image: linear-gradient(...)</code>
+           on the scroll container; native uses
+           <code>.scrollEdgeEffectStyle(.soft | .hard, for:)</code>.`,
+    body: scrollEdgeEffectsBody,
   },
   {
     id: "rules",

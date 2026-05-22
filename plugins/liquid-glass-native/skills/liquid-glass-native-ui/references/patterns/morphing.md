@@ -83,9 +83,19 @@ All four must hold for the morph to actually run:
 
 ## Geometry
 
-- Container `spacing:`: smallest value that still produces a visible
-  morph. Toolbar pill defaults to `4`; expanding action group typically
-  uses `24-30`.
+- Container `spacing:` is the **merge threshold**, not a margin. Pick
+  it so the **resting state** is what you want:
+  - **Fully merged pill** (toolbar grouping): `spacing:` ≥ HStack gap.
+    Standard toolbar pill uses `GlassEffectContainer(spacing: 4)` with
+    `HStack(spacing: 4)`.
+  - **Cleanly separated capsules** (expanded action row): container
+    `spacing:` **smaller** than HStack gap. E.g.
+    `GlassEffectContainer(spacing: 4)` with `HStack(spacing: 16)`.
+    Morph identity still works because the items share the container
+    and namespace.
+  - Never pick a middle value (container `24` with HStack gap `8`).
+    That renders the awkward half-merged blob state at rest — correct
+    *during* the animation, wrong as a resting visual.
 - Duration: `base` (240 ms) with `spring` easing for expansion, `fast`
   (160 ms) standard easing for swap.
 - Reduced Motion automatically collapses to a cross-fade. Do not

@@ -1557,6 +1557,208 @@ body.lg-stage {
 }
 .lg-footer a { color: inherit; }
 
+/* =====================================================================
+   Morphing — web approximation. Single-capsule shape morph: one CSS
+   transition on width / border-radius / contents, inside one
+   backdrop-filter sample. Multi-capsule metaball emergence is
+   native-only and intentionally not faked here.
+   ===================================================================== */
+.lg-morph-stage {
+  position: relative;
+  min-height: 160px;
+  border-radius: var(--lg-radius-md);
+  border: 1px solid var(--lg-divider);
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  padding: var(--lg-gap-panel);
+}
+.lg-morph-stage__backdrop {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(120% 80% at 20% 20%, rgba(255, 90, 160, 0.45), transparent 60%),
+    radial-gradient(120% 80% at 80% 80%, rgba(60, 120, 255, 0.45), transparent 60%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.10), rgba(0, 0, 0, 0.10));
+}
+.lg-morph-pill {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr;
+  align-items: center;
+  width: 60px;
+  height: 44px;
+  padding: 0 14px;
+  border: 0;
+  cursor: pointer;
+  color: var(--lg-text);
+  font: 600 14px/1 var(--lg-font-sans);
+  border-radius: var(--lg-radius-capsule);
+  transition:
+    width var(--lg-duration-base) var(--lg-ease-standard),
+    padding var(--lg-duration-base) var(--lg-ease-standard);
+}
+.lg-morph-pill__compact,
+.lg-morph-pill__expanded {
+  grid-column: 1;
+  grid-row: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  transition: opacity var(--lg-duration-fast) var(--lg-ease-standard);
+}
+.lg-morph-pill__compact {
+  font-size: 18px;
+  letter-spacing: 1px;
+  opacity: 1;
+}
+.lg-morph-pill__expanded {
+  opacity: 0;
+  pointer-events: none;
+}
+.lg-morph-pill__icon {
+  font-size: 16px;
+  line-height: 1;
+}
+.lg-morph-pill:hover,
+.lg-morph-pill:focus-visible {
+  width: 220px;
+  padding: 0 16px;
+}
+.lg-morph-pill:hover .lg-morph-pill__compact,
+.lg-morph-pill:focus-visible .lg-morph-pill__compact {
+  opacity: 0;
+}
+.lg-morph-pill:hover .lg-morph-pill__expanded,
+.lg-morph-pill:focus-visible .lg-morph-pill__expanded {
+  opacity: 1;
+}
+.lg-section__lede--caveat {
+  border-left: 2px solid var(--lg-divider);
+  padding-left: var(--lg-gap-panel);
+  color: var(--lg-text-subtle);
+}
+@media (prefers-reduced-motion: reduce) {
+  .lg-morph-pill,
+  .lg-morph-pill__compact,
+  .lg-morph-pill__expanded {
+    transition: none !important;
+  }
+}
+
+/* =====================================================================
+   Scroll edge effects — web approximation via mask-image.
+   Native uses .scrollEdgeEffectStyle(.soft | .hard, for:).
+   ===================================================================== */
+.lg-edge-demo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--lg-gap-panel);
+}
+.lg-edge-demo {
+  display: grid;
+  gap: var(--lg-gap-control);
+}
+.lg-edge-demo__title {
+  font: 600 12px/1 var(--lg-font-sans);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--lg-text-subtle);
+  margin: 0;
+}
+.lg-edge-demo__frame {
+  position: relative;
+  height: 220px;
+  border-radius: var(--lg-radius-md);
+  border: 1px solid var(--lg-divider);
+  background: var(--lg-surface);
+  overflow: hidden;
+}
+.lg-edge-demo__pill {
+  position: absolute;
+  top: var(--lg-gap-control);
+  left: var(--lg-gap-control);
+  right: var(--lg-gap-control);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--lg-gap-control);
+  padding: 4px var(--lg-gap-control);
+  z-index: 2;
+}
+.lg-edge-demo__pill-title {
+  font: 600 13px/1 var(--lg-font-sans);
+  color: var(--lg-text);
+}
+.lg-edge-demo__list {
+  list-style: none;
+  margin: 0;
+  padding: 56px 0 0;
+  height: 100%;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+.lg-edge-demo__list--soft {
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    black 32px,
+    black calc(100% - 24px),
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    black 32px,
+    black calc(100% - 24px),
+    transparent 100%
+  );
+}
+.lg-edge-demo__list--hard {
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    black 6px,
+    black calc(100% - 6px),
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    black 6px,
+    black calc(100% - 6px),
+    transparent 100%
+  );
+}
+.lg-edge-demo__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px var(--lg-gap-panel);
+  border-bottom: 1px solid var(--lg-divider);
+  font: 400 13px/1.4 var(--lg-font-sans);
+  color: var(--lg-text);
+}
+.lg-edge-demo__meta {
+  font: 400 12px/1.4 var(--lg-font-sans);
+  color: var(--lg-text-subtle);
+}
+.lg-edge-demo__note {
+  margin: 0;
+  font: 400 12px/1.5 var(--lg-font-sans);
+  color: var(--lg-text-subtle);
+}
+@media (prefers-reduced-transparency: reduce) {
+  .lg-edge-demo__list--soft,
+  .lg-edge-demo__list--hard {
+    mask-image: none;
+    -webkit-mask-image: none;
+  }
+  .lg-edge-demo__list--hard {
+    border-top: 1px solid var(--lg-divider);
+  }
+}
+
 /* Focus visibility */
 :focus-visible {
   outline: 2px solid #0a84ff;

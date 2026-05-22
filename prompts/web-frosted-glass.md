@@ -44,6 +44,8 @@ For a real macOS app with the actual `glassEffect` API, install the `liquid-glas
 > - Stepper: in a toolbar wrap both buttons in one shared glass capsule (gap 4, button 28 capsule). In a form the stepper is solid.
 > - Titlebar accessory: principal toolbar slot, min-height 32, max-width 360. Inherits toolbar glass — do **not** add another glass layer.
 > - Floating HUD: capsule (single row) or radius-16 (multi-row) Regular-glass container in `.overlay(alignment: .bottom)`, padding 6, item 40, gap 4, margin 16 from edge. Only over media or canvas — never over forms.
+> - Scroll edge effects (web approximation): fade scroll content beneath floating chrome with `mask-image: linear-gradient(...)` on the scroll container. **Soft** = wide gradient (24-32 px transparent band). **Hard** = narrow gradient (4-8 px) or a 1 px solid divider. One style per edge. Never mix soft + hard on adjacent edges of one scroll view. Apply only where chrome actually overlaps that edge — edge effects are not decoration.
+> - Morphing (web approximation, single-capsule only): a single glass capsule may animate its width / border-radius and crossfade its contents on state change. Use a CSS `transition` (240 ms `standard` easing) on `width`, `border-radius`, and child `opacity`. Keep the morph inside **one** capsule. **Do not** simulate macOS 26's multi-capsule metaball emergence (one capsule sprouting several with gooey tension between them) with SVG goo filters — that's native-only and the simulation fights `backdrop-filter`.
 >
 > **System primitives.**
 >

@@ -24,6 +24,13 @@ export const SIDEBAR_GROUPS = [
     ],
   },
   {
+    label: "Patterns",
+    items: [
+      { id: "morphing",            icon: "⤳", label: "Morphing" },
+      { id: "scroll-edge-effects", icon: "≡", label: "Scroll edge effects" },
+    ],
+  },
+  {
     label: "Reference",
     items: [
       { id: "rules",         icon: "✓", label: "Rules" },

@@ -8,22 +8,26 @@ const CONTENT     = "Content layer; SOLID — glass forbidden.";
 const MODAL       = "Modal surface; Regular glass auto on partial detent.";
 const REFERENCE   = "Reference documentation.";
 const CLEAR       = "Clear glass; requires dim layer behind.";
+const EDGE        = "Boundary treatment; only where chrome overlaps.";
+const MORPH       = "Single-capsule shape morph; one transition, one glass sample.";
 
 export const SECTION_META = {
-  materials:        { label: "Materials",         variant: "Regular", surfaceRule: FOUNDATIONS },
-  shape:            { label: "Shape",             variant: "Regular", surfaceRule: FOUNDATIONS },
-  spacing:          { label: "Spacing",           variant: "Regular", surfaceRule: FOUNDATIONS },
-  typography:       { label: "Typography",        variant: "Regular", surfaceRule: FOUNDATIONS },
-  motion:           { label: "Motion",            variant: "Regular", surfaceRule: FOUNDATIONS },
-  buttons:          { label: "Buttons",           variant: "Regular", surfaceRule: FLOATING },
-  controls:         { label: "Controls",          variant: "Regular", surfaceRule: FLOATING },
-  "inputs-overlays":{ label: "Inputs & overlays", variant: "Regular", surfaceRule: FLOATING },
-  "forms-lists":    { label: "Forms & lists",     variant: "Regular", surfaceRule: CONTENT },
-  surfaces:         { label: "Content surfaces",  variant: "Regular", surfaceRule: CONTENT },
-  "sheet-section":  { label: "Sheet",             variant: "Regular", surfaceRule: MODAL },
-  rules:            { label: "Where glass belongs", variant: "Regular", surfaceRule: REFERENCE },
-  "anti-patterns":  { label: "Anti-patterns",     variant: "Regular", surfaceRule: REFERENCE },
-  "clear-variant":  { label: "Clear variant",     variant: "Clear",   surfaceRule: CLEAR },
+  materials:             { label: "Materials",            variant: "Regular", surfaceRule: FOUNDATIONS },
+  shape:                 { label: "Shape",                variant: "Regular", surfaceRule: FOUNDATIONS },
+  spacing:               { label: "Spacing",              variant: "Regular", surfaceRule: FOUNDATIONS },
+  typography:            { label: "Typography",           variant: "Regular", surfaceRule: FOUNDATIONS },
+  motion:                { label: "Motion",               variant: "Regular", surfaceRule: FOUNDATIONS },
+  buttons:               { label: "Buttons",              variant: "Regular", surfaceRule: FLOATING },
+  controls:              { label: "Controls",             variant: "Regular", surfaceRule: FLOATING },
+  "inputs-overlays":     { label: "Inputs & overlays",    variant: "Regular", surfaceRule: FLOATING },
+  "forms-lists":         { label: "Forms & lists",        variant: "Regular", surfaceRule: CONTENT },
+  surfaces:              { label: "Content surfaces",     variant: "Regular", surfaceRule: CONTENT },
+  "sheet-section":       { label: "Sheet",                variant: "Regular", surfaceRule: MODAL },
+  morphing:              { label: "Morphing",             variant: "Regular", surfaceRule: MORPH },
+  "scroll-edge-effects": { label: "Scroll edge effects",  variant: "Regular", surfaceRule: EDGE },
+  rules:                 { label: "Where glass belongs",  variant: "Regular", surfaceRule: REFERENCE },
+  "anti-patterns":       { label: "Anti-patterns",        variant: "Regular", surfaceRule: REFERENCE },
+  "clear-variant":       { label: "Clear variant",        variant: "Clear",   surfaceRule: CLEAR },
 };
 
 const VARIANT_TOKENS = {

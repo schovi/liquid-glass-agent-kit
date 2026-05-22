@@ -41,9 +41,21 @@ The morph only happens when **all four** of these hold:
 
 ## Geometry
 
-- Container `spacing:`: choose the smallest value that still produces a
-  visible morph. Toolbar pill defaults to `4`; an expanding action
-  group typically uses `24-30`.
+- Container `spacing:` is the **merge threshold**, not a margin. Sibling
+  glass elements closer to each other than `spacing:` render with
+  metaball "tail" tension between them. Elements farther apart than
+  `spacing:` render as cleanly separate capsules. Pick `spacing:` so
+  the **resting state** is what you want:
+  - Fully merged pill (toolbar grouping): set `spacing:` ≥ the
+    inter-item gap. Standard toolbar pill is `spacing: 4` with HStack
+    gap `4`.
+  - Cleanly separated capsules (expanded action row): set `spacing:`
+    **smaller** than the inter-item gap, e.g. container `spacing: 4`
+    with HStack gap `16`. The morph identity still works because the
+    items share the container and namespace.
+  - Don't pick a value in the middle (e.g. container `24` with gap `8`).
+    That renders the awkward half-merged blob state at rest — fine
+    *during* animation, wrong as a resting visual.
 - Duration: `base` (240 ms) with `spring` easing for expansion, `fast`
   (160 ms) standard easing for swap.
 - Reduced Motion collapses the morph to a cross-fade automatically — do

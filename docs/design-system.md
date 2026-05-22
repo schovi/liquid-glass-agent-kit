@@ -393,25 +393,25 @@ Free-floating Regular-glass control surface over media or canvas. Capsule (singl
 
 ### Morphing
 
-Glass elements morph — they don't pop — when they appear, disappear, swap shape, or move. Native-only; no web equivalent.
+Glass elements morph — they don't pop — when they appear, disappear, swap shape, or move. The web side approximates the **single-capsule** flavor only.
 
 - spec: `spec/patterns/morphing.md`
-- web: n/a — no morph in the web approximation; the prompt notes the gap.
-- native: not yet demonstrated in `examples/macos-native-swift/` (follow-up).
+- web: `examples/macos-web/sections.js` (`morphingBody`) + `examples/macos-web/styles.css` (`.lg-morph-pill`). Single-capsule shape morph — one CSS transition on width / border-radius / contents, one `backdrop-filter` sample. Multi-capsule metaball emergence is **not** approximated (SVG goo filters fight `backdrop-filter` and oversell what the profile delivers).
+- native: `examples/macos-native-swift/Sources/LiquidGlassShowcase/Patterns.swift` (`MorphingSection`) — expand-into-row and capsule-swap demos.
 - native plugin: `plugins/liquid-glass-native/skills/liquid-glass-native-ui/references/patterns/morphing.md`
 - apple: SwiftUI `@Namespace` + `glassEffectID(_:in:)` + `glassEffectUnion(id:in:)` inside a shared `GlassEffectContainer`, with `withAnimation`; AppKit `NSGlassEffectContainerView` + `NSAnimationContext.runAnimationGroup`
-- caveats: morph requires same container, same namespace, animated transaction, and sufficient `spacing:` to cover the gap. Different containers never morph.
+- caveats: native morph requires same container, same namespace, animated transaction, and `spacing:` chosen so the resting state is either fused or fully separated (never the half-merged blob in between). The web approximation covers only the single-capsule shape change; reduced-motion drops the transition.
 
 ### Scroll edge effects
 
-Per-edge fade / harden treatment beneath floating chrome. Native-only; no web equivalent.
+Per-edge fade / harden treatment beneath floating chrome.
 
 - spec: `spec/patterns/scroll-edge-effects.md`
-- web: n/a — CSS `mask-image` is the nearest approximation but doesn't match the system and is not in the kit.
-- native: not yet demonstrated in `examples/macos-native-swift/` (follow-up).
+- web: `examples/macos-web/sections.js` (`scrollEdgeEffectsBody`) + `examples/macos-web/styles.css` (`.lg-edge-demo__list--soft` / `--hard`) — approximation via `mask-image: linear-gradient(...)`; web prompt names this in the "Scroll edge effects (web approximation)" section.
+- native: `examples/macos-native-swift/Sources/LiquidGlassShowcase/Patterns.swift` (`ScrollEdgeEffectsSection`) — side-by-side `.soft` vs `.hard` scroll views under a glass pill.
 - native plugin: `plugins/liquid-glass-native/skills/liquid-glass-native-ui/references/patterns/scroll-edge-effects.md`
 - apple: SwiftUI `.scrollEdgeEffectStyle(_:for:)`; AppKit `NSScrollView.topEdgeEffect.style` / `.bottomEdgeEffect` / `.leftEdgeEffect` / `.rightEdgeEffect`
-- caveats: one style per edge, never mix soft + hard on adjacent edges. Apply only where chrome actually overlaps that edge. `NavigationSplitView` columns already apply hard edges to their toolbars.
+- caveats: one style per edge, never mix soft + hard on adjacent edges. Apply only where chrome actually overlaps that edge. `NavigationSplitView` columns already apply hard edges to their toolbars. Reduced-transparency drops the mask in the web approximation and falls back to a solid divider.
 
 ---
 
@@ -473,6 +473,7 @@ Not part of A1-A10 (the web auditor doesn't enforce them), but flagged by the na
 - Removing `.glassEffect` conditionally instead of using `.identity` — reflows layout for no reason.
 - Morph without `withAnimation` / `NSAnimationContext` — participants pop instead of morphing.
 - Morph across separate `GlassEffectContainer`s — never works; use one container or `.glassEffectUnion(id:in:)`.
+- `GlassEffectContainer(spacing:)` set to a middle value vs. HStack gap — produces half-merged blob tails at rest. Pick `spacing: ≥ gap` (fused pill) or `spacing: < gap` (separate capsules), never in between.
 - Mixing `.soft` + `.hard` scroll edge styles on adjacent edges of one scroll view.
 - Edge effect on a scroll view with no overlapping chrome — decorative noise.
 - Icon + label glued into one tap target — pick icon-only or label-only.
