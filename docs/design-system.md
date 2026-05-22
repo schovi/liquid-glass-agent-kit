@@ -199,6 +199,83 @@ Single-line input, min height 44, radius 12. **Always solid.** Glass behind text
 - apple: SwiftUI `TextField` / `SecureField`; AppKit `NSTextField`
 - caveats: never put `.glassEffect` behind a text field. Autocomplete and validation states need full contrast.
 
+### Popover
+
+Anchored floating panel, Regular glass. Min width 220, radius 16, padding 8. Item radius 12.
+
+- spec: `spec/components/popover.yaml`
+- web: `examples/macos-web/styles.css` (`.lg-popover`, `.lg-popover__panel`, `.lg-popover__item`)
+- native: `examples/macos-native-swift/Sources/LiquidGlassShowcase/InputsOverlays.swift` (`PopoverDemo`) — `.popover(isPresented: arrowEdge:)`
+- native plugin: `plugins/liquid-glass-native/skills/liquid-glass-native-ui/references/components/popover.md`
+- apple: SwiftUI `.popover(isPresented:arrowEdge:content:)`; AppKit `NSPopover` (`behavior = .transient`)
+- caveats: glass is automatic — do not stack `.glassEffect` inside the popover content. Arrow placement adapts to anchor edge; pass `arrowEdge` explicitly when the popover must point a specific direction.
+
+### Menu
+
+Pull-down or context menu — list of actions, optional separators, trailing keyboard shortcuts. Regular glass on macOS 26.
+
+- spec: `spec/components/menu.yaml`
+- web: `examples/macos-web/styles.css` (`.lg-menu`, `.lg-menu__item`)
+- native: `examples/macos-native-swift/Sources/LiquidGlassShowcase/InputsOverlays.swift` (`MenuDemo`) and `ContentView.swift` (toolbar `Menu`)
+- native plugin: `plugins/liquid-glass-native/skills/liquid-glass-native-ui/references/components/menu.md`
+- apple: SwiftUI `Menu { ... }`, `.contextMenu { ... }`; AppKit `NSMenu`, `NSPopUpButton`
+- caveats: don't reorder destructive actions — the system places them at the bottom automatically. Mark destructive items with `role: .destructive` so the system tints them.
+
+### Search field
+
+Single-line search input. Capsule (32 tall) in toolbar, radius 12 (44 tall) inline. **Always solid.**
+
+- spec: `spec/components/search-field.yaml`
+- web: `examples/macos-web/styles.css` (`.lg-toolbar-search`, `.lg-search-field`)
+- native: `examples/macos-native-swift/Sources/LiquidGlassShowcase/ContentView.swift` (`.searchable`) and `InputsOverlays.swift` (inline demo)
+- native plugin: `plugins/liquid-glass-native/skills/liquid-glass-native-ui/references/components/search-field.md`
+- apple: SwiftUI `.searchable(text:placement:prompt:)`; AppKit `NSSearchField`, `NSSearchToolbarItem`
+- caveats: never put `.glassEffect` behind the field. The toolbar host (titlebar) provides the surrounding glass — the field itself stays solid.
+
+### Toggle
+
+Boolean switch, system-rendered. Track 38×22, knob 18. Solid, used in form rows.
+
+- spec: `spec/components/toggle.yaml`
+- web: `examples/macos-web/styles.css` (`.lg-toggle`, `.lg-toggle__track`, `.lg-toggle__knob`)
+- native: `examples/macos-native-swift/Sources/LiquidGlassShowcase/FormsLists.swift` (`FormRowsDemo`) — `Toggle("Label", isOn: $value)`
+- native plugin: `plugins/liquid-glass-native/skills/liquid-glass-native-ui/references/components/toggle.md`
+- apple: SwiftUI `Toggle`; AppKit `NSSwitch`
+- caveats: prefer `Toggle` inside `Form`; the system handles labeling and accessibility. Custom rendering breaks VoiceOver.
+
+### Slider
+
+Continuous value. Solid track (height 4), 22 pt thumb. In toolbar contexts the thumb gets glass automatically.
+
+- spec: `spec/components/slider.yaml`
+- web: `examples/macos-web/styles.css` (`.lg-slider`, `.lg-slider__track`, `.lg-slider__thumb`)
+- native: `examples/macos-native-swift/Sources/LiquidGlassShowcase/InputsOverlays.swift` (`SliderDemo`) — `Slider(value:in:)`
+- native plugin: `plugins/liquid-glass-native/skills/liquid-glass-native-ui/references/components/slider.md`
+- apple: SwiftUI `Slider(value:in:step:)` (optionally `neutralValue:` on macOS 26); AppKit `NSSlider`
+- caveats: never put `.glassEffect` on the track — glass behind a value the user is reading is anti-pattern A2. The thumb's glass is system-applied in toolbar contexts only.
+
+### Progress
+
+Determinate or indeterminate progress. Solid. Linear track height 4; circular 16 / 24 / 32.
+
+- spec: `spec/components/progress.yaml`
+- web: `examples/macos-web/styles.css` (`.lg-progress--linear`, `.lg-progress--circular`)
+- native: `examples/macos-native-swift/Sources/LiquidGlassShowcase/InputsOverlays.swift` (`ProgressDemo`) — `ProgressView(value:)` and `ProgressView()`
+- native plugin: `plugins/liquid-glass-native/skills/liquid-glass-native-ui/references/components/progress.md`
+- apple: SwiftUI `ProgressView`; AppKit `NSProgressIndicator`
+- caveats: indeterminate spinners do not honor `Color.tint` reliably — use `.tint(_:)` and accept the system fallback. Never put a glass background under either variant.
+
+### Badge
+
+Small solid status pill, 20 tall, capsule. Sits on content surfaces or trailing edges of list rows.
+
+- spec: `spec/components/badge.yaml`
+- web: `examples/macos-web/styles.css` (`.lg-badge`, modifiers `.lg-badge--info`, `--success`, `--warning`, `--danger`)
+- native: `examples/macos-native-swift/Sources/LiquidGlassShowcase/FormsLists.swift` (`BadgeRow`) — custom Capsule + `.foregroundStyle(...)`
+- native plugin: `plugins/liquid-glass-native/skills/liquid-glass-native-ui/references/components/badge.md`
+- apple: no single API — compose `Capsule().fill(...)` + label. For numeric counters, `.badge(_:)` on `NavigationLink` / `TabView` items.
+- caveats: badges sit on solid backgrounds; placing one on a glass surface defeats its contrast purpose. Counter badges follow Apple's right-aligned trailing-edge convention.
+
 ---
 
 ## Patterns (Apple-native)
@@ -248,6 +325,111 @@ Inner radius + inset = outer radius. SwiftUI resolves automatically via `Concent
 - apple: SwiftUI `ConcentricRectangle`; AppKit `NSView.LayoutRegion` + manual radii
 - caveats: window outer corner radius is chosen to wrap concentrically around the toolbar pill.
 
+### Form rows
+
+Solid `Form` + `LabeledContent`. Never glass. Row gap 12; section gap 24.
+
+- spec: `spec/patterns/form-rows.md`
+- web: `examples/macos-web/styles.css` (`.lg-form`, `.lg-form-row`)
+- native: `examples/macos-native-swift/Sources/LiquidGlassShowcase/FormsLists.swift` (`FormRowsDemo`)
+- native plugin: `plugins/liquid-glass-native/skills/liquid-glass-native-ui/references/patterns/form-rows.md`
+- apple: SwiftUI `Form` / `Section` / `LabeledContent`; AppKit `NSGridView`
+- caveats: glass on a form is anti-pattern A2. Inside a sheet, the sheet's glass is the only glass — the form stays solid.
+
+### Inset list
+
+`List(.inset)` with grouped sections. Solid rows, solid section backgrounds. Row min-height 32 (compact) / 44 (regular).
+
+- spec: `spec/patterns/inset-list.md`
+- web: `examples/macos-web/styles.css` (`.lg-inset-list`, `.lg-inset-list__section`)
+- native: `examples/macos-native-swift/Sources/LiquidGlassShowcase/FormsLists.swift` (`InsetListDemo`)
+- native plugin: `plugins/liquid-glass-native/skills/liquid-glass-native-ui/references/patterns/inset-list.md`
+- apple: SwiftUI `List { Section { ... } }.listStyle(.inset)`; AppKit `NSCollectionView` grouped layout
+- caveats: don't mix inset and plain styles in one list. Sidebar-style lists use `.listStyle(.sidebar)` inside `NavigationSplitView` instead — the system applies glass to the sidebar, not the rows.
+
+### Disclosure group
+
+Collapsible row inside an inset list or inspector. Solid. Indent 16 per depth.
+
+- spec: `spec/patterns/disclosure-group.md`
+- web: `examples/macos-web/styles.css` (`.lg-disclosure-group`)
+- native: `examples/macos-native-swift/Sources/LiquidGlassShowcase/FormsLists.swift` (`DisclosureDemo`)
+- native plugin: `plugins/liquid-glass-native/skills/liquid-glass-native-ui/references/patterns/disclosure-group.md`
+- apple: SwiftUI `DisclosureGroup`, `OutlineGroup`; AppKit `NSOutlineView`
+- caveats: cap visible depth at 3 in content panels. Persist expansion with `@SceneStorage` when the user expects state across window restoration.
+
+### Stepper
+
+Paired increment / decrement buttons. Toolbar variant uses `GlassEffectContainer` (shared glass capsule); form variant is solid.
+
+- spec: `spec/patterns/stepper.md`
+- web: `examples/macos-web/styles.css` (`.lg-stepper`)
+- native: `examples/macos-native-swift/Sources/LiquidGlassShowcase/FormsLists.swift` (`StepperDemo`)
+- native plugin: `plugins/liquid-glass-native/skills/liquid-glass-native-ui/references/patterns/stepper.md`
+- apple: SwiftUI `Stepper(value:in:step:)`; AppKit `NSStepper`
+- caveats: hold-to-repeat is built into `Stepper` — don't reimplement. VoiceOver reads the current value and step; don't strip the system label.
+
+### Titlebar accessory
+
+Custom view in the principal toolbar slot — typically a segmented control or breadcrumb. Inherits the unified toolbar's glass; the accessory itself adds no glass.
+
+- spec: `spec/patterns/titlebar-accessory.md`
+- web: `examples/macos-web/index.html` (`.lg-titlebar__center` houses the principal segmented control)
+- native: `examples/macos-native-swift/Sources/LiquidGlassShowcase/ContentView.swift` (`ToolbarItem(placement: .principal)`)
+- native plugin: `plugins/liquid-glass-native/skills/liquid-glass-native-ui/references/patterns/titlebar-accessory.md`
+- apple: SwiftUI `ToolbarItem(placement: .principal)`; AppKit `NSTitlebarAccessoryViewController` (`layoutAttribute = .top`)
+- caveats: only one principal slot per toolbar. Don't add `.glassEffect` — the toolbar already provides the shared glass (A1).
+
+### Floating HUD
+
+Free-floating Regular-glass control surface over media or canvas. Capsule (single row) or 16-radius (multi-row).
+
+- spec: `spec/patterns/floating-hud.md`
+- web: `examples/macos-web/styles.css` (`.lg-floating-hud`)
+- native: `examples/macos-native-swift/Sources/LiquidGlassShowcase/InputsOverlays.swift` (`FloatingHUDDemo`)
+- native plugin: `plugins/liquid-glass-native/skills/liquid-glass-native-ui/references/patterns/floating-hud.md`
+- apple: SwiftUI `GlassEffectContainer` inside `.overlay(alignment:)`; AppKit `NSGlassEffectContainerView` positioned in the content view
+- caveats: never place a HUD over a form or text-heavy view (A2). For video, fade-out uses `fast` (160 ms) standard easing.
+
+### Morphing
+
+Glass elements morph — they don't pop — when they appear, disappear, swap shape, or move. Native-only; no web equivalent.
+
+- spec: `spec/patterns/morphing.md`
+- web: n/a — no morph in the web approximation; the prompt notes the gap.
+- native: not yet demonstrated in `examples/macos-native-swift/` (follow-up).
+- native plugin: `plugins/liquid-glass-native/skills/liquid-glass-native-ui/references/patterns/morphing.md`
+- apple: SwiftUI `@Namespace` + `glassEffectID(_:in:)` + `glassEffectUnion(id:in:)` inside a shared `GlassEffectContainer`, with `withAnimation`; AppKit `NSGlassEffectContainerView` + `NSAnimationContext.runAnimationGroup`
+- caveats: morph requires same container, same namespace, animated transaction, and sufficient `spacing:` to cover the gap. Different containers never morph.
+
+### Scroll edge effects
+
+Per-edge fade / harden treatment beneath floating chrome. Native-only; no web equivalent.
+
+- spec: `spec/patterns/scroll-edge-effects.md`
+- web: n/a — CSS `mask-image` is the nearest approximation but doesn't match the system and is not in the kit.
+- native: not yet demonstrated in `examples/macos-native-swift/` (follow-up).
+- native plugin: `plugins/liquid-glass-native/skills/liquid-glass-native-ui/references/patterns/scroll-edge-effects.md`
+- apple: SwiftUI `.scrollEdgeEffectStyle(_:for:)`; AppKit `NSScrollView.topEdgeEffect.style` / `.bottomEdgeEffect` / `.leftEdgeEffect` / `.rightEdgeEffect`
+- caveats: one style per edge, never mix soft + hard on adjacent edges. Apply only where chrome actually overlaps that edge. `NavigationSplitView` columns already apply hard edges to their toolbars.
+
+---
+
+## System primitives
+
+Apple ships these as system-provided UI. Wrap, don't restyle.
+
+### Alert / Confirmation dialog / Tooltip
+
+`Alert` and `ConfirmationDialog` are system-rendered modals. `Tooltip` (`.help(_:)`) is a system text bubble on hover. None of them carry Liquid Glass tokens you can tweak — they pick up the system treatment.
+
+- spec: covered as a recipe in `plugins/liquid-glass-native/skills/liquid-glass-native-ui/references/system-primitives.md`
+- web: out of scope — the web prompt notes "use the platform dialog / native tooltip"
+- native: `examples/macos-native-swift/Sources/LiquidGlassShowcase/InputsOverlays.swift` (`SystemPrimitivesDemo`)
+- native plugin: `plugins/liquid-glass-native/skills/liquid-glass-native-ui/references/system-primitives.md`
+- apple: SwiftUI `.alert(_:isPresented:actions:)`, `.confirmationDialog(_:isPresented:titleVisibility:actions:)`, `.help(_:)`; AppKit `NSAlert`, `NSToolTip`
+- caveats: do not reimplement these. Custom alerts that look like the system alert mislead users about origin (system vs. app) and break accessibility.
+
 ---
 
 ## Rules
@@ -280,6 +462,23 @@ The auditor in `audit/liquid-glass-audit.mjs` enforces these for the web profile
 - A10 Invented Apple endorsement claims
 
 - spec: `spec/rules/anti-patterns.md`, `plugins/liquid-glass-native/skills/liquid-glass-native-ui/references/anti-patterns.md`
+
+### Native-only bonus pitfalls
+
+Not part of A1-A10 (the web auditor doesn't enforce them), but flagged by the native implementer / auditor on review:
+
+- `.glassEffect` placed mid-chain — must run last, after layout / frame / padding.
+- Materials around the control instead of on it — wrap a `Button` in a backdrop and the backdrop becomes the affordance.
+- `.interactive()` on static surfaces — adds phantom hover targets and confuses screen readers.
+- Removing `.glassEffect` conditionally instead of using `.identity` — reflows layout for no reason.
+- Morph without `withAnimation` / `NSAnimationContext` — participants pop instead of morphing.
+- Morph across separate `GlassEffectContainer`s — never works; use one container or `.glassEffectUnion(id:in:)`.
+- Mixing `.soft` + `.hard` scroll edge styles on adjacent edges of one scroll view.
+- Edge effect on a scroll view with no overlapping chrome — decorative noise.
+- Icon + label glued into one tap target — pick icon-only or label-only.
+- `.glassProminent` + `.circle` border shape painting outside the circle — add `.clipShape(Circle())`.
+
+- native plugin: `plugins/liquid-glass-native/skills/liquid-glass-native-ui/references/anti-patterns.md` (Bonus section)
 
 ---
 

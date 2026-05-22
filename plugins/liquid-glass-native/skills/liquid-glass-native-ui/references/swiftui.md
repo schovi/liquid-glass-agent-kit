@@ -15,6 +15,46 @@ view.glassEffect(.regular.interactive())             // press / hover response
 
 `Glass` exposes `.regular`, `.clear`, `.identity`. Chainable: `.tint(_:)`, `.interactive()`.
 
+### Modifier order — `.glassEffect` must run last
+
+Glass samples whatever is behind the view. The sampling pass uses the
+view's final shape, so every layout / frame / padding modifier must
+run *before* `.glassEffect`. Putting `.glassEffect` mid-chain samples
+the wrong region.
+
+```swift
+// ✅ Correct
+Text("Hello")
+    .padding()
+    .frame(width: 200)
+    .glassEffect(.regular, in: .rect(cornerRadius: 16))
+
+// ❌ Wrong — padding / frame apply after glass sampling
+Text("Hello")
+    .glassEffect()
+    .padding()
+    .frame(width: 200)
+```
+
+### `.identity` — the conditional off-state
+
+`Glass.identity` is the no-op variant. Toggle glass off with it instead
+of conditionally removing the `.glassEffect` modifier — `.identity`
+keeps layout stable and avoids re-running the sampling pass.
+
+```swift
+button
+    .glassEffect(highlighted ? .regular : .identity)
+```
+
+### `.interactive()` — only on input
+
+`.interactive()` adds press, hover, and pointer-illumination response.
+Apply it **only** to views that actually respond to user input
+(buttons, sliders, tappable pills). Putting it on a static status pill
+or decorative badge produces phantom hover targets and confuses screen
+readers.
+
 ## Grouping glass
 
 `GlassEffectContainer(spacing:)` groups glass elements so they share one
@@ -31,8 +71,34 @@ GlassEffectContainer(spacing: 4) {
 }
 ```
 
-For matched-geometry morphing across containers, use `.glassEffectID(_:in:)`
-and `.glassEffectUnion(id:namespace:)`.
+### Morphing — `glassEffectID` + `@Namespace`
+
+When a glass element appears, disappears, or swaps shape, give every
+participant a `glassEffectID` in a shared `@Namespace` and wrap the
+state change in `withAnimation`. The full pattern lives in
+`references/patterns/morphing.md`.
+
+```swift
+@Namespace private var ns
+@State private var expanded = false
+
+GlassEffectContainer(spacing: 24) {
+    Button(expanded ? "Collapse" : "Expand") {
+        withAnimation(.bouncy) { expanded.toggle() }
+    }
+    .buttonStyle(.glass)
+    .glassEffectID("toggle", in: ns)
+
+    if expanded {
+        Button("Action 1") { }.buttonStyle(.glass).glassEffectID("a1", in: ns)
+        Button("Action 2") { }.buttonStyle(.glass).glassEffectID("a2", in: ns)
+    }
+}
+```
+
+Requirements: same `GlassEffectContainer`, same `@Namespace`, animated
+state change. Use `.glassEffectUnion(id:in:)` when participants live
+far apart (e.g. toolbar item morphing into a content-area capsule).
 
 ## Background extension
 
@@ -42,7 +108,25 @@ HeroImage()
 ```
 
 Mirrors and blurs the view outside the safe area so it shows through
-floating sidebars and inspectors.
+floating sidebars and inspectors. Apply on the **content**, never on
+the chrome — the chrome already paints Liquid Glass.
+
+## Scroll edge effects
+
+Controls how scrolling content fades or hardens beneath floating
+chrome. Full rules in `references/patterns/scroll-edge-effects.md`.
+
+```swift
+ScrollView { ... }
+    .scrollEdgeEffectStyle(.hard, for: .top)
+```
+
+- Styles: `.soft` (default), `.hard`.
+- Edges: `.top`, `.bottom`, `.leading`, `.trailing`, `.all`.
+- One style per edge. Never mix soft + hard on adjacent edges of the
+  same scroll view.
+- Only apply where a floating chrome element actually sits at that
+  edge — edge effects are not decoration.
 
 ## Window chrome
 

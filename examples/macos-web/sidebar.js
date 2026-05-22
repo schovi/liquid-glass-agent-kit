@@ -15,10 +15,12 @@ export const SIDEBAR_GROUPS = [
   {
     label: "Components",
     items: [
-      { id: "buttons",       icon: "▣", label: "Buttons" },
-      { id: "controls",      icon: "▥", label: "Controls" },
-      { id: "surfaces",      icon: "▦", label: "Surfaces" },
-      { id: "sheet-section", icon: "⤒", label: "Sheet" },
+      { id: "buttons",          icon: "▣", label: "Buttons" },
+      { id: "controls",         icon: "▥", label: "Controls" },
+      { id: "inputs-overlays",  icon: "◧", label: "Inputs & overlays" },
+      { id: "forms-lists",      icon: "▤", label: "Forms & lists" },
+      { id: "surfaces",         icon: "▦", label: "Surfaces" },
+      { id: "sheet-section",    icon: "⤒", label: "Sheet" },
     ],
   },
   {

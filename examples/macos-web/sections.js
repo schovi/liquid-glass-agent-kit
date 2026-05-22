@@ -156,6 +156,251 @@ function controlsBody() {
   `;
 }
 
+function inputsOverlaysBody() {
+  return `
+    <div class="lg-component-grid">
+      <article class="lg-component-card">
+        <h2 class="lg-component-card__title">Menu · Regular glass + separators + shortcuts</h2>
+        <div class="lg-component-card__demo">
+          <details class="lg-menu-host" open>
+            <summary class="lg-button" data-renderer="css">File</summary>
+            <div class="lg-menu" role="menu" data-renderer="css">
+              <div class="lg-menu__item" role="menuitem">
+                <span class="lg-menu__icon" aria-hidden="true">+</span>
+                <span>New</span>
+                <span class="lg-menu__shortcut">⌘N</span>
+              </div>
+              <div class="lg-menu__item" role="menuitem">
+                <span class="lg-menu__icon" aria-hidden="true">⌘</span>
+                <span>Open…</span>
+                <span class="lg-menu__shortcut">⌘O</span>
+              </div>
+              <div class="lg-menu__separator" role="separator"></div>
+              <div class="lg-menu__item" role="menuitem">
+                <span class="lg-menu__icon" aria-hidden="true">⤓</span>
+                <span>Export tokens</span>
+                <span class="lg-menu__shortcut">⌥⌘E</span>
+              </div>
+              <div class="lg-menu__separator" role="separator"></div>
+              <div class="lg-menu__item lg-menu__item--destructive" role="menuitem">
+                <span class="lg-menu__icon" aria-hidden="true">⌫</span>
+                <span>Move to Trash</span>
+                <span class="lg-menu__shortcut">⌘⌫</span>
+              </div>
+            </div>
+          </details>
+        </div>
+      </article>
+
+      <article class="lg-component-card">
+        <h2 class="lg-component-card__title">Search field · 44 tall, solid</h2>
+        <label class="lg-search-field" aria-label="Search tokens">
+          <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" class="lg-search-field__icon">
+            <circle cx="7" cy="7" r="5" fill="none" stroke="currentColor" stroke-width="1.5"/>
+            <line x1="10.5" y1="10.5" x2="14" y2="14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <input type="search" placeholder="Type to search…" />
+        </label>
+      </article>
+
+      <article class="lg-component-card">
+        <h2 class="lg-component-card__title">Toggle · 38×22 capsule, solid track</h2>
+        <div class="lg-component-card__demo">
+          <button type="button" class="lg-toggle" role="switch" aria-checked="false">
+            <span class="lg-toggle__track" aria-hidden="true"><span class="lg-toggle__knob"></span></span>
+            <span>Off</span>
+          </button>
+          <button type="button" class="lg-toggle" role="switch" aria-checked="true">
+            <span class="lg-toggle__track" aria-hidden="true"><span class="lg-toggle__knob"></span></span>
+            <span>On</span>
+          </button>
+          <button type="button" class="lg-toggle" role="switch" aria-checked="true" aria-disabled="true">
+            <span class="lg-toggle__track" aria-hidden="true"><span class="lg-toggle__knob"></span></span>
+            <span>Disabled</span>
+          </button>
+        </div>
+      </article>
+
+      <article class="lg-component-card">
+        <h2 class="lg-component-card__title">Slider · 4 pt track, 22 pt thumb</h2>
+        <div class="lg-slider" role="group" aria-label="Volume">
+          <div class="lg-slider__track">
+            <div class="lg-slider__fill" style="width: 64%"></div>
+            <div class="lg-slider__thumb" style="left: 64%"></div>
+          </div>
+          <span class="lg-slider__value">0.64</span>
+        </div>
+      </article>
+
+      <article class="lg-component-card">
+        <h2 class="lg-component-card__title">Progress · linear + circular</h2>
+        <div class="lg-component-card__demo" style="flex-direction: column; align-items: stretch;">
+          <div class="lg-progress--linear" role="progressbar" aria-valuemin="0" aria-valuemax="1" aria-valuenow="0.42">
+            <div class="lg-progress--linear__fill" style="width: 42%"></div>
+          </div>
+          <div class="lg-progress--linear" role="progressbar" aria-busy="true" aria-label="Loading">
+            <div class="lg-progress--linear__fill"></div>
+          </div>
+          <div style="display: flex; gap: 16px; align-items: center;">
+            <span class="lg-progress--circular" data-size="sm" role="progressbar" aria-busy="true" aria-label="Loading small">
+              <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+                <circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="20 80" stroke-linecap="round"/>
+              </svg>
+            </span>
+            <span class="lg-progress--circular" role="progressbar" aria-busy="true" aria-label="Loading medium">
+              <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+                <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="30 120" stroke-linecap="round"/>
+              </svg>
+            </span>
+            <span class="lg-progress--circular" data-size="lg" role="progressbar" aria-busy="true" aria-label="Loading large">
+              <svg viewBox="0 0 32 32" width="32" height="32" aria-hidden="true">
+                <circle cx="16" cy="16" r="12" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="40 160" stroke-linecap="round"/>
+              </svg>
+            </span>
+          </div>
+        </div>
+      </article>
+
+      <article class="lg-component-card">
+        <h2 class="lg-component-card__title">Badge · 20 pt capsule, never on glass</h2>
+        <div class="lg-component-card__demo">
+          <span class="lg-badge">Neutral</span>
+          <span class="lg-badge lg-badge--info">Beta</span>
+          <span class="lg-badge lg-badge--success">Passing</span>
+          <span class="lg-badge lg-badge--warning">Warn</span>
+          <span class="lg-badge lg-badge--danger">Error</span>
+          <span class="lg-badge lg-badge--counter">12</span>
+        </div>
+      </article>
+
+      <article class="lg-component-card" style="grid-column: 1 / -1;">
+        <h2 class="lg-component-card__title">Floating HUD · GlassEffectContainer over media</h2>
+        <div class="lg-floating-hud-stage">
+          <div class="lg-floating-hud" data-renderer="css" role="toolbar" aria-label="Playback controls">
+            <button type="button" class="lg-floating-hud__item" aria-label="Previous"><span aria-hidden="true">⏮</span></button>
+            <button type="button" class="lg-floating-hud__item" aria-label="Play"><span aria-hidden="true">⏵</span></button>
+            <button type="button" class="lg-floating-hud__item" aria-label="Next"><span aria-hidden="true">⏭</span></button>
+            <button type="button" class="lg-floating-hud__item" aria-label="Mute"><span aria-hidden="true">🔊</span></button>
+          </div>
+        </div>
+      </article>
+    </div>
+  `;
+}
+
+function formsListsBody() {
+  return `
+    <div class="lg-component-grid">
+      <article class="lg-component-card" style="grid-column: 1 / -1;">
+        <h2 class="lg-component-card__title">Form rows · solid, never glass</h2>
+        <div class="lg-form">
+          <h3 class="lg-form__heading">Notifications</h3>
+          <div class="lg-form-row">
+            <span class="lg-form-row__label">Email updates</span>
+            <span class="lg-form-row__control">
+              <button type="button" class="lg-toggle" role="switch" aria-checked="true">
+                <span class="lg-toggle__track" aria-hidden="true"><span class="lg-toggle__knob"></span></span>
+              </button>
+            </span>
+          </div>
+          <div class="lg-form-row">
+            <span class="lg-form-row__label">Volume</span>
+            <span class="lg-form-row__control">
+              <div class="lg-slider" role="group" aria-label="Volume">
+                <div class="lg-slider__track">
+                  <div class="lg-slider__fill" style="width: 50%"></div>
+                  <div class="lg-slider__thumb" style="left: 50%"></div>
+                </div>
+                <span class="lg-slider__value">0.50</span>
+              </div>
+            </span>
+          </div>
+          <div class="lg-form-row">
+            <span class="lg-form-row__label">Sessions</span>
+            <span class="lg-form-row__control">
+              <div class="lg-stepper" role="group" aria-label="Sessions">
+                <button type="button" class="lg-stepper__button" aria-label="Decrement">−</button>
+                <span class="lg-stepper__divider" aria-hidden="true"></span>
+                <span class="lg-stepper__value">3</span>
+                <span class="lg-stepper__divider" aria-hidden="true"></span>
+                <button type="button" class="lg-stepper__button" aria-label="Increment">+</button>
+              </div>
+            </span>
+          </div>
+        </div>
+      </article>
+
+      <article class="lg-component-card">
+        <h2 class="lg-component-card__title">Inset list · grouped sections</h2>
+        <div class="lg-inset-list">
+          <div class="lg-inset-list__section">
+            <h3 class="lg-inset-list__heading">Recents</h3>
+            <div class="lg-inset-list__row">
+              <span class="lg-inset-list__row-icon" aria-hidden="true">◐</span>
+              <span>Materials</span>
+              <span class="lg-badge lg-badge--counter">2</span>
+            </div>
+            <div class="lg-inset-list__row">
+              <span class="lg-inset-list__row-icon" aria-hidden="true">▤</span>
+              <span>Spacing</span>
+              <span class="lg-badge">8 · 12 · 16</span>
+            </div>
+            <div class="lg-inset-list__row">
+              <span class="lg-inset-list__row-icon" aria-hidden="true">Aa</span>
+              <span>Typography</span>
+              <span class="lg-badge lg-badge--info">v0.1</span>
+            </div>
+          </div>
+          <div class="lg-inset-list__section">
+            <h3 class="lg-inset-list__heading">Pinned</h3>
+            <div class="lg-inset-list__row lg-inset-list__row--compact">
+              <span class="lg-inset-list__row-icon" aria-hidden="true">★</span>
+              <span>Toolbar</span>
+              <span></span>
+            </div>
+            <div class="lg-inset-list__row lg-inset-list__row--compact">
+              <span class="lg-inset-list__row-icon" aria-hidden="true">★</span>
+              <span>Sheet</span>
+              <span></span>
+            </div>
+            <p class="lg-inset-list__footer">Compact rows are 32 tall; default rows are 44.</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="lg-component-card">
+        <h2 class="lg-component-card__title">Disclosure group · solid, 16 pt indent</h2>
+        <div class="lg-form">
+          <details class="lg-disclosure-group" open>
+            <summary>
+              <svg class="lg-disclosure-group__chevron" viewBox="0 0 12 12" width="12" height="12" aria-hidden="true">
+                <path d="M4 2l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <span>Advanced</span>
+            </summary>
+            <div class="lg-disclosure-group__body">
+              Reveal-on-demand controls live inside disclosure groups.
+              Body indents by 16 (panelGap). Solid surface only.
+            </div>
+          </details>
+          <details class="lg-disclosure-group">
+            <summary>
+              <svg class="lg-disclosure-group__chevron" viewBox="0 0 12 12" width="12" height="12" aria-hidden="true">
+                <path d="M4 2l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <span>Developer</span>
+            </summary>
+            <div class="lg-disclosure-group__body">
+              Outline groups go deeper but cap visible depth at three
+              in a content panel.
+            </div>
+          </details>
+        </div>
+      </article>
+    </div>
+  `;
+}
+
 function surfacesBody() {
   return `
     <article class="lg-content-card">
@@ -294,6 +539,23 @@ export const SECTIONS = [
     lede: `Segmented picker rides Regular glass. Text fields are
            <strong>always solid</strong> — glass behind text reduces readability.`,
     body: controlsBody,
+  },
+  {
+    id: "inputs-overlays",
+    eyebrow: "Components",
+    title: "Inputs & overlays",
+    lede: `Menu, search field, toggle, slider, progress, badge, and a floating HUD.
+           Glass is automatic on the menu and HUD; the rest are <strong>solid</strong>
+           because they sit in the content layer or behind text the user is reading.`,
+    body: inputsOverlaysBody,
+  },
+  {
+    id: "forms-lists",
+    eyebrow: "Components",
+    title: "Forms & lists",
+    lede: `Form rows, inset list with grouped sections, and disclosure groups.
+           Solid throughout — glass behind body content is anti-pattern A2.`,
+    body: formsListsBody,
   },
   {
     id: "surfaces",

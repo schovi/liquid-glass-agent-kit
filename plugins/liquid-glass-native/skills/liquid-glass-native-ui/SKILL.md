@@ -74,5 +74,14 @@ Before returning code, check against `references/anti-patterns.md`:
 - `references/appkit.md` — AppKit cheat-sheet with class / enum names.
 - `references/anti-patterns.md` — the ten things to never ship.
 - `references/example.md` — pointer to `examples/macos-native-swift/`.
+- `references/components/` — one focused recipe per component:
+  - `popover.md`, `menu.md`, `search-field.md`, `toggle.md`, `slider.md`,
+    `progress.md`, `badge.md`.
+- `references/patterns/` — one focused recipe per pattern:
+  - `form-rows.md`, `inset-list.md`, `disclosure-group.md`, `stepper.md`,
+    `titlebar-accessory.md`, `floating-hud.md`, `morphing.md`,
+    `scroll-edge-effects.md`.
+- `references/system-primitives.md` — alerts, confirmation dialogs,
+  tooltips. "Use the system, don't restyle."
 
 All claims trace to `docs/resources.md` at the repo root.

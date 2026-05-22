@@ -17,6 +17,8 @@ export const SECTION_META = {
   motion:           { label: "Motion",            variant: "Regular", surfaceRule: FOUNDATIONS },
   buttons:          { label: "Buttons",           variant: "Regular", surfaceRule: FLOATING },
   controls:         { label: "Controls",          variant: "Regular", surfaceRule: FLOATING },
+  "inputs-overlays":{ label: "Inputs & overlays", variant: "Regular", surfaceRule: FLOATING },
+  "forms-lists":    { label: "Forms & lists",     variant: "Regular", surfaceRule: CONTENT },
   surfaces:         { label: "Content surfaces",  variant: "Regular", surfaceRule: CONTENT },
   "sheet-section":  { label: "Sheet",             variant: "Regular", surfaceRule: MODAL },
   rules:            { label: "Where glass belongs", variant: "Regular", surfaceRule: REFERENCE },

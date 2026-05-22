@@ -2,7 +2,8 @@ import SwiftUI
 
 enum SectionID: String, CaseIterable, Identifiable, Hashable {
     case materials, shape, spacing, typography, motion
-    case buttons, controls, surfaces, sheet
+    case buttons, controls, inputsOverlays, formsLists, surfaces, sheet
+    case morphing, scrollEdgeEffects
     case rules, antiPatterns, clearVariant
 
     var id: Self { self }
@@ -16,8 +17,12 @@ enum SectionID: String, CaseIterable, Identifiable, Hashable {
         case .motion: return "Motion"
         case .buttons: return "Buttons"
         case .controls: return "Controls"
+        case .inputsOverlays: return "Inputs & overlays"
+        case .formsLists: return "Forms & lists"
         case .surfaces: return "Surfaces"
         case .sheet: return "Sheet"
+        case .morphing: return "Morphing"
+        case .scrollEdgeEffects: return "Scroll edge effects"
         case .rules: return "Rules"
         case .antiPatterns: return "Anti-patterns"
         case .clearVariant: return "Clear variant"
@@ -33,8 +38,12 @@ enum SectionID: String, CaseIterable, Identifiable, Hashable {
         case .motion: return "wave.3.right"
         case .buttons: return "square.fill"
         case .controls: return "switch.2"
+        case .inputsOverlays: return "slider.horizontal.3"
+        case .formsLists: return "list.bullet.rectangle"
         case .surfaces: return "square.stack.3d.up"
         case .sheet: return "arrow.up.to.line"
+        case .morphing: return "arrow.triangle.merge"
+        case .scrollEdgeEffects: return "line.horizontal.3.decrease"
         case .rules: return "checkmark.seal"
         case .antiPatterns: return "xmark.seal"
         case .clearVariant: return "drop"
@@ -51,19 +60,21 @@ enum SectionID: String, CaseIterable, Identifiable, Hashable {
     var group: SectionGroup {
         switch self {
         case .materials, .shape, .spacing, .typography, .motion: return .foundations
-        case .buttons, .controls, .surfaces, .sheet: return .components
+        case .buttons, .controls, .inputsOverlays, .formsLists, .surfaces, .sheet: return .components
+        case .morphing, .scrollEdgeEffects: return .patterns
         case .rules, .antiPatterns, .clearVariant: return .reference
         }
     }
 }
 
 enum SectionGroup: String, CaseIterable, Identifiable {
-    case foundations, components, reference
+    case foundations, components, patterns, reference
     var id: Self { self }
     var label: String {
         switch self {
         case .foundations: return "Foundations"
         case .components: return "Components"
+        case .patterns: return "Patterns"
         case .reference: return "Reference"
         }
     }

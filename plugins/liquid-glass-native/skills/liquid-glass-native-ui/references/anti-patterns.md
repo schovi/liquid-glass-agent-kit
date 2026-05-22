@@ -116,3 +116,13 @@ These aren't in the A1-A10 list but burn real engineers:
 - **Removing `NSVisualEffectMaterial.sidebar`** is what *enables* Liquid Glass on sidebars in macOS 26. Many migrations look "broken" because the engineer kept the legacy material.
 - **Adding `.presentationBackground(.glass)`** on a sheet is redundant when `.presentationDetents` already includes a partial detent. It can produce double-glass.
 - **Stacking two `.toolbar` modifiers** in different ancestors results in two glass strips. Pick one place.
+- **`.glassEffect` placed mid-chain.** Glass samples behind the view; layout / frame / padding must run *before* glass. Move `.glassEffect` to the end of the modifier chain.
+- **Materials around the control, not on it.** Wrapping a `Button` in a `Capsule().fill(.regularMaterial)` makes the backdrop the affordance and the button a label on top. The button itself should be glass: `.buttonStyle(.glass)` / `.buttonStyle(.glassProminent)`.
+- **`.interactive()` on static surfaces.** Press / hover / pointer-illumination is for elements that respond to input. Status pills, decorative badges, non-tappable HUDs must not carry `.interactive()` — it produces phantom hover targets and confuses screen readers.
+- **Removing `.glassEffect` conditionally instead of using `.identity`.** Removing the modifier reflows the view. Use `.glassEffect(condition ? .regular : .identity)` to toggle off without layout recalc.
+- **Morph without `withAnimation`.** `glassEffectID` + `@Namespace` only morph when the state change is wrapped in `withAnimation(...)`. Without it the views just pop. (Same trap in AppKit without `NSAnimationContext.runAnimationGroup`.)
+- **Morph across separate `GlassEffectContainer`s.** Participants in different containers never morph. Move them into the same container, or use `.glassEffectUnion(id:in:)` for cross-distance identity.
+- **Mixing `.soft` and `.hard` scroll edge styles** on adjacent edges of one scroll view. Pick one boundary character.
+- **Edge effect on a scroll view with no overlapping chrome.** Edge effects are not decoration — strip the modifier.
+- **Icon + label glued into one tap target.** A glyph and a label inside the same button read as one affordance with two tap zones. Pick icon-only or label-only per button. If you genuinely need both, give them their own affordances.
+- **`.glassProminent` + `.circle` border shape artifact.** The prominent style can paint outside the circle. Add `.clipShape(Circle())` after `.buttonStyle(.glassProminent)`.

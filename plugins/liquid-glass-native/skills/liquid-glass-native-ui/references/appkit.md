@@ -133,6 +133,23 @@ slider.tintProminence = .primary
 - `NSPopover` — material `.popover`. Set `behavior = .transient` for hover-dismiss.
 - `NSMenu` — material `.menu`. Redesigned single-column icon-led rows. Use SF Symbols.
 
+## Scroll edge effects
+
+Per-edge accessors on `NSScrollView`. Controls how scroll content
+fades or hardens at edges that sit beneath floating chrome. Full
+rules in `references/patterns/scroll-edge-effects.md`.
+
+```swift
+scrollView.topEdgeEffect.style    = .hard
+scrollView.bottomEdgeEffect.style = .soft
+scrollView.leftEdgeEffect.isHidden = true
+```
+
+- `.style`: `.soft` (default) or `.hard`.
+- `.isHidden`: drop the effect on edges where no chrome actually sits.
+- One style per edge. Never mix soft + hard on adjacent edges of the
+  same scroll view.
+
 ## Source list sidebar
 
 `NSOutlineView` in source-list style. On macOS 26, rows render directly on

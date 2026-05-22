@@ -28,6 +28,26 @@ For a real macOS app with the actual `glassEffect` API, install the `liquid-glas
 > - Card: radius 24, padding 24, gap 12. Glass on cards is optional and only above content.
 > - Segmented control: height 32, padding 2, item padding 12/4, capsule; 2-5 items.
 > - Text field: min-height 44, padding 12/10, radius 12. **Solid surface, no glass.**
+> - Popover: min-width 220, radius 16, padding 8; item padding 10/8, item radius 12. Regular glass.
+> - Menu: min-width 200, radius 12, padding 6; item min-height 28, item padding 10/4, item radius 12, shortcut gap 24. Regular glass.
+> - Search field (toolbar): min-height 32, padding 12/6, capsule, icon 14. **Solid.** Inline variant: min-height 44, radius 12.
+> - Toggle: track 38×22 capsule, knob 18 with 2 inset; label gap 12. **Solid track.**
+> - Slider: track height 4 capsule, thumb 22 circle, min-width 120. **Solid track**; only the thumb gets glass when system-rendered in a toolbar.
+> - Progress: linear height 4 capsule, min-width 120; circular small 16 / medium 24 / large 32, stroke 2. **Solid.**
+> - Badge: min-height 20, padding 8/2, capsule, font 12/600. **Solid** — sits on content, never on glass.
+>
+> **Patterns (always solid).**
+>
+> - Form rows: `Form` container, `LabeledContent` rows, row gap 12, section gap 24. Glass on a form is forbidden.
+> - Inset list: rounded section background, row min-height 32 (compact) / 44 (regular), row padding 12/8. Solid.
+> - Disclosure group: header min-height 32, chevron size 12 leading, indent 16 per depth. Solid.
+> - Stepper: in a toolbar wrap both buttons in one shared glass capsule (gap 4, button 28 capsule). In a form the stepper is solid.
+> - Titlebar accessory: principal toolbar slot, min-height 32, max-width 360. Inherits toolbar glass — do **not** add another glass layer.
+> - Floating HUD: capsule (single row) or radius-16 (multi-row) Regular-glass container in `.overlay(alignment: .bottom)`, padding 6, item 40, gap 4, margin 16 from edge. Only over media or canvas — never over forms.
+>
+> **System primitives.**
+>
+> - Alerts, confirmation dialogs, and tooltips are platform-rendered. Use the host platform's dialog / native tooltip. Do not hand-roll a custom alert that mimics the system one.
 >
 > **Layering.**
 >

@@ -105,6 +105,8 @@ struct DetailView: View {
                             case .motion: MotionSection()
                             case .buttons: ButtonsSection()
                             case .controls: ControlsSection()
+                            case .inputsOverlays: InputsOverlaysSection()
+                            case .formsLists: FormsListsSection()
                             case .surfaces: SurfacesSection()
                             case .sheet: SheetSection(onOpen: onOpenSheet)
                             case .rules: RulesSection()

@@ -33,6 +33,13 @@ imports:
   - components/sheet.yaml
   - components/segmented-control.yaml
   - components/text-field.yaml
+  - components/popover.yaml
+  - components/menu.yaml
+  - components/search-field.yaml
+  - components/toggle.yaml
+  - components/slider.yaml
+  - components/progress.yaml
+  - components/badge.yaml
 
 # Renderers an agent may pick from. Choice is part of the skill's required
 # workflow; never silently mix two renderers in the same surface.

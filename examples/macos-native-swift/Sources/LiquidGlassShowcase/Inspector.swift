@@ -31,9 +31,9 @@ struct Inspector: View {
         switch section {
         case .materials, .shape, .spacing, .typography, .motion:
             return "Foundational tokens; renderer-agnostic."
-        case .buttons, .controls:
+        case .buttons, .controls, .inputsOverlays:
             return "Floating layer; Regular glass on capsule."
-        case .surfaces:
+        case .formsLists, .surfaces:
             return "Content layer; SOLID — glass forbidden."
         case .sheet:
             return "Modal surface; Regular glass auto on partial detent."
