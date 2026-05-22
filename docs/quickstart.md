@@ -20,7 +20,7 @@ See `docs/web-prompt.md`.
 ### Codex
 
 ```bash
-codex plugin marketplace add OWNER/liquid-glass-agent-kit --sparse .agents/plugins plugins/liquid-glass-native
+codex plugin marketplace add schovi/liquid-glass-agent-kit --sparse .agents/plugins plugins/liquid-glass-native
 ```
 
 ```text
@@ -33,7 +33,7 @@ See `docs/install-codex.md`.
 ### Claude Code
 
 ```bash
-claude plugin marketplace add OWNER/liquid-glass-agent-kit --sparse .claude-plugin plugins/liquid-glass-native
+claude plugin marketplace add schovi/liquid-glass-agent-kit --sparse .claude-plugin plugins/liquid-glass-native
 /plugin install liquid-glass-native@liquid-glass-agent-kit
 /liquid-glass-native:liquid-glass-native-ui Build a SwiftUI inspector pane.
 ```

@@ -6,7 +6,7 @@
       "name": "liquid-glass-native",
       "source": {
         "source": "git-subdir",
-        "url": "OWNER/liquid-glass-agent-kit",
+        "url": "schovi/liquid-glass-agent-kit",
         "path": "plugins/liquid-glass-native",
         "ref": "main"
       },

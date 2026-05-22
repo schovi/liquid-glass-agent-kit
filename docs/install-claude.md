@@ -7,14 +7,14 @@ This installs the **native macOS 26** plugin. For web Liquid Glass UI in Claude 
 Inside Claude Code:
 
 ```
-/plugin marketplace add OWNER/liquid-glass-agent-kit
+/plugin marketplace add schovi/liquid-glass-agent-kit
 /plugin install liquid-glass-native@liquid-glass-agent-kit
 ```
 
 Or from the shell:
 
 ```bash
-claude plugin marketplace add OWNER/liquid-glass-agent-kit --sparse .claude-plugin plugins/liquid-glass-native
+claude plugin marketplace add schovi/liquid-glass-agent-kit --sparse .claude-plugin plugins/liquid-glass-native
 ```
 
 ## Local development

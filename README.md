@@ -38,7 +38,7 @@ Tested with: ChatGPT, Claude (web + Code), Codex, Cursor, v0, Lovable, Figma Mak
 ### Codex
 
 ```bash
-codex plugin marketplace add OWNER/liquid-glass-agent-kit --sparse .agents/plugins plugins/liquid-glass-native
+codex plugin marketplace add schovi/liquid-glass-agent-kit --sparse .agents/plugins plugins/liquid-glass-native
 ```
 
 ```text
@@ -48,7 +48,7 @@ $liquid-glass-native-ui Build a SwiftUI sidebar app with NavigationSplitView.
 ### Claude Code
 
 ```bash
-claude plugin marketplace add OWNER/liquid-glass-agent-kit --sparse .claude-plugin plugins/liquid-glass-native
+claude plugin marketplace add schovi/liquid-glass-agent-kit --sparse .claude-plugin plugins/liquid-glass-native
 /plugin install liquid-glass-native@liquid-glass-agent-kit
 /liquid-glass-native:liquid-glass-native-ui Build a SwiftUI inspector pane.
 ```

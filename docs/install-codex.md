@@ -5,7 +5,7 @@ This installs the **native macOS 26** plugin. For web Liquid Glass UI (in Codex 
 ## Marketplace install (recommended)
 
 ```bash
-codex plugin marketplace add OWNER/liquid-glass-agent-kit --sparse .agents/plugins plugins/liquid-glass-native
+codex plugin marketplace add schovi/liquid-glass-agent-kit --sparse .agents/plugins plugins/liquid-glass-native
 ```
 
 Open Codex and run:
