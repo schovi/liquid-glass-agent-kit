@@ -109,21 +109,96 @@ inline comments saying "Liquid Glass certified" / "Apple-official" /
 The kit is inspired-by, not endorsed. That's stated in the spec, the
 plugin manifests, and every README.
 
-## Bonus — macOS 26-specific gotchas
+## macOS 26 gotchas (A11-A24)
 
-These aren't in the A1-A10 list but burn real engineers:
+These are macOS 26-specific failure modes that burn real engineers.
+They sit alongside A1-A10 in the same audit ID space.
 
-- **Removing `NSVisualEffectMaterial.sidebar`** is what *enables* Liquid Glass on sidebars in macOS 26. Many migrations look "broken" because the engineer kept the legacy material.
-- **Adding `.presentationBackground(.glass)`** on a sheet is redundant when `.presentationDetents` already includes a partial detent. It can produce double-glass.
-- **Stacking two `.toolbar` modifiers** in different ancestors results in two glass strips. Pick one place.
-- **`.glassEffect` placed mid-chain.** Glass samples behind the view; layout / frame / padding must run *before* glass. Move `.glassEffect` to the end of the modifier chain.
-- **Materials around the control, not on it.** Wrapping a `Button` in a `Capsule().fill(.regularMaterial)` makes the backdrop the affordance and the button a label on top. The button itself should be glass: `.buttonStyle(.glass)` / `.buttonStyle(.glassProminent)`.
-- **`.interactive()` on static surfaces.** Press / hover / pointer-illumination is for elements that respond to input. Status pills, decorative badges, non-tappable HUDs must not carry `.interactive()` — it produces phantom hover targets and confuses screen readers.
-- **Removing `.glassEffect` conditionally instead of using `.identity`.** Removing the modifier reflows the view. Use `.glassEffect(condition ? .regular : .identity)` to toggle off without layout recalc.
-- **Morph without `withAnimation`.** `glassEffectID` + `@Namespace` only morph when the state change is wrapped in `withAnimation(...)`. Without it the views just pop. (Same trap in AppKit without `NSAnimationContext.runAnimationGroup`.)
-- **Morph across separate `GlassEffectContainer`s.** Participants in different containers never morph. Move them into the same container, or use `.glassEffectUnion(id:in:)` for cross-distance identity.
-- **`GlassEffectContainer(spacing:)` set to a middle value relative to HStack gap.** `spacing:` is the metaball merge threshold, not a margin. Container `24` with HStack gap `8` renders blob-tail tension between siblings at rest — the half-merged state that's correct during animation but wrong as a resting visual. Pick `spacing: ≥ gap` for a fused pill, `spacing: < gap` for separate capsules. Never in between.
-- **Mixing `.soft` and `.hard` scroll edge styles** on adjacent edges of one scroll view. Pick one boundary character.
-- **Edge effect on a scroll view with no overlapping chrome.** Edge effects are not decoration — strip the modifier.
-- **Icon + label glued into one tap target.** A glyph and a label inside the same button read as one affordance with two tap zones. Pick icon-only or label-only per button. If you genuinely need both, give them their own affordances.
-- **`.glassProminent` + `.circle` border shape artifact.** The prominent style can paint outside the circle. Add `.clipShape(Circle())` after `.buttonStyle(.glassProminent)`.
+## A11 — Legacy `.sidebar` material retained
+
+Keeping `NSVisualEffectMaterial.sidebar` (or the SwiftUI equivalent) on
+a sidebar hierarchy *blocks* Liquid Glass. Removing it is what enables
+the new material on macOS 26. Migrations often look "broken" because
+the engineer left the legacy material in place.
+
+## A12 — `.presentationBackground(.glass)` stacked on `.presentationDetents`
+
+A sheet with `.presentationDetents` (partial detent) already renders
+its background as glass. Adding `.presentationBackground(.glass)` on
+top produces double glass. Pick one.
+
+## A13 — Two `.toolbar` modifiers in different ancestors
+
+Two `.toolbar` modifiers in different parents render two glass strips
+stacked. Pick one place to declare toolbar content.
+
+## A14 — `.glassEffect` placed mid-chain
+
+Glass samples whatever is behind the view at the point the modifier
+runs. Layout / frame / padding must run *before* `.glassEffect`. Move
+`.glassEffect` to the end of the modifier chain.
+
+## A15 — Materials wrapping the control instead of styling it
+
+Wrapping a `Button` in `Capsule().fill(.regularMaterial)` makes the
+backdrop the affordance and the button a label on top. The button
+itself should be glass: `.buttonStyle(.glass)` /
+`.buttonStyle(.glassProminent)`. AppKit equivalent: set
+`NSButton.bezelStyle = .glass`, do not wrap in an
+`NSVisualEffectView`.
+
+## A16 — `.interactive()` on static surfaces
+
+`.interactive()` enables press / hover / pointer-illumination. Status
+pills, decorative badges, non-tappable HUDs must not carry it — it
+produces phantom hover targets and confuses screen readers.
+
+## A17 — Toggling glass by removing the modifier
+
+Removing `.glassEffect` conditionally reflows the view. Use
+`.glassEffect(condition ? .regular : .identity)` to toggle off without
+layout recalc.
+
+## A18 — Morph without `withAnimation`
+
+`glassEffectID` + `@Namespace` only morph when the state change is
+wrapped in `withAnimation(...)`. Without it the views just pop.
+AppKit equivalent: wrap the change in
+`NSAnimationContext.runAnimationGroup`.
+
+## A19 — Morph across separate `GlassEffectContainer`s
+
+Participants in different containers never morph. Move them into the
+same container, or use `.glassEffectUnion(id:in:)` for cross-distance
+identity.
+
+## A20 — `GlassEffectContainer(spacing:)` set to a middle value
+
+`spacing:` is the metaball merge threshold, not a margin. Container
+`24` with HStack gap `8` renders blob-tail tension between siblings at
+rest — the half-merged state that's correct during animation but
+wrong as a resting visual. Pick `spacing: ≥ gap` for a fused pill,
+`spacing: < gap` for separate capsules. Never in between.
+
+## A21 — Mixed `.soft` and `.hard` scroll edge styles
+
+Mixing `.soft` and `.hard` on adjacent edges of one scroll view
+fights itself. Pick one boundary character.
+
+## A22 — Scroll-edge effect with no overlapping chrome
+
+Edge effects are not decoration — they hand off content to floating
+chrome (toolbar, search bar). If nothing overlaps the scroll view,
+strip the modifier.
+
+## A23 — Icon + label glued into one tap target
+
+A glyph and a label inside the same button read as one affordance
+with two tap zones. Pick icon-only or label-only per button. If you
+genuinely need both behaviors, give them their own affordances.
+
+## A24 — `.glassProminent` + `.circle` border shape artifact
+
+The prominent style can paint outside the circle. Add
+`.clipShape(Circle())` *after* `.buttonStyle(.glassProminent)` when
+combined with `.buttonBorderShape(.circle)`.

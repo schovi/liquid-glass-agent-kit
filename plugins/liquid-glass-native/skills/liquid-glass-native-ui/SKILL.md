@@ -48,6 +48,8 @@ If the user wants the web profile instead, use the sibling skill
 
 Before returning code, check against `references/anti-patterns.md`:
 
+Core (A1-A10):
+
 - A1 — glass-on-glass nesting
 - A2 — glass behind body content
 - A3 — invented numeric tokens
@@ -58,6 +60,23 @@ Before returning code, check against `references/anti-patterns.md`:
 - A8 — unreadable Clear glass (no dim)
 - A9 — fighting system accessibility flags
 - A10 — Apple-endorsement claims
+
+macOS 26 gotchas (A11-A24):
+
+- A11 — legacy `.sidebar` material retained
+- A12 — `.presentationBackground(.glass)` stacked on `.presentationDetents`
+- A13 — two `.toolbar` modifiers in different ancestors
+- A14 — `.glassEffect` placed mid-chain
+- A15 — materials wrapping the control instead of styling it
+- A16 — `.interactive()` on static surfaces
+- A17 — toggling glass by removing the modifier (use `.identity`)
+- A18 — morph without `withAnimation`
+- A19 — morph across separate `GlassEffectContainer`s
+- A20 — `GlassEffectContainer(spacing:)` set to a middle value
+- A21 — mixed `.soft` / `.hard` scroll edge styles on one scroll view
+- A22 — scroll-edge effect with no overlapping chrome
+- A23 — icon + label glued into one tap target
+- A24 — `.glassProminent` + `.circle` border shape artifact
 
 ## What this skill is not
 

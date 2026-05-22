@@ -1,7 +1,7 @@
 {
   "name": "liquid-glass-native",
   "description": "Build authentic macOS 26 (Tahoe) Liquid Glass apps with AppKit and SwiftUI. Materials, window chrome, NavigationSplitView, NSGlassEffectView, toolbars, and anti-patterns.",
-  "version": "0.1.0",
+  "version": "0.2.1",
   "author": { "name": "liquid-glass-agent-kit contributors" },
   "repository": "https://github.com/schovi/liquid-glass-agent-kit",
   "license": "MIT"

@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.2.1 — native auditor catches up
+
+### Changed
+
+- `plugins/liquid-glass-native/skills/liquid-glass-native-ui/references/anti-patterns.md` — promoted the unlabeled "Bonus — macOS 26 gotchas" section to formal IDs **A11–A24**, one heading per gotcha (legacy `.sidebar` material, `.presentationBackground(.glass)` + detents, double `.toolbar`, `.glassEffect` mid-chain, materials wrapping controls, `.interactive()` on static surfaces, conditional removal vs `.identity`, morph without `withAnimation`, morph across containers, `GlassEffectContainer(spacing:)` middle value, mixed `.soft`/`.hard` scroll edges, edge effect without chrome, icon + label glued, `.glassProminent` + `.circle` clip).
+- `plugins/liquid-glass-native/skills/liquid-glass-native-ui/SKILL.md` — extended the self-audit checklist with A11–A24.
+- `plugins/liquid-glass-native/agents/liquid-glass-native-auditor.md` — rewrote "What to check" to enumerate all 24 anti-patterns with concrete code signals, added a `FW —` prefix for framework-hygiene findings that have no A-ID, and updated the report format.
+
+### Migration
+
+No code or API changes — the audit ID space just grew. Existing
+findings keyed to A1–A10 are unchanged.
+
 ## 0.2.0 — prompt-first pivot
 
 ### Changed
