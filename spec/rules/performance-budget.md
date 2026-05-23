@@ -15,7 +15,10 @@ elements, three surfaces at rest.
 A **live-blurred surface** is any element that performs real-time
 backdrop sampling on render:
 
-- web: any element with class `lg-glass` (regardless of variant).
+- web: any element with class `lg-glass` whose role is `liveBlur: true`
+  in `spec/tokens/material.yaml` (default for unrolled elements). The
+  `data-role` attribute can opt a surface out — e.g. `data-role="windowBackground"`
+  marks a solid tint that does not count.
 - native SwiftUI: any view with `.glassEffect(...)` where the variant
   is not `.identity`.
 - native AppKit: any `NSGlassEffectView` and the content view of any
@@ -24,6 +27,13 @@ backdrop sampling on render:
 Elements *grouped inside* a single `GlassEffectContainer` /
 `NSGlassEffectContainerView` count as **one** surface — that is the
 point of the container.
+
+### Role taxonomy and the budget
+
+`spec/tokens/material.yaml` `roles.*` carries a `liveBlur:` field.
+Roles with `liveBlur: false` (`windowBackground`, `content`) are solid
+tints with no backdrop sampling and never count, even if the renderer
+happens to draw them with the same CSS class for layout reasons.
 
 ## The cap
 
@@ -58,10 +68,12 @@ When the design needs more floating elements than the budget allows:
 
 ### B1 — Budget exceeded
 
-The web auditor counts elements with class `lg-glass` per HTML file
-and fails when the count exceeds `material.yaml` `budget.max` (6 by
-default). A warning is not emitted at the recommended threshold; the
-recommendation is documentary.
+The web auditor counts elements with class `lg-glass` per HTML file,
+ignoring any element whose `data-role` resolves to a `liveBlur: false`
+role (`windowBackground`, `content`). It fails when the remaining
+count exceeds `material.yaml` `budget.max` (6 by default). A warning
+is not emitted at the recommended threshold; the recommendation is
+documentary.
 
 The native side is review-enforced — `liquid-glass-native-auditor`
 flags screens that exceed the recommended count per pane and rejects

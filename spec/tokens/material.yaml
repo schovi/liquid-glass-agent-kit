@@ -3,6 +3,17 @@
 # These are NOT Apple-published values. They are a community-derived web
 # approximation chosen to look correct in HTML/CSS/SVG/WebGL across light
 # and dark backgrounds. Renderers should consume only the values listed here.
+#
+# Two-axis model:
+#   - `glass.*`     — the primitive material variants (regular, clear). What
+#                     the surface *is*.
+#   - `roles.*`     — semantic roles (sidebar, toolbar, menu, popover, hud,
+#                     sheet, header, windowBackground, content). Where the
+#                     surface *lives*. Picks the right Apple API per platform
+#                     and decides whether the surface counts against the
+#                     B1 live-blur budget.
+# Renderers consume roles when they know the surface's role (almost always),
+# and fall back to glass.* primitives when they don't.
 
 glass:
   regular:
@@ -54,6 +65,77 @@ glass:
       shadow: "0 6px 24px rgba(0,0,0,0.10)"
       requiresBackgroundDimming: true
       backgroundDim: "rgba(0,0,0,0.24)"
+
+# Material roles — pick a role by where the surface lives, not by appearance.
+#
+# Each role names the closest real Apple API for SwiftUI, AppKit, and the
+# macOS 26 / iOS 26 Glass variant where one applies. The `web:` field tells
+# the web renderer which `glass.*` primitive to consume (or `solid` when the
+# surface does not carry live blur). `liveBlur:` decides whether the surface
+# counts against the B1 performance budget.
+roles:
+  sidebar:
+    swiftui: "Glass.regular (NavigationSplitView sidebar column auto-applies)"
+    appkit: "NSVisualEffectView.Material.sidebar"
+    glass26: "regular"
+    web: glass.regular
+    liveBlur: true
+
+  toolbar:
+    swiftui: "Glass.regular (auto on .toolbar { ... })"
+    appkit: "NSToolbar (unified mode) + NSVisualEffectView.Material.titlebar"
+    glass26: "regular"
+    web: glass.regular
+    liveBlur: true
+
+  menu:
+    swiftui: "system-applied via Menu / .contextMenu"
+    appkit: "NSVisualEffectView.Material.menu"
+    glass26: "regular"
+    web: glass.regular
+    liveBlur: true
+
+  popover:
+    swiftui: "system-applied via .popover(isPresented:arrowEdge:)"
+    appkit: "NSVisualEffectView.Material.popover"
+    glass26: "regular"
+    web: glass.regular
+    liveBlur: true
+
+  hud:
+    swiftui: "Glass.regular inside .overlay(alignment:) (often in GlassEffectContainer)"
+    appkit: "NSVisualEffectView.Material.hudWindow"
+    glass26: "regular"
+    web: glass.regular
+    liveBlur: true
+
+  sheet:
+    swiftui: "system-applied via .sheet { ... .presentationDetents([...]) }"
+    appkit: "NSWindow sheet (material .sheet)"
+    glass26: "regular"
+    web: glass.regular
+    liveBlur: true
+
+  header:
+    swiftui: ".background(.regularMaterial) on sticky section headers"
+    appkit: "NSVisualEffectView.Material.headerView"
+    glass26: "regular"
+    web: glass.regular
+    liveBlur: true
+
+  windowBackground:
+    swiftui: "Color(nsColor: .windowBackgroundColor)"
+    appkit: "NSVisualEffectView.Material.windowBackground (or solid)"
+    glass26: "n/a — opaque tinted"
+    web: solid
+    liveBlur: false           # solid tint, cheap. Does not count against B1.
+
+  content:
+    swiftui: "Color(nsColor: .controlBackgroundColor)"
+    appkit: "solid NSColor"
+    glass26: "n/a — solid"
+    web: solid
+    liveBlur: false           # solid content surface. Does not count against B1.
 
 # Performance / cognitive budget for live-blurred surfaces.
 # See spec/rules/performance-budget.md for the full rule.

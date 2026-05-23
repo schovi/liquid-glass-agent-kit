@@ -73,3 +73,54 @@ render — never reach for `CIFilter` to "hand-tune" the look.
 
 - SwiftUI: `Glass.regular`, `Glass.clear`, `.glass.tint(_:).interactive()`.
 - AppKit: `NSGlassEffectView`, optional `tintColor`; or use the right `NSVisualEffectMaterial` (`.popover`, `.menu`, `.sheet`, etc.).
+
+## Material roles — pick by where the surface lives
+
+`spec/tokens/material.yaml` `roles.*` names each surface by where it sits.
+The role chooses the right Apple API for each platform and decides whether
+the surface counts against the B1 live-blur budget.
+
+| Role | SwiftUI | AppKit (`NSVisualEffectView.Material`) | macOS 26 Glass | Counts vs B1 |
+|---|---|---|---|---|
+| `sidebar` | `Glass.regular` (auto on `NavigationSplitView` sidebar) | `.sidebar` | regular | yes |
+| `toolbar` | `Glass.regular` (auto on `.toolbar { ... }`) | `.titlebar` / `NSToolbar` unified | regular | yes |
+| `menu` | system-applied via `Menu` / `.contextMenu` | `.menu` | regular | yes |
+| `popover` | system-applied via `.popover(isPresented:arrowEdge:)` | `.popover` | regular | yes |
+| `hud` | `Glass.regular` inside `.overlay(alignment:)` (often in `GlassEffectContainer`) | `.hudWindow` | regular | yes |
+| `sheet` | system-applied via `.sheet { ... .presentationDetents([...]) }` | `NSWindow` sheet (`.sheet`) | regular | yes |
+| `header` | `.background(.regularMaterial)` on sticky headers | `.headerView` | regular | yes |
+| `windowBackground` | `Color(nsColor: .windowBackgroundColor)` | `.windowBackground` or solid | n/a | no (solid tint) |
+| `content` | `Color(nsColor: .controlBackgroundColor)` | solid `NSColor` | n/a | no (solid) |
+
+Rule of thumb for amateurs: don't ask "should this be `.thin` or `.thick`?" —
+ask "what does this surface *do*?" Pick the role first; the material follows.
+
+Wrong:
+
+```swift
+Rectangle().fill(.ultraThinMaterial)  // why this thickness?
+```
+
+Right:
+
+```swift
+// A sidebar column. The sidebar role auto-applies the system material.
+NavigationSplitView {
+    sidebarContent
+} detail: {
+    detailContent
+}
+```
+
+```swift
+// A floating HUD over media. Role: hud.
+mediaCanvas
+    .overlay(alignment: .bottom) {
+        GlassEffectContainer {
+            HStack { /* HUD controls */ }
+                .padding(6)
+                .glassEffect(.regular, in: .capsule)
+        }
+        .padding(16)
+    }
+```

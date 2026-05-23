@@ -1,5 +1,7 @@
 component: toolbar
 description: Horizontal floating group of icon-buttons. Capsule shape.
+material:
+  role: toolbar
 geometry:
   minHeight: 52
   padding: 6
@@ -11,3 +13,8 @@ placement:
   - top
   - bottom
   - floating
+chrome:
+  # When the toolbar sits inside the window titlebar (unified mode), the
+  # surrounding window-chrome rules apply. See spec/patterns/window-chrome.md
+  # for titlebar height, traffic-light alignment, and full-size content view.
+  pattern: spec/patterns/window-chrome.md

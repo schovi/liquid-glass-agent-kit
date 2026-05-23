@@ -474,6 +474,48 @@ function morphingBody() {
   `;
 }
 
+function commandPaletteBody() {
+  return `
+    <div class="lg-command-palette-demo">
+      <p class="lg-section__lede">
+        Press <span class="lg-command-palette-demo__kbd">⌘K</span> from anywhere
+        on this page (or click the button below) to open the palette. Type to
+        filter, <span class="lg-command-palette-demo__kbd">↑↓</span> to navigate,
+        <span class="lg-command-palette-demo__kbd">⏎</span> to run,
+        <span class="lg-command-palette-demo__kbd">Esc</span> to dismiss.
+      </p>
+      <button
+        type="button"
+        class="lg-button lg-button--prominent lg-button--blue lg-command-palette-demo__trigger"
+        data-open-command-palette
+      >Open command palette</button>
+      <article class="lg-content-card">
+        <h2 class="lg-content-card__title">What the kit fixes</h2>
+        <p class="lg-content-card__body">
+          The palette uses the <code>hud</code> material role over a scrim,
+          so it never stacks glass on the underlying toolbar (anti-pattern A1).
+          The geometry (640 wide, 16 outer radius, 12 item radius) is
+          concentric. Keyboard model is non-negotiable —
+          <code>⌘K</code> toggle, <code>↑↓</code> navigate, <code>⏎</code> run,
+          <code>Esc</code> close, focus trap while open, focus restore on close.
+        </p>
+      </article>
+      <article class="lg-content-card">
+        <h2 class="lg-content-card__title">Native equivalent</h2>
+        <p class="lg-content-card__body">
+          On macOS 26, place the panel in
+          <code>.overlay(alignment: .top)</code> with
+          <code>.glassEffect(.regular, in: .rect(cornerRadius: 16))</code>,
+          and toggle it with
+          <code>.keyboardShortcut(.init("k"), modifiers: .command)</code>.
+          Do <em>not</em> reuse <code>.searchable</code> — that one lives in
+          the toolbar; the palette is its own modal surface.
+        </p>
+      </article>
+    </div>
+  `;
+}
+
 function scrollEdgeEffectsBody() {
   const ROW_COUNT = 24;
   const rows = Array.from({ length: ROW_COUNT }, (_, i) => `
@@ -655,6 +697,16 @@ export const SECTIONS = [
            <code>.presentationDetents([.medium, .large])</code> picks up Liquid Glass
            automatically.`,
     body: sheetBody,
+  },
+  {
+    id: "command-palette",
+    eyebrow: "Patterns",
+    title: "Command palette (⌘K)",
+    lede: `Floating action launcher on the <code>hud</code> material role.
+           Spotlight is the system version; Raycast / Linear / Superhuman
+           are the modern app pattern. The kit codifies geometry, motion,
+           and the keyboard model so the focus trap and restore are right.`,
+    body: commandPaletteBody,
   },
   {
     id: "morphing",

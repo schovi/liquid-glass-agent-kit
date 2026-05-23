@@ -89,6 +89,48 @@
       </div>
     </main>
 
+    <!--
+      Command palette — Cmd-K floating launcher. Hidden until opened from
+      command-palette.js. Geometry/keyboard/motion from
+      spec/components/command-palette.yaml and spec/patterns/command-palette.md.
+      Glass role: hud. Scrim under the panel breaks any glass-on-glass with
+      the underlying toolbar.
+    -->
+    <div
+      class="lg-command-palette"
+      id="lg-command-palette"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="lg-command-palette-title"
+      data-state="closed"
+      hidden
+    >
+      <div class="lg-command-palette__scrim" aria-hidden="true"></div>
+      <div class="lg-command-palette__panel lg-glass--regular" data-renderer="css" data-role="hud">
+        <h2 id="lg-command-palette-title" class="lg-command-palette__sr-only">Command palette</h2>
+        <input
+          class="lg-command-palette__input"
+          type="text"
+          role="combobox"
+          aria-expanded="true"
+          aria-controls="lg-command-palette-listbox"
+          aria-activedescendant=""
+          autocomplete="off"
+          spellcheck="false"
+          placeholder="Type a command…"
+        />
+        <ul
+          id="lg-command-palette-listbox"
+          class="lg-command-palette__list"
+          role="listbox"
+          aria-label="Commands"
+        ></ul>
+        <footer class="lg-command-palette__footer">
+          <kbd>↑↓</kbd> navigate · <kbd>⏎</kbd> run · <kbd>Esc</kbd> close
+        </footer>
+      </div>
+    </div>
+
     <!-- Sheet — bottom-anchored modal. :target trigger keeps it JS-free. -->
     <div class="lg-sheet" id="open-sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title">
       <a class="lg-sheet__scrim" href="#" aria-label="Close sheet"></a>

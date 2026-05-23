@@ -10,6 +10,7 @@ const REFERENCE   = "Reference documentation.";
 const CLEAR       = "Clear glass; requires dim layer behind.";
 const EDGE        = "Boundary treatment; only where chrome overlaps.";
 const MORPH       = "Single-capsule shape morph; one transition, one glass sample.";
+const PALETTE     = "Floating launcher on the hud role; ⌘K, focus trap, scrim under.";
 
 export const SECTION_META = {
   materials:             { label: "Materials",            variant: "Regular", surfaceRule: FOUNDATIONS },
@@ -23,6 +24,7 @@ export const SECTION_META = {
   "forms-lists":         { label: "Forms & lists",        variant: "Regular", surfaceRule: CONTENT },
   surfaces:              { label: "Content surfaces",     variant: "Regular", surfaceRule: CONTENT },
   "sheet-section":       { label: "Sheet",                variant: "Regular", surfaceRule: MODAL },
+  "command-palette":     { label: "Command palette",     variant: "Regular", surfaceRule: PALETTE },
   morphing:              { label: "Morphing",             variant: "Regular", surfaceRule: MORPH },
   "scroll-edge-effects": { label: "Scroll edge effects",  variant: "Regular", surfaceRule: EDGE },
   rules:                 { label: "Where glass belongs",  variant: "Regular", surfaceRule: REFERENCE },

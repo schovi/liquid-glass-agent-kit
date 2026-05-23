@@ -121,6 +121,202 @@ private enum ChipVariant {
     }
 }
 
+// MARK: - Command palette (⌘K)
+
+struct CommandPaletteSection: View {
+    @State private var isOpen = false
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: Tokens.Spacing.panelGap) {
+            SectionHeader(
+                eyebrow: "Patterns",
+                title: "Command palette (⌘K)",
+                lede: "Floating action launcher on the hud material role. Toggle with ⌘K. The palette panel is glass; items inside are solid rows (no glass-on-glass). Use .overlay(alignment: .top) + .glassEffect(.regular, in: .rect(cornerRadius: 16)) — not .searchable, which lives in the toolbar."
+            )
+
+            ComponentCard(title: "Press the button or ⌘K") {
+                Button {
+                    withAnimation(Tokens.Easing.standard(duration: Tokens.Duration.base)) {
+                        isOpen = true
+                    }
+                } label: {
+                    Label("Open command palette", systemImage: "command")
+                }
+                .buttonStyle(.glassProminent)
+                .buttonBorderShape(.capsule)
+                .controlSize(.large)
+                .keyboardShortcut("k", modifiers: .command)
+            }
+
+            Text("Geometry: width 640, max-height 480, top offset 96. Outer radius 16, item radius 12 (concentric). Input 44 tall, item 44 tall. Spring enter 240 ms, standard exit 160 ms. Reduced Motion collapses to opacity-only fade automatically.")
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+        }
+        .overlay(alignment: .top) {
+            if isOpen {
+                CommandPalettePanel(isOpen: $isOpen)
+                    .padding(.top, Tokens.Spacing.sectionGap)
+                    .transition(.scale(scale: 0.96).combined(with: .opacity))
+            }
+        }
+    }
+}
+
+private struct PaletteCommand: Identifiable, Hashable {
+    let id: String
+    let label: String
+    let shortcut: String?
+}
+
+private struct CommandPalettePanel: View {
+    @Binding var isOpen: Bool
+    @State private var query: String = ""
+    @State private var selectedIndex: Int = 0
+    @FocusState private var inputFocused: Bool
+
+    private let commands: [PaletteCommand] = [
+        .init(id: "jump-materials",   label: "Jump to Materials",         shortcut: "⌘1"),
+        .init(id: "jump-shape",       label: "Jump to Shape",             shortcut: "⌘2"),
+        .init(id: "jump-typography",  label: "Jump to Typography",        shortcut: "⌘3"),
+        .init(id: "open-sheet",       label: "Open New entry sheet",      shortcut: "⌘N"),
+        .init(id: "toggle-appearance", label: "Toggle light / dark appearance", shortcut: nil),
+        .init(id: "export-tokens",    label: "Export design tokens",      shortcut: "⌥⌘E"),
+        .init(id: "share",            label: "Share showcase link",       shortcut: "⌘⇧S"),
+        .init(id: "about",            label: "About Liquid Glass",        shortcut: nil),
+    ]
+
+    private var filtered: [PaletteCommand] {
+        let q = query.trimmingCharacters(in: .whitespaces).lowercased()
+        if q.isEmpty { return commands }
+        return commands.filter { $0.label.lowercased().contains(q) }
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            TextField("Type a command…", text: $query)
+                .textFieldStyle(.plain)
+                .font(.title3)
+                .padding(.horizontal, 14)
+                .padding(.vertical, 10)
+                .focused($inputFocused)
+                .onChange(of: query) { _, _ in selectedIndex = 0 }
+                .onKeyPress(.upArrow) {
+                    if !filtered.isEmpty {
+                        selectedIndex = (selectedIndex - 1 + filtered.count) % filtered.count
+                    }
+                    return .handled
+                }
+                .onKeyPress(.downArrow) {
+                    if !filtered.isEmpty {
+                        selectedIndex = (selectedIndex + 1) % filtered.count
+                    }
+                    return .handled
+                }
+                .onKeyPress(.return) {
+                    runSelected()
+                    return .handled
+                }
+                .onKeyPress(.escape) {
+                    close()
+                    return .handled
+                }
+
+            ScrollView {
+                LazyVStack(spacing: 2) {
+                    ForEach(Array(filtered.enumerated()), id: \.element.id) { index, cmd in
+                        CommandRow(
+                            command: cmd,
+                            isSelected: index == selectedIndex
+                        )
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            selectedIndex = index
+                            runSelected()
+                        }
+                        .onHover { hovering in
+                            if hovering { selectedIndex = index }
+                        }
+                    }
+                    if filtered.isEmpty {
+                        Text("No matches")
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                            .padding(.vertical, 12)
+                    }
+                }
+            }
+            .frame(maxHeight: 360)
+
+            HStack(spacing: Tokens.Spacing.controlGap) {
+                KeyHint("↑↓"); Text("navigate")
+                KeyHint("⏎");  Text("run")
+                KeyHint("Esc"); Text("close")
+            }
+            .font(.caption2)
+            .foregroundStyle(.tertiary)
+            .padding(.horizontal, 12)
+            .padding(.top, 2)
+            .padding(.bottom, 4)
+        }
+        .padding(8)
+        .frame(width: 640)
+        .frame(maxHeight: 480)
+        .glassEffect(.regular, in: .rect(cornerRadius: Tokens.Radius.md))
+        .onAppear { inputFocused = true }
+    }
+
+    private func runSelected() {
+        guard selectedIndex < filtered.count else { return }
+        close()
+    }
+
+    private func close() {
+        withAnimation(Tokens.Easing.standard(duration: Tokens.Duration.fast)) {
+            isOpen = false
+        }
+    }
+}
+
+private struct CommandRow: View {
+    let command: PaletteCommand
+    let isSelected: Bool
+
+    var body: some View {
+        HStack {
+            Text(command.label)
+                .font(.body)
+            Spacer()
+            if let shortcut = command.shortcut {
+                Text(shortcut)
+                    .font(.caption.monospaced())
+                    .foregroundStyle(.tertiary)
+            }
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 10)
+        .frame(minHeight: 44)
+        .background(
+            RoundedRectangle(cornerRadius: Tokens.Radius.sm, style: .continuous)
+                .fill(isSelected ? Color.primary.opacity(0.08) : Color.clear)
+        )
+    }
+}
+
+private struct KeyHint: View {
+    let key: String
+    init(_ key: String) { self.key = key }
+    var body: some View {
+        Text(key)
+            .font(.caption2.monospaced())
+            .padding(.horizontal, 5)
+            .padding(.vertical, 1)
+            .background(
+                RoundedRectangle(cornerRadius: 4, style: .continuous)
+                    .fill(Color.primary.opacity(0.06))
+            )
+    }
+}
+
 // MARK: - Scroll edge effects
 
 struct ScrollEdgeEffectsSection: View {

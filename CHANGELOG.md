@@ -1,5 +1,53 @@
 # Changelog
 
+## 0.3.0 — T2 pass (material roles, Cmd-K, app shell, icon)
+
+### Added
+
+- **Material role taxonomy (#7).** Each glass surface now picks a role by where it lives (sidebar, toolbar, menu, popover, hud, sheet, header, windowBackground, content) instead of just a thickness. Roles map to Apple's own SwiftUI Material + `NSVisualEffectView.Material` + macOS 26 Glass variant on the native side, and to a CSS approximation on the web side. `liveBlur: false` roles (`windowBackground`, `content`) are excluded from the B1 performance budget.
+  - `spec/tokens/material.yaml` — new `roles.*` block.
+  - `spec/rules/performance-budget.md` — B1 counts only `liveBlur: true` roles. Web auditor honors `data-role="windowBackground"` / `data-role="content"` opt-outs.
+  - `audit/liquid-glass-audit.mjs`, `audit/README.md` — B1 filter by role.
+  - `prompts/web-frosted-glass.md` — token block names the roles.
+  - `plugins/liquid-glass-native/skills/liquid-glass-native-ui/references/tokens.md` — per-role API table (SwiftUI / AppKit / Glass).
+  - `examples/macos-native-swift/Sources/LiquidGlassShowcase/Tokens.swift` — `enum MaterialRole` documenting each role's Apple API hint and live-blur status.
+  - `docs/design-system.md` — Material — roles entry.
+- **Command palette / Cmd-K (#4).** First-class pattern with geometry, motion, keyboard model, and ARIA wiring. Spec, web demo, and native demo all ship.
+  - `spec/components/command-palette.yaml` (new) — geometry + material role (`hud`) + keyboard model.
+  - `spec/patterns/command-palette.md` (new) — full pattern doc with native + AppKit recipes and source citations.
+  - `examples/macos-web/command-palette.js` (new) — working ⌘K palette wired with focus trap, filter, ↑↓/⏎/Esc model, click-and-hover selection, focus restore.
+  - `examples/macos-web/index.html`, `examples/macos-web/styles.css`, `examples/macos-web/app.js`, `examples/macos-web/sections.js`, `examples/macos-web/sidebar.js`, `examples/macos-web/inspector.js` — palette markup, styles, app wiring, showcase tile, sidebar entry, inspector metadata.
+  - `examples/macos-native-swift/Sources/LiquidGlassShowcase/Patterns.swift` — new `CommandPaletteSection` with a working SwiftUI panel (`TextField` + `onKeyPress(.upArrow / .downArrow / .return / .escape)` + `.keyboardShortcut("k", modifiers: .command)`).
+  - `examples/macos-native-swift/Sources/LiquidGlassShowcase/Sidebar.swift`, `examples/macos-native-swift/Sources/LiquidGlassShowcase/ContentView.swift`, `examples/macos-native-swift/Sources/LiquidGlassShowcase/Inspector.swift` — `commandPalette` `SectionID` case + DetailView wiring + inspector surface rule.
+  - `plugins/liquid-glass-native/skills/liquid-glass-native-ui/references/patterns/command-palette.md` (new) — SwiftUI / AppKit recipe.
+  - `plugins/liquid-glass-native/skills/liquid-glass-native-ui/SKILL.md` — reference map entry.
+  - `spec/liquid-glass.profile.yaml` — imports `command-palette.yaml`.
+  - `prompts/web-frosted-glass.md` — Patterns section adds a Cmd-K line.
+  - `docs/design-system.md` — Command palette entry.
+- **App shell — sidebar + window chrome (#6).** Promotes implicit numbers in the showcases to spec entries with explicit geometry (titlebar 52 / 28, traffic-light alignment to first sidebar row, sidebar 220–260 / 320, 10 inset, 28 outer radius).
+  - `spec/patterns/sidebar.md` (new) — geometry + section structure + full-height sidebar pattern + anti-patterns.
+  - `spec/patterns/window-chrome.md` (new) — outer radius, padding, titlebar heights, traffic-light alignment, `fullSizeContentView`, toolbar composition rules.
+  - `spec/components/toolbar.yaml` — `material.role: toolbar`; `chrome:` pointer to the new window-chrome pattern.
+  - `plugins/liquid-glass-native/skills/liquid-glass-native-ui/references/patterns/sidebar.md` (new) — SwiftUI `NavigationSplitView` + AppKit `NSSplitViewController` recipes.
+  - `plugins/liquid-glass-native/skills/liquid-glass-native-ui/references/patterns/window-chrome.md` (new) — Mac chrome cheat-sheet.
+  - `prompts/web-frosted-glass.md` — new App shell section with chrome numbers.
+  - `docs/design-system.md` — Sidebar and Window chrome entries expanded with role, native plugin pointer, and caveats.
+- **Mac app icon guidance (#5).** Closes the silent gap where a credible glass UI ships with a default Xcode icon.
+  - `spec/rules/icon.md` (new) — Icon Composer flow, squircle grid (1024 canvas, 820 safe area), layered model, light/dark/tinted variants, common amateur mistakes.
+  - `plugins/liquid-glass-native/skills/liquid-glass-native-ui/references/icon.md` (new) — native-side mirror.
+  - `plugins/liquid-glass-native/skills/liquid-glass-native-ui/SKILL.md` — reference map entry.
+  - `prompts/web-frosted-glass.md` — out-of-scope note pointing at the spec.
+  - `docs/design-system.md` — App icon section.
+
+### Changed
+
+- B1 budget enforcement now filters by material role. Surfaces marked `data-role="windowBackground"` or `data-role="content"` (`liveBlur: false`) no longer count. Existing showcase pages with many demo glass tiles are unaffected because they remain `liveBlur: true`.
+- The native showcase's patterns group now has three entries (command-palette, morphing, scroll-edge-effects) instead of two.
+
+### Migration
+
+No code or API renames. Existing tokens (`glass.regular`, `glass.clear`) are unchanged; the `roles.*` block is additive. Existing showcase markup keeps working without `data-role` attributes — defaults preserve the previous audit behavior.
+
 ## 0.2.2 — T1 rule pass (criticism, budget, Apple-prompt diff)
 
 ### Added

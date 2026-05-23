@@ -40,6 +40,7 @@ imports:
   - components/slider.yaml
   - components/progress.yaml
   - components/badge.yaml
+  - components/command-palette.yaml
 
 # Renderers an agent may pick from. Choice is part of the skill's required
 # workflow; never silently mix two renderers in the same surface.

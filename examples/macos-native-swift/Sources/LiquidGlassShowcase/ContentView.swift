@@ -109,6 +109,7 @@ struct DetailView: View {
                             case .formsLists: FormsListsSection()
                             case .surfaces: SurfacesSection()
                             case .sheet: SheetSection(onOpen: onOpenSheet)
+                            case .commandPalette: CommandPaletteSection()
                             case .morphing: MorphingSection()
                             case .scrollEdgeEffects: ScrollEdgeEffectsSection()
                             case .rules: RulesSection()

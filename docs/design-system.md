@@ -75,6 +75,18 @@ Per-pane cap on live-blurred surfaces. Recommended 3 (calm) · busy transient 5 
 - apple: WWDC25 session 219 ("share sampling, don't stack"); rationale from JuniperPhoton's three-textures-per-`CABackdropLayer` measurement and the iOS 26.1 Menu regression.
 - caveats: a `GlassEffectContainer` / `NSGlassEffectContainerView` counts as **one** surface no matter how many children it groups — that is the point.
 
+### Material — roles
+
+Each surface picks a role by where it lives. Roles map to the closest real Apple API per platform (SwiftUI Material, `NSVisualEffectView.Material`, macOS 26 Glass variant) and decide whether the surface counts against the B1 budget. Picking by role beats picking by thickness — an amateur learns "sidebar → use the sidebar role" once, then everything downstream falls out automatically.
+
+- live-blur roles (count against B1): `sidebar`, `toolbar`, `menu`, `popover`, `hud`, `sheet`, `header`
+- solid roles (do not count against B1): `windowBackground`, `content`
+- spec: `spec/tokens/material.yaml` (`roles.*`)
+- web: opt out a solid surface with `data-role="windowBackground"` (or `content`) so the auditor excludes it
+- native: `examples/macos-native-swift/Sources/LiquidGlassShowcase/Tokens.swift` (`enum MaterialRole`); `plugins/liquid-glass-native/skills/liquid-glass-native-ui/references/tokens.md` (per-role API table)
+- apple: SwiftUI `NavigationSplitView` (sidebar), `.toolbar` (toolbar), `Menu` (menu), `.popover` (popover), `.overlay(alignment:)` (hud), `.sheet` + `.presentationDetents` (sheet); AppKit `NSVisualEffectView.Material` enum is the canonical role taxonomy on the macOS side (`.sidebar`, `.titlebar`, `.menu`, `.popover`, `.hudWindow`, `.sheet`, `.headerView`, `.windowBackground`).
+- caveats: roles are documentation + audit-filter — they do not generate code. The renderer still picks a primitive (Regular or Clear glass) per role.
+
 ### Material — accessibility fallbacks
 
 Reduced transparency / increased contrast / reduced motion. Web emits explicit fallbacks. Native is system-driven — do not hand-roll fallbacks.
@@ -293,21 +305,25 @@ Small solid status pill, 20 tall, capsule. Sits on content surfaces or trailing 
 
 ### Window chrome
 
-Outer radius 28, traffic lights top-left, unified titlebar + toolbar.
+Outer radius 28, 8 padding to inner panels, titlebar 52 (unified) / 28 (no toolbar). Traffic lights (12 × 12, 8 gap, 14 from left) align vertically to the **first sidebar row**, not the titlebar text baseline. Full-size content view + transparent titlebar produce the "modern Mac app" look.
 
+- spec: `spec/patterns/window-chrome.md`
 - web: `examples/macos-web/index.html` (`.lg-window`, `.lg-titlebar`, `.lg-traffic-lights`)
 - native: macOS system chrome (no code) + `.windowToolbarStyle(.unified(showsTitle: true))` in `examples/macos-native-swift/Sources/LiquidGlassShowcase/App.swift`
-- apple: HIG window chapter; AppKit `NSWindow.toolbarStyle = .unified`
-- caveats: outer corner radius wraps concentrically around the inner toolbar pill (concentricity rule).
+- native plugin: `plugins/liquid-glass-native/skills/liquid-glass-native-ui/references/patterns/window-chrome.md`
+- apple: HIG Window Anatomy; AppKit `NSWindow.toolbarStyle = .unified`, `.titlebarAppearsTransparent`, `.fullSizeContentView`; SwiftUI `.windowToolbarStyle(.unified(showsTitle:))` + `.navigationSubtitle(_:)`
+- caveats: outer corner radius (28) wraps concentrically around the inner toolbar pill (concentricity rule). Two `.toolbar` modifiers in different ancestors silently drop one — anti-pattern A13.
 
 ### Sidebar
 
-Floating Regular-glass source list. Section heading + rows + icons + badges.
+Floating Regular-glass source list on the `sidebar` material role. Section heading + rows + icons + badges. 220 min / 260 ideal width on Mac, 320 on iPad. Row 28–30 tall, section heading 28 tall, icon column 22. 2–5 sections. 10 px inset from window outer edge.
 
-- web: `examples/macos-web/index.html` (`.lg-sidebar`)
-- native: `examples/macos-native-swift/Sources/LiquidGlassShowcase/Sidebar.swift`
-- apple: AppKit `NSSplitViewItem.behavior = .sidebar`; SwiftUI `NavigationSplitView` sidebar column
-- caveats: on macOS 26, *remove* the legacy `.sidebar` `NSVisualEffectMaterial` — keeping it blocks Liquid Glass auto-application.
+- spec: `spec/patterns/sidebar.md`
+- web: `examples/macos-web/index.html` (`.lg-sidebar`) + `examples/macos-web/sidebar.js`
+- native: `examples/macos-native-swift/Sources/LiquidGlassShowcase/Sidebar.swift` (`NavigationSplitView` + `.listStyle(.sidebar)`)
+- native plugin: `plugins/liquid-glass-native/skills/liquid-glass-native-ui/references/patterns/sidebar.md`
+- apple: AppKit `NSSplitViewItem.behavior = .sidebar`; SwiftUI `NavigationSplitView` sidebar column auto-applies the system material; iPadOS shares the API and ramps the width to 320
+- caveats: on macOS 26, *remove* the legacy `.sidebar` `NSVisualEffectMaterial` — keeping it blocks Liquid Glass auto-application (A11). Glass-on-glass inside the sidebar (a row that adds its own `.glassEffect`) is A1.
 
 ### Inspector
 
@@ -402,6 +418,17 @@ Free-floating Regular-glass control surface over media or canvas. Capsule (singl
 - apple: SwiftUI `GlassEffectContainer` inside `.overlay(alignment:)`; AppKit `NSGlassEffectContainerView` positioned in the content view
 - caveats: never place a HUD over a form or text-heavy view (A2). For video, fade-out uses `fast` (160 ms) standard easing.
 
+### Command palette (⌘K)
+
+Floating action launcher on the `hud` material role. Spotlight is the system version; Raycast / Linear / Superhuman are the modern app-level pattern. Width 640, max-height 480, top offset 96 from window edge. Outer radius 16; item radius 12 (concentric, 16 outer − 4 panel padding). Input 44 tall, item 44 tall. Spring enter 240 ms; standard exit 160 ms.
+
+- spec: `spec/components/command-palette.yaml` (geometry), `spec/patterns/command-palette.md` (keyboard + motion + a11y)
+- web: `examples/macos-web/command-palette.js` (logic), `examples/macos-web/sections.js` (`commandPaletteBody`), `examples/macos-web/styles.css` (`.lg-command-palette*`), `examples/macos-web/index.html` (palette overlay markup)
+- native: `examples/macos-native-swift/Sources/LiquidGlassShowcase/Patterns.swift` (`CommandPaletteSection`)
+- native plugin: `plugins/liquid-glass-native/skills/liquid-glass-native-ui/references/patterns/command-palette.md`
+- apple: SwiftUI `.overlay(alignment: .top)` + `.glassEffect(.regular, in: .rect(cornerRadius: 16))` + `.keyboardShortcut(.init("k"), modifiers: .command)`; AppKit `NSPanel` with `.hudWindow` material + `NSEvent.addLocalMonitorForEvents`
+- caveats: panel is glass, items inside are **solid** hover rows — glass-on-glass (A1) is the most common mistake. Do not reuse `.searchable` (that's a toolbar field, not a modal). Always trap focus while open and restore focus on close.
+
 ### Morphing
 
 Glass elements morph — they don't pop — when they appear, disappear, swap shape, or move. The web side approximates the **single-capsule** flavor only.
@@ -423,6 +450,18 @@ Per-edge fade / harden treatment beneath floating chrome.
 - native plugin: `plugins/liquid-glass-native/skills/liquid-glass-native-ui/references/patterns/scroll-edge-effects.md`
 - apple: SwiftUI `.scrollEdgeEffectStyle(_:for:)`; AppKit `NSScrollView.topEdgeEffect.style` / `.bottomEdgeEffect` / `.leftEdgeEffect` / `.rightEdgeEffect`
 - caveats: one style per edge, never mix soft + hard on adjacent edges. Apply only where chrome actually overlaps that edge. `NavigationSplitView` columns already apply hard edges to their toolbars. Reduced-transparency drops the mask in the web approximation and falls back to a solid divider.
+
+---
+
+## App icon
+
+Continuous-curvature squircle, layered model, light / dark / tinted variants. Authored in Icon Composer, dropped into Xcode as an `.icon` asset. Out of scope for the web prompt; required for credible macOS / iOS apps.
+
+- spec: `spec/rules/icon.md`
+- web: out of scope — `prompts/web-frosted-glass.md` refuses icon-generation requests
+- native: no code in `examples/macos-native-swift/` (icons are art assets); guidance in `plugins/liquid-glass-native/skills/liquid-glass-native-ui/references/icon.md`
+- apple: [Icon Composer](https://developer.apple.com/icon-composer/); HIG App Icons chapter
+- caveats: do not pre-clip the squircle in artwork (system reclips → double round); do not bake drop shadow (system applies the inner shadow + Liquid-Glass-aware highlight); always author all three variants.
 
 ---
 

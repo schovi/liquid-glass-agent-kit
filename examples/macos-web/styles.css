@@ -1759,6 +1759,183 @@ body.lg-stage {
   }
 }
 
+/* =====================================================================
+   Command palette — Cmd-K floating launcher. Geometry from
+   spec/components/command-palette.yaml. Material role: hud.
+   ===================================================================== */
+.lg-command-palette {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  align-items: start;
+  justify-items: center;
+  padding-top: 96px;
+  z-index: 40;
+  pointer-events: none;
+}
+.lg-command-palette[data-state="open"] { pointer-events: auto; }
+
+.lg-command-palette__scrim {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.08);
+  opacity: 0;
+  transition: opacity var(--lg-duration-base) var(--lg-ease-standard);
+}
+.lg-command-palette[data-state="open"] .lg-command-palette__scrim { opacity: 1; }
+@media (prefers-color-scheme: dark) {
+  .lg-command-palette__scrim { background: rgba(0, 0, 0, 0.32); }
+}
+
+.lg-command-palette__panel {
+  position: relative;
+  width: min(640px, calc(100% - 32px));
+  max-height: 480px;
+  padding: 8px;
+  display: grid;
+  gap: 4px;
+  grid-template-rows: auto 1fr auto;
+  border-radius: var(--lg-radius-md); /* 16 */
+  background: var(--lg-glass-bg-light);
+  border: 1px solid var(--lg-glass-border-light);
+  box-shadow: var(--lg-glass-shadow);
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  isolation: isolate;
+  transform: translateY(-8px) scale(0.96);
+  opacity: 0;
+  transition:
+    transform var(--lg-duration-base) var(--lg-ease-spring),
+    opacity var(--lg-duration-base) var(--lg-ease-standard);
+}
+.lg-command-palette[data-state="open"] .lg-command-palette__panel {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+}
+.lg-command-palette__panel::before {
+  content: "";
+  position: absolute; inset: 0;
+  border-radius: inherit;
+  background: var(--lg-glass-highlight);
+  pointer-events: none;
+}
+@media (prefers-color-scheme: dark) {
+  .lg-command-palette__panel {
+    background: var(--lg-glass-bg-dark);
+    border-color: var(--lg-glass-border-dark);
+  }
+}
+
+.lg-command-palette__sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.lg-command-palette__input {
+  min-height: 44px;
+  padding: 10px 14px;
+  font: 400 17px/1.3 var(--lg-font-sans);
+  color: var(--lg-text);
+  background: transparent;
+  border: 0;
+  border-radius: var(--lg-radius-sm); /* 12, concentric to 16 outer */
+  outline: 0;
+  width: 100%;
+}
+.lg-command-palette__input::placeholder { color: var(--lg-text-faint); }
+
+.lg-command-palette__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 2px;
+  overflow-y: auto;
+  max-height: 360px;
+}
+
+.lg-command-palette__item {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  padding: 10px 12px;
+  border-radius: var(--lg-radius-sm); /* 12 */
+  font: 400 15px/1.3 var(--lg-font-sans);
+  color: var(--lg-text);
+  cursor: pointer;
+  user-select: none;
+}
+.lg-command-palette__item--selected,
+.lg-command-palette__item:hover {
+  background: rgba(0, 0, 0, 0.08);
+}
+@media (prefers-color-scheme: dark) {
+  .lg-command-palette__item--selected,
+  .lg-command-palette__item:hover {
+    background: rgba(255, 255, 255, 0.10);
+  }
+}
+.lg-command-palette__shortcut {
+  font: 400 12px/1 var(--lg-font-mono);
+  color: var(--lg-text-faint);
+  letter-spacing: 0.04em;
+}
+.lg-command-palette__empty {
+  padding: 12px;
+  text-align: center;
+  font: 400 13px/1.3 var(--lg-font-sans);
+  color: var(--lg-text-faint);
+}
+
+.lg-command-palette__footer {
+  display: flex;
+  gap: 8px;
+  padding: 6px 12px 4px;
+  font: 400 11px/1.2 var(--lg-font-sans);
+  color: var(--lg-text-faint);
+}
+.lg-command-palette__footer kbd {
+  font-family: var(--lg-font-mono);
+  font-size: 11px;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.06);
+  color: var(--lg-text-subtle);
+}
+@media (prefers-color-scheme: dark) {
+  .lg-command-palette__footer kbd { background: rgba(255, 255, 255, 0.10); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lg-command-palette__panel { transform: none; transition: opacity var(--lg-duration-fast) linear; }
+}
+
+/* The "press Cmd-K" demo trigger on the showcase tile. */
+.lg-command-palette-demo {
+  display: grid;
+  gap: var(--lg-gap-panel);
+}
+.lg-command-palette-demo__trigger {
+  width: fit-content;
+}
+.lg-command-palette-demo__kbd {
+  font: 400 13px/1 var(--lg-font-mono);
+  color: var(--lg-text-faint);
+  padding: 4px 8px;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 6px;
+}
+@media (prefers-color-scheme: dark) {
+  .lg-command-palette-demo__kbd { background: rgba(255, 255, 255, 0.08); }
+}
+
 /* Focus visibility */
 :focus-visible {
   outline: 2px solid #0a84ff;
@@ -1779,6 +1956,7 @@ body.lg-stage {
   .lg-menu,
   .lg-floating-hud,
   .lg-sheet__panel,
+  .lg-command-palette__panel,
   .lg-material-card__pane.lg-glass--regular {
     background: var(--lg-fallback-bg-light);
     backdrop-filter: none;
@@ -1810,6 +1988,7 @@ body.lg-stage {
     .lg-menu,
     .lg-floating-hud,
     .lg-sheet__panel,
+    .lg-command-palette__panel,
     .lg-material-card__pane.lg-glass--regular,
     .lg-material-card__pane.lg-glass--clear {
       background: var(--lg-fallback-bg-dark);

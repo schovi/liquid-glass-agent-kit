@@ -22,7 +22,7 @@ The auditor enforces anti-patterns from `spec/rules/anti-patterns.md` (A-prefix)
 - **A8** Clear glass without a `data-dim="true"` or `.lg-dim` sibling
 - **A9** Missing `prefers-reduced-transparency` / `prefers-contrast` / `prefers-reduced-motion` fallback in CSS
 - **A10** Apple endorsement phrases ("apple-official", "apple-certified", "licensed by apple")
-- **B1** Performance budget exceeded — more `lg-glass` elements in one file than `spec/tokens/material.yaml` `budget.max` (default 6) allows.
+- **B1** Performance budget exceeded — more live-blur `lg-glass` elements in one file than `spec/tokens/material.yaml` `budget.max` (default 6) allows. Elements opted out via `data-role="windowBackground"` or `data-role="content"` (roles with `liveBlur: false`) are excluded.
 
 A4 (invented component dimensions) and A6 (broken concentricity) are not statically checkable; they're enforced by the prompt at generation time and by manual review. The forbidden-surface codes F1–F5 from `spec/rules/when-not-to-use-glass.md` are review rules, not audit IDs — F2 and F5 are partially covered by A2 and A1 respectively.
 

@@ -113,8 +113,11 @@ Forbidden surfaces (`references/when-not-to-use-glass.md`, review-only):
 - `references/patterns/` — one focused recipe per pattern:
   - `form-rows.md`, `inset-list.md`, `disclosure-group.md`, `stepper.md`,
     `titlebar-accessory.md`, `floating-hud.md`, `morphing.md`,
-    `scroll-edge-effects.md`.
+    `scroll-edge-effects.md`, `command-palette.md`,
+    `sidebar.md`, `window-chrome.md`.
 - `references/system-primitives.md` — alerts, confirmation dialogs,
   tooltips. "Use the system, don't restyle."
+- `references/icon.md` — app-icon guidance: Icon Composer, squircle
+  grid, light / dark / tinted variants.
 
 All claims trace to `docs/resources.md` at the repo root.

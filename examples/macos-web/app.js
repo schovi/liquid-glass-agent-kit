@@ -6,6 +6,7 @@
 import { renderSidebar }                  from "./sidebar.js";
 import { renderSections }                 from "./sections.js";
 import { renderInspector, updateInspector, SECTION_META } from "./inspector.js";
+import { initCommandPalette, openCommandPalette } from "./command-palette.js";
 
 const sidebarHost   = document.querySelector(".lg-sidebar__sections");
 const contentHost   = document.querySelector(".lg-content");
@@ -62,3 +63,24 @@ if (contentHost && sections.length > 0) {
 // Initial selection — first sidebar item.
 const firstId = Object.keys(SECTION_META)[0];
 if (firstId) select(firstId);
+
+// Command palette — wire ⌘K + the demo trigger button in the palette section.
+initCommandPalette({
+  onJumpTo: (sectionId) => select(sectionId, { scroll: true }),
+  onAction: (action) => {
+    if (action === "open-sheet") {
+      window.location.hash = "open-sheet";
+    } else if (action === "toggle-theme") {
+      document.documentElement.dataset.theme =
+        document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+    }
+  },
+});
+
+contentHost?.addEventListener("click", (event) => {
+  const target = event.target.closest("[data-open-command-palette]");
+  if (target) {
+    event.preventDefault();
+    openCommandPalette();
+  }
+});

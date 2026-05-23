@@ -17,9 +17,16 @@ const ALLOWED_RADIUS_PX = new Set([0, 12, 16, 24, 28, 32]);
 const ALLOWED_CAPSULE_RADIUS = new Set([9999]);
 
 // B1 — Performance budget. Per spec/tokens/material.yaml budget.max.
-// A live-blurred surface is any element carrying class "lg-glass". Per-file
-// proxy for the "per visible pane" rule. See spec/rules/performance-budget.md.
+// A live-blurred surface is any element carrying class "lg-glass" whose role
+// is liveBlur:true in spec/tokens/material.yaml. Elements opted out via
+// data-role="windowBackground" or data-role="content" (liveBlur:false) are
+// excluded. Per-file proxy for the "per visible pane" rule.
+// See spec/rules/performance-budget.md.
 const GLASS_BUDGET_MAX = 6;
+
+// Roles whose `liveBlur:` is false in spec/tokens/material.yaml. Elements
+// declaring one of these via data-role do not count against B1.
+const SOLID_ROLES = new Set(["windowBackground", "content"]);
 
 const findings = [];
 
@@ -176,16 +183,27 @@ function checkInventedAppleTerminology(file, src) {
 // B1 — Performance budget exceeded. Counts elements with class "lg-glass"
 // per file (proxy for "per visible pane"). HTML and JS template strings are
 // both scanned because the showcase emits glass markup from sections.js.
+//
+// An element is excluded when it carries a data-role whose role has
+// `liveBlur: false` in spec/tokens/material.yaml (see SOLID_ROLES above).
 function checkBudget(file, src) {
   const ext = extname(file);
   if (![".html", ".htm", ".js", ".mjs"].includes(ext)) return;
-  const re = /class\s*=\s*["'][^"']*\blg-glass\b[^"']*["']/g;
-  const count = (src.match(re) || []).length;
+  // Match the full opening tag so we can inspect data-role alongside class.
+  const tagRe = /<[a-z][^>]*\bclass\s*=\s*["'][^"']*\blg-glass\b[^"']*["'][^>]*>/gi;
+  let count = 0;
+  let m;
+  while ((m = tagRe.exec(src))) {
+    const tag = m[0];
+    const roleMatch = /\bdata-role\s*=\s*["']([^"']+)["']/.exec(tag);
+    if (roleMatch && SOLID_ROLES.has(roleMatch[1])) continue;
+    count += 1;
+  }
   if (count > GLASS_BUDGET_MAX) {
     record(
       file,
       "B1",
-      `Performance budget exceeded: ${count} lg-glass surfaces in this file; cap is ${GLASS_BUDGET_MAX} per pane. Share sampling (GlassEffectContainer / shared capsule) or downgrade non-primary surfaces to solid. See spec/rules/performance-budget.md.`,
+      `Performance budget exceeded: ${count} live-blur lg-glass surfaces in this file; cap is ${GLASS_BUDGET_MAX} per pane. Share sampling (GlassEffectContainer / shared capsule), downgrade non-primary surfaces to solid, or label opaque tints with data-role="windowBackground". See spec/rules/performance-budget.md.`,
     );
   }
 }

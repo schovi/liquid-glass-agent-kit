@@ -37,6 +37,8 @@ struct Inspector: View {
             return "Content layer; SOLID — glass forbidden."
         case .sheet:
             return "Modal surface; Regular glass auto on partial detent."
+        case .commandPalette:
+            return "Floating launcher; hud role over scrim; ⌘K toggle."
         case .morphing:
             return "Animated identity; one GlassEffectContainer + @Namespace."
         case .scrollEdgeEffects:

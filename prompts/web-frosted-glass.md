@@ -18,6 +18,11 @@ For a real macOS app with the actual `glassEffect` API, install the `liquid-glas
 > - Clear glass (rare, requires a dim layer behind): `background rgba(255,255,255,0.18)`; `backdrop-filter: blur(28px) saturate(160%)`; dim `rgba(0,0,0,0.24)`.
 > - Reduced-transparency fallback: opaque `rgba(255,255,255,0.92)` / `rgba(20,20,20,0.92)`.
 >
+> **Material roles.** Pick a role by *where the surface lives* (this maps to Apple's own `NSVisualEffectView.Material` enum, not a generic "blur" knob):
+>
+> - `sidebar` (sidebar column) · `toolbar` (titlebar / floating capsule) · `menu` (pull-down / context menu) · `popover` (anchored panel) · `hud` (floating control over media) · `sheet` (presentation detents) · `header` (sticky section header) — all use Regular glass and count against the B1 budget.
+> - `windowBackground` (the solid tint behind the whole window) and `content` (any solid content surface) — solid, not glass, do not count against B1. Mark these with `data-role="windowBackground"` or `data-role="content"` if they happen to share the `lg-glass` class hook.
+>
 > **Component geometry (do not improvise).**
 >
 > - Button: min-height 44, padding 16/8, icon 18, font 15/600, capsule.
@@ -46,10 +51,23 @@ For a real macOS app with the actual `glassEffect` API, install the `liquid-glas
 > - Floating HUD: capsule (single row) or radius-16 (multi-row) Regular-glass container in `.overlay(alignment: .bottom)`, padding 6, item 40, gap 4, margin 16 from edge. Only over media or canvas — never over forms.
 > - Scroll edge effects (web approximation): fade scroll content beneath floating chrome with `mask-image: linear-gradient(...)` on the scroll container. **Soft** = wide gradient (24-32 px transparent band). **Hard** = narrow gradient (4-8 px) or a 1 px solid divider. One style per edge. Never mix soft + hard on adjacent edges of one scroll view. Apply only where chrome actually overlaps that edge — edge effects are not decoration.
 > - Morphing (web approximation, single-capsule only): a single glass capsule may animate its width / border-radius and crossfade its contents on state change. Use a CSS `transition` (240 ms `standard` easing) on `width`, `border-radius`, and child `opacity`. Keep the morph inside **one** capsule. **Do not** simulate macOS 26's multi-capsule metaball emergence (one capsule sprouting several with gooey tension between them) with SVG goo filters — that's native-only and the simulation fights `backdrop-filter`.
+> - Command palette (⌘K): a single rounded glass panel (`hud` role) over a scrim. Width 640, max-height 480, top offset 96, outer radius 16, item radius 12 (concentric), input height 44, item height 44. Non-negotiable keyboard model: `⌘K` toggles, `↑↓` moves selection, `⏎` runs, `Esc` closes, `Tab` is trapped inside the panel, focus restores to the trigger on close. The panel itself is glass; items inside are **solid** hover rows (glass-on-glass is A1). Spring enter 240 ms; standard exit 160 ms. ARIA: `role="dialog"` with `aria-modal="true"` on the panel, `role="combobox"` + `aria-activedescendant` on the input, `role="listbox"` on the list. Reduced motion collapses to opacity-only fade.
 >
 > **System primitives.**
 >
 > - Alerts, confirmation dialogs, and tooltips are platform-rendered. Use the host platform's dialog / native tooltip. Do not hand-roll a custom alert that mimics the system one.
+>
+> **App icons (out of scope here).**
+>
+> - This prompt does not generate macOS / iOS app icons. Refuse "make me an app icon" requests and point the user at Icon Composer + the squircle grid (see `spec/rules/icon.md`). Never bake squircle clipping or drop shadows into icon artwork — the system applies both.
+>
+> **App shell (sidebar + window chrome).**
+>
+> - Window outer corner radius **28**. Padding between window edge and sidebar / content **8** (control gap). Sidebar outer radius is concentric: `28 − 8 = 20`.
+> - Titlebar height: **52** with toolbar, **28** without. Traffic-light cluster (3 × 12 pt circles, 8 pt gap) starts 14 pt from window left edge; its vertical center aligns to the **first sidebar row center**, not the titlebar text baseline.
+> - Sidebar role: `sidebar`. Width 220 min / 260 ideal on Mac, 320 on iPad. Section heading 28 tall, row 28–30 tall, icon column 22, row padding 10/4. Section count 2–5; more reads as a directory tree.
+> - One toolbar per window. Adjacent items auto-merge into one shared glass capsule; insert a fixed spacer to add a hard gap, a flexible spacer to split the capsule.
+> - Full-height sidebar window: the sidebar pulls up next to the traffic lights, content sits under a transparent titlebar. Web approximates this with a single rounded `.lg-window` grid containing sidebar + titlebar + body.
 >
 > **Layering.**
 >
