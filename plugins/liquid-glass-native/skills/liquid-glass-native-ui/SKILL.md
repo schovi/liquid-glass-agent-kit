@@ -61,9 +61,11 @@ Core (A1-A10):
 - A9 — fighting system accessibility flags
 - A10 — Apple-endorsement claims
 
-Web-only ID (do not raise on native code):
+Web-only IDs (do not raise on native code):
 
 - A25 — renderer tier missing or invalid (web `data-tier`; covered by the web auditor)
+- A26 — missing `:focus-visible { outline: ... }` rule (web CSS; native focus rings come from the system)
+- A27 — icon-only HTML `<button>` without `aria-label` (web auditor; native equivalent is enforced through code review on `accessibilityLabel` / `setAccessibilityLabel`)
 
 macOS 26 gotchas (A11-A24):
 
@@ -119,10 +121,16 @@ Forbidden surfaces (`references/when-not-to-use-glass.md`, review-only):
     `titlebar-accessory.md`, `floating-hud.md`, `morphing.md`,
     `scroll-edge-effects.md`, `command-palette.md`,
     `sidebar.md`, `window-chrome.md`.
+  - Mac craft beyond glass: `menu-bar-extra.md`, `multi-window.md`,
+    `keyboard-shortcuts.md`.
 - `references/system-primitives.md` — alerts, confirmation dialogs,
   tooltips. "Use the system, don't restyle."
 - `references/icon.md` — app-icon guidance: Icon Composer, squircle
   grid, light / dark / tinted variants.
+- `references/accessibility.md` — WCAG mapping (1.4.3 contrast, 2.4.7
+  focus, 2.5.5 target size, 4.1.2 name / role / value, 2.3.3 motion),
+  SwiftUI / AppKit equivalents, the auto-degradation table, and the
+  native scope of A2 / A8 / A9 / A26 / A27. **The kit's headline rule.**
 - `references/metal-shaders.md` — `.layerEffect` / `.colorEffect` /
   `.distortionEffect` recipes for hero surfaces and brand
   transitions when `.glassEffect` is insufficient. Used by the

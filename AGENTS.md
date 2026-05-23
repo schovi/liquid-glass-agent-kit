@@ -54,7 +54,7 @@ Single-rendering bug fixes (CSS typo in the showcase, Swift compile error that d
 
 The auditor (`audit/liquid-glass-audit.mjs`) and review-only rules share one ID namespace partitioned by prefix:
 
-- **A** — anti-patterns. A1–A10 are cross-cutting (web + native); A11–A24 are macOS 26-specific (native skill only); A25 is the renderer-tier check, web-only.
+- **A** — anti-patterns. A1–A10 are cross-cutting (web + native); A11–A24 are macOS 26-specific (native skill only); A25 (renderer tier), A26 (focus-visible), and A27 (icon-only accessible name) are web-only.
 - **B** — budget. B1 = performance budget. New budget rules go to B2+.
 - **F** — forbidden surfaces. Review-only, lives in `spec/rules/when-not-to-use-glass.md` and the native mirror. F2 and F5 overlap with A2 and A1; the auditor catches the worst statically.
 

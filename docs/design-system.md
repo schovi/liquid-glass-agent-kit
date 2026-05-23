@@ -6,6 +6,17 @@ through `.claude/skills/liquid-glass-sync/`, which orchestrates lockstep
 updates to this doc, the web prompt token block, the web showcase, the
 native plugin references, and the native showcase.
 
+## Position
+
+The kit's headline rule is **accessibility**. Every token, component,
+and pattern below ships its fallback ladder (`prefers-reduced-transparency`,
+`prefers-contrast: more`, `prefers-reduced-motion`), its 44×44 hit
+target, its visible focus outline, and an accessible name on every
+icon-only action. The web auditor enforces the worst failures (A2,
+A8, A9, A26, A27); the rest are review rules. See
+`spec/rules/accessibility-rules.md` for the full WCAG mapping and
+external citations (NN/g, Infinum, Axess Lab).
+
 ## How to read this doc
 
 Each entry lists:
@@ -490,6 +501,54 @@ Continuous-curvature squircle, layered model, light / dark / tinted variants. Au
 
 ---
 
+## Mac craft (beyond glass)
+
+Liquid Glass is one chapter of "how to make a Mac app feel like a
+Mac app." These patterns codify the rest: keyboard-first behavior,
+menu-bar surfaces, scene-based architecture. They share the kit's
+discipline (geometry tokens, anti-pattern enumeration, native +
+spec parity) and pair naturally with glass — a Mac app uses all of
+them.
+
+### Menu bar extra (status item)
+
+Persistent app surface anchored to the system menu bar. System-owned
+Regular glass; custom material on top is F5.
+
+- spec: `spec/patterns/menu-bar-extra.md`
+- web: out of scope — menu-bar surfaces are macOS-only
+- native plugin: `plugins/liquid-glass-native/skills/liquid-glass-native-ui/references/patterns/menu-bar-extra.md`
+- apple: SwiftUI `MenuBarExtra` + `.menuBarExtraStyle(.window | .menu)`; AppKit `NSStatusBar.system.statusItem` + `NSPopover`
+- caveats: status icon MUST be `isTemplate = true`; no animated icons; no hover-triggered popovers; global hotkey for `.window` style needs `KeyboardShortcuts` package or Carbon hotkey registration.
+
+### Multi-window
+
+Scene architecture, not material. `WindowGroup` for documents,
+`Window(id:)` for singletons (Preferences, About), per-window
+`.toolbar` declarations (sharing one across windows is A13). State
+restoration is mandatory.
+
+- spec: `spec/patterns/multi-window.md`
+- web: out of scope — single-window by definition
+- native plugin: `plugins/liquid-glass-native/skills/liquid-glass-native-ui/references/patterns/multi-window.md`
+- apple: SwiftUI `WindowGroup`, `Window`, `DocumentGroup`, `@SceneStorage`, `openWindow(id:value:)`; AppKit `NSWindowController`, `NSWindow.isRestorable`, `applicationShouldTerminateAfterLastWindowClosed(_:)`
+- caveats: document state at the app root becomes singleton — use scene-rooted `@StateObject` or `@SceneStorage`; never override ⌘W / ⌘N / ⌘Q semantics; let the system cascade window origins (no hard-coded positions).
+
+### Keyboard shortcuts
+
+Modifier conventions (⌘ app, ⇧ inverse, ⌥ variant, ⌃ system,
+fn system), shortcut taxonomy (app / document / modal / letter-only),
+and discoverability requirements. Linear, Things, Raycast, Arc, and
+Sublime all share these unwritten rules; the kit writes them down.
+
+- spec: `spec/patterns/keyboard-shortcuts.md`
+- web: out of scope — the Cmd-K pattern in `spec/patterns/command-palette.md` covers the modal keyboard model for web apps
+- native plugin: `plugins/liquid-glass-native/skills/liquid-glass-native-ui/references/patterns/keyboard-shortcuts.md`
+- apple: SwiftUI `keyboardShortcut(_:modifiers:)`, `commands { CommandMenu... }`; AppKit `NSMenuItem.keyEquivalent`, `NSMenuItem.keyEquivalentModifierMask`, `NSView.keyDown(with:)`; system-wide hotkeys via [`KeyboardShortcuts`](https://github.com/sindresorhus/KeyboardShortcuts) or Carbon `RegisterEventHotKey`
+- caveats: ⌘W / ⌘N / ⌘Q / ⌘H / ⌘M / ⌘\` are system-owned — never override; letter-only shortcuts fail in text-input contexts; every shortcut MUST appear in a menu item or the Cmd-K palette for discoverability.
+
+---
+
 ## System primitives
 
 Apple ships these as system-provided UI. Wrap, don't restyle.
@@ -525,7 +584,7 @@ Page background (F1), long-form text containers (F2), forms / text fields (F3), 
 - apple: WWDC25 session 219 ("don't stack")
 - caveats: NN/g, Infinum, Axess Lab, JuniperPhoton each contributed citations behind a specific F-code; see `docs/resources.md` section N.7.
 
-### Anti-patterns (A1-A10) and budget (B1)
+### Anti-patterns (A1-A10, A25-A27 web-only) and budget (B1)
 
 The auditor in `audit/liquid-glass-audit.mjs` enforces these for the web profile. The native side relies on the implementer and auditor agents to enforce by review.
 
@@ -539,6 +598,9 @@ The auditor in `audit/liquid-glass-audit.mjs` enforces these for the web profile
 - A8 Unreadable Clear glass (no dim)
 - A9 Missing accessibility fallback (web) / fighting system flags (native)
 - A10 Invented Apple endorsement claims
+- A25 Renderer tier missing or invalid (web-only, `data-tier="T0|T1|T2|T3"`)
+- A26 Missing `:focus-visible { outline: ... }` rule on a stylesheet with `.lg-glass` (web-only; WCAG 2.4.7)
+- A27 Icon-only glass action missing accessible name (`aria-label` / `aria-labelledby` / `title`) (web-only; WCAG 4.1.2)
 - B1 Performance budget exceeded (separate prefix; auditor counts `lg-glass` elements per file vs `material.yaml` `budget.max`).
 
 - spec: `spec/rules/anti-patterns.md`, `spec/rules/performance-budget.md`, `plugins/liquid-glass-native/skills/liquid-glass-native-ui/references/anti-patterns.md`, `plugins/liquid-glass-native/skills/liquid-glass-native-ui/references/performance-budget.md`
@@ -563,15 +625,35 @@ Not part of A1-A10 (the web auditor doesn't enforce them), but flagged by the na
 
 ---
 
-## Accessibility
+## Accessibility (the headline rule)
 
-- Touch / click targets minimum 44 × 44.
-- Text on Regular glass meets WCAG AA at the worst-case backdrop.
-- Text on Clear glass requires a dim layer.
-- Focus indicators visible against both light and dark backdrops.
-- Web emits explicit fallbacks; native is system-driven.
+The kit's position. Apple's Liquid Glass shipped to documented
+WCAG-AA failures (NN/g, Infinum, Axess Lab); the kit ships the
+contrast film, the reduced-transparency tier, and the audit baked in.
+WCAG criteria the kit enforces:
+
+| WCAG criterion                       | What's enforced                                 | Where                                                       |
+| ------------------------------------ | ----------------------------------------------- | ----------------------------------------------------------- |
+| 1.4.1 Use of color                   | State changes pair hue with icon / label / shape | Review only                                                 |
+| 1.4.3 Contrast (minimum)             | Text on Regular glass clears AA at worst-case   | F2 (review) + tokens                                        |
+| 1.4.11 Non-text contrast             | `prefers-contrast: more` darkens glass borders   | A9 (auditor)                                                |
+| 2.3.3 Animation from interactions    | `prefers-reduced-motion` disables glass animation | A9 (auditor)                                              |
+| 2.4.7 Focus visible                  | `:focus-visible { outline: ... }` present        | **A26** (auditor)                                           |
+| 2.5.5 Target size                    | 44 × 44 hit area on every interactive element    | Component tokens (`button.minHeight`, `icon-button.size`)   |
+| 4.1.2 Name, role, value              | Icon-only buttons carry `aria-label` / `title`   | **A27** (auditor)                                           |
+
+Reduced-transparency is the escape hatch, not the design — if a
+surface needs it to be readable, it's in the wrong layer (F2 / F3 /
+F4). Native UI auto-degrades through the system flags; web emits
+explicit `@media` rules and uses the renderer-tier ladder (T0 forced
+under reduced transparency).
 
 - spec: `spec/rules/accessibility-rules.md`
+- web: `examples/macos-web/styles.css` (three `@media` blocks + global `:focus-visible` rule)
+- native plugin: `plugins/liquid-glass-native/skills/liquid-glass-native-ui/references/accessibility.md`
+- audit IDs: A2, A8, A9, A26, A27
+- apple: HIG Accessibility chapter; WWDC25 session 219 auto-degradation paths
+- caveats: NN/g, Infinum, Axess Lab, Vidit B citations in `spec/rules/accessibility-rules.md`
 
 ---
 

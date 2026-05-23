@@ -1,11 +1,17 @@
 # Liquid Glass Agent Kit
 
-Build Apple-inspired Liquid Glass UI with any AI tool. Stop agents inventing random blur, radius, shadow, and spacing values. Fixed tokens, fixed component sizes, fixed layering rules.
+A Mac craft toolkit for AI tools. Liquid Glass is the headline — fixed tokens, fixed dimensions, fixed layering rules, enforced accessibility ladder — and the rest of the conventions that make a Mac app feel like a Mac app: sidebar geometry, toolbar composition, Cmd-K palette, app icons, menu-bar extras, multi-window scenes, keyboard shortcuts.
 
 Two delivery modes, one spec:
 
 - **Web**: a paste-once prompt. Works in any AI tool, including ones that can't install plugins (ChatGPT, v0, Figma Make, Lovable).
-- **Native macOS 26**: a skill/plugin installed into Claude Code or Codex. Wraps the real `glassEffect` / `NavigationSplitView` / `ConcentricRectangle` APIs.
+- **Native macOS 26**: a skill/plugin installed into Claude Code or Codex. Wraps the real `glassEffect` / `NavigationSplitView` / `ConcentricRectangle` APIs, plus the broader Mac craft chapters.
+
+## The kit's position
+
+Apple shipped Liquid Glass to a mixed reception. [NN/g called it "cracked"](https://www.nngroup.com/articles/liquid-glass/). [Infinum measured WCAG-AA failures on Control Center](https://infinum.com/blog/apples-ios-26-liquid-glass-sleek-shiny-and-questionably-accessible/). [45% of developers held back from the redesign](https://www.geeky-gadgets.com/apple-liquid-glass-adoption-rate/). The kit's answer is to ship Liquid Glass with the contrast film, the reduced-transparency tier, and the audit baked in — accessibility-first, not as an afterthought.
+
+Where Apple's own LLM prompts and OpenAI Codex's Liquid Glass guide lead with fidelity, this kit leads with the fallback ladder, the contrast guarantee, and the audit. WCAG 1.4.3 / 2.4.7 / 2.5.5 / 4.1.2 / 2.3.3 are all enforced — at generation time through the prompt, at review time through `npm run audit`, and at runtime through the renderer-tier ladder (T0 solid fallback ⇢ T1 backdrop-filter ⇢ T2 displacement ⇢ T3 WebGL). See `spec/rules/accessibility-rules.md`.
 
 ## What this is
 

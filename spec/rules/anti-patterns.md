@@ -48,6 +48,39 @@ No `@media (prefers-reduced-transparency: reduce)` or `prefers-contrast: more` f
 
 Calling something "Liquid Glass certified" or "Apple-official". The kit is portable approximation, never an Apple endorsement.
 
+## A26 — Missing focus indicator on interactive glass
+
+WCAG 2.4.7. Interactive elements styled as glass (icon buttons,
+toolbar pills, command-palette items) MUST have a visible focus
+indicator. The kit's convention is a 2 px outline with
+`outline-offset: 2px` against the system accent. The auditor accepts
+either a per-element `.lg-glass:focus-visible` rule or a global
+`:focus-visible { outline: ... }` rule — both apply via the cascade.
+
+The auditor fires A26 when a CSS file containing `.lg-glass` rules
+declares no `:focus-visible` declaration with `outline`.
+
+Web-only ID — native UI inherits focus rings from the system. See
+`spec/rules/accessibility-rules.md` for the full WCAG mapping.
+
+## A27 — Icon-only glass action missing accessible name
+
+WCAG 4.1.2. A button that renders nothing but an icon (or a single
+glyph wrapped in `aria-hidden`) MUST carry an accessible name —
+`aria-label`, `aria-labelledby`, or `title` on the web side;
+`accessibilityLabel` on SwiftUI; `setAccessibilityLabel(_:)` on AppKit.
+
+The auditor enforces this on the web side by scanning `<button>` and
+`<summary>` opening tags whose `class` includes one of the kit's
+icon-only patterns (`lg-icon-button`, `lg-toolbar-pill__item`,
+`lg-floating-hud__item`, `lg-sidebar-toggle`, `lg-stepper__button`,
+`lg-toolbar-button`). If none of the three name attributes is present,
+A27 fires.
+
+Web-only audit ID — native a11y labels are enforced through
+SwiftUI `accessibilityLabel(_:)` / AppKit `setAccessibilityLabel`, not
+the static auditor. See `spec/rules/accessibility-rules.md`.
+
 ## A25 — Renderer tier missing or invalid
 
 Every `.lg-glass` element on the web side must declare a renderer tier via `data-tier="T0|T1|T2|T3"`. Tier selection is page-wide and the auditor cannot verify which fallback applies to a tier-less element. See `spec/rules/web-renderer-tiers.md` for the full rule and `spec/tokens/material.yaml` `tiers.*` / `tierSelection.*` for the data.

@@ -11,8 +11,9 @@ enforces the worst of these (A1 glass-on-glass, A2 glass behind body
 text) directly; the rest are review rules.
 
 The forbidden-surface IDs (F1–F5) are distinct from the audit IDs
-(A1–A10 + native A11–A24). They name *surfaces* the design system
-keeps glass off; the A-codes name *patterns* the auditor flags.
+(A1–A10 + native A11–A24 + web-only A25 / A26 / A27). They name
+*surfaces* the design system keeps glass off; the A-codes name
+*patterns* the auditor flags.
 
 ## F1 — Page background
 

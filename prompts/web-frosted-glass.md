@@ -10,6 +10,8 @@ For a real macOS app with the actual `glassEffect` API, install the `liquid-glas
 
 > You are generating Apple-inspired Liquid Glass web UI. This is a portable web approximation (frosted glass via `backdrop-filter`), not Apple-official and not a render of native Liquid Glass. Follow these rules without exception.
 >
+> **Accessibility first.** Apple's Liquid Glass shipped to documented contrast failures (NN/g "Liquid Glass Is Cracked", Infinum's Control Center audit, Axess Lab). The kit's position is the opposite: every glass surface ships the fallback ladder (`prefers-reduced-transparency`, `prefers-contrast: more`, `prefers-reduced-motion`), the 44×44 hit target, a visible `:focus-visible` outline, and an accessible name on every icon-only action. WCAG 1.4.3 (contrast), 2.4.7 (focus visible), 2.5.5 (target size), 4.1.2 (name / role / value), 2.3.3 (motion from interaction) — all apply. The auditor enforces the worst failures (A2, A8, A9, A26, A27); the rest are review rules. Don't ship a glass surface that needs the reduced-transparency fallback to be readable — that means it's in the wrong layer (see F2 / F3 / F4 below).
+>
 > **Token-only.** Never invent blur, saturation, opacity, shadow, padding, or radius values. Use exactly:
 >
 > - Shape radii: `sm 12px`, `md 16px`, `lg 24px`, `xl 28px`, capsule `9999px`.
@@ -100,9 +102,17 @@ For a real macOS app with the actual `glassEffect` API, install the `liquid-glas
 >
 > Selection policy is strict and short-circuits in order: (1) reduced-transparency → T0; (2) no `backdrop-filter` → T0; (3) author opted into T3 + WebGL2 available → T3; (4) author opted into T2 + Chromium → T2; (5) default → T1. Tier selection runs once at page load and applies to every glass element on the page. Full rule: `spec/rules/web-renderer-tiers.md`.
 >
-> **Accessibility.**
+> **Accessibility (the kit's headline rule).**
 >
-> Always emit `@media (prefers-reduced-transparency: reduce)`, `@media (prefers-contrast: more)`, and `@media (prefers-reduced-motion: reduce)` rules. Touch targets ≥ 44×44 px. Focus indicators visible.
+> Every glass surface ships with this fallback ladder. The auditor fails A9 / A26 / A27 if any of these is missing.
+>
+> - **Reduced transparency** — `@media (prefers-reduced-transparency: reduce)` forces `background: var(--lg-fallback-bg)` and `backdrop-filter: none` on every `.lg-glass` rule. The renderer tier collapses to T0. This is the escape hatch, not the design — if a surface needs it to be readable, you used glass in the wrong place.
+> - **Increased contrast** — `@media (prefers-contrast: more)` darkens borders (`border-color: var(--lg-fallback-border)`). WCAG 1.4.11 (non-text contrast).
+> - **Reduced motion** — `@media (prefers-reduced-motion: reduce)` disables `transition` and `animation` on `.lg-glass`. Morph effects collapse to opacity-only fades. Command-palette spring enter falls back to a 160 ms fade. WCAG 2.3.3.
+> - **Focus indicator (A26).** Ship at least one `:focus-visible { outline: 2px solid <accent>; outline-offset: 2px }` rule. A global rule satisfies the auditor; element-specific rules are preferred. WCAG 2.4.7.
+> - **Accessible name on icon-only actions (A27).** Every `<button>` or `<summary>` rendered as an icon-only glass control (`lg-icon-button`, `lg-toolbar-pill__item`, `lg-floating-hud__item`, `lg-sidebar-toggle`, `lg-stepper__button`, `lg-toolbar-button`) MUST carry `aria-label`, `aria-labelledby`, or `title`. WCAG 4.1.2.
+> - **Touch targets** — minimum 44×44 px hit area (`button.minHeight`, `icon-button.size`). WCAG 2.5.5 (AAA).
+> - **Color is never the only signal** — pair state changes with an icon, label, or shape change. WCAG 1.4.1.
 >
 > **Output discipline.**
 >

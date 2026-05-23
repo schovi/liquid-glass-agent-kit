@@ -17,6 +17,14 @@ const ALLOWED_RADIUS_PX = new Set([0, 12, 16, 24, 28, 32]);
 const ALLOWED_CAPSULE_RADIUS = new Set([9999]);
 const ALLOWED_TIERS = new Set(["T0", "T1", "T2", "T3"]);
 
+// A27 — icon-only glass actions must carry an accessible name. The class
+// patterns below name the showcase's icon-only buttons; any element with one
+// of these classes that ships without aria-label / aria-labelledby / title
+// fails WCAG 4.1.2. The list is conservative: spec-compliant markup uses
+// these class names; consumers who invent their own icon-only class names
+// will not be caught by A27 statically.
+const ICON_ONLY_CLASSES = /(lg-icon-button|lg-toolbar-pill__item|lg-floating-hud__item|lg-sidebar-toggle|lg-stepper__button|lg-toolbar-button)/;
+
 // B1 — Performance budget. Per spec/tokens/material.yaml budget.max.
 // A live-blurred surface is any element carrying class "lg-glass" whose role
 // is liveBlur:true in spec/tokens/material.yaml. Elements opted out via
@@ -64,6 +72,8 @@ function audit(file, src) {
   checkInventedAppleTerminology(file, src);
   checkBudget(file, src);
   checkTierDeclaration(file, src);
+  checkFocusVisible(file, src);
+  checkIconOnlyAccessibleName(file, src);
 }
 
 // A1 and A2 share a depth scan so they reflect real nesting, not source order.
@@ -232,6 +242,49 @@ function checkTierDeclaration(file, src) {
     if (!ALLOWED_TIERS.has(tierMatch[1])) {
       record(file, "A25", `Invalid data-tier="${tierMatch[1]}"; allowed: ${[...ALLOWED_TIERS].join(", ")}.`, tag);
     }
+  }
+}
+
+// A26 — Focus indicator on interactive glass. WCAG 2.4.7 (focus visible).
+// A CSS file that ships .lg-glass rules MUST declare at least one
+// :focus-visible rule with an outline. The check is lenient: a global
+// `:focus-visible { outline: ... }` rule satisfies it because the cascade
+// makes it apply to interactive .lg-glass descendants. We require both the
+// :focus-visible selector and an `outline:` declaration close to it to
+// avoid false-positives from documentation comments.
+function checkFocusVisible(file, src) {
+  if (extname(file) !== ".css") return;
+  if (!/\blg-glass\b/.test(src)) return;
+  if (!/:focus-visible[\s\S]{0,300}\boutline\s*:/m.test(src)) {
+    record(
+      file,
+      "A26",
+      "Missing :focus-visible { outline: ... } rule. Interactive .lg-glass elements need a visible focus indicator (WCAG 2.4.7). See spec/rules/accessibility-rules.md.",
+    );
+  }
+}
+
+// A27 — Icon-only glass action missing accessible name. WCAG 4.1.2.
+// Buttons (and <summary>) styled with the showcase's icon-only class names
+// MUST carry aria-label, aria-labelledby, or title. We scan opening tags
+// only; closing tags and inner content are not parsed.
+function checkIconOnlyAccessibleName(file, src) {
+  const ext = extname(file);
+  if (![".html", ".htm", ".js", ".mjs"].includes(ext)) return;
+  const tagRe = /<(button|summary)\b[^>]*>/gi;
+  let m;
+  while ((m = tagRe.exec(src))) {
+    const tag = m[0];
+    if (!ICON_ONLY_CLASSES.test(tag)) continue;
+    if (/\baria-label\s*=/.test(tag)) continue;
+    if (/\baria-labelledby\s*=/.test(tag)) continue;
+    if (/\btitle\s*=/.test(tag)) continue;
+    record(
+      file,
+      "A27",
+      "Icon-only glass action missing accessible name (aria-label / aria-labelledby / title). WCAG 4.1.2. See spec/rules/accessibility-rules.md.",
+      tag,
+    );
   }
 }
 

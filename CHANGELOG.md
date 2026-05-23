@@ -1,5 +1,56 @@
 # Changelog
 
+## 0.5.0 — T4 pass · accessibility-first framing (#12) + Mac craft beyond glass (#14)
+
+### Added (#12 — accessibility-first Liquid Glass)
+
+- **Accessibility is now the kit's headline rule.** Apple shipped Liquid Glass to documented WCAG-AA failures (NN/g "Liquid Glass Is Cracked", Infinum's Control Center audit, Axess Lab, 45%-adoption stat). The kit's position is the opposite: every glass surface ships the fallback ladder, the contrast film, the focus indicator, and an accessible name on every icon-only action — enforced statically through the auditor.
+  - `spec/rules/accessibility-rules.md` — promoted from a short reference into the canonical headline rule. New "Why a11y is the kit's position" intro, WCAG-criterion mapping for every rule (1.4.1, 1.4.3, 1.4.11, 2.3.3, 2.4.7, 2.5.5, 4.1.2), citations (NN/g, Infinum, Axess Lab, Vidit B, Iconfactory, Geeky Gadgets), audit-ID coverage table.
+  - `prompts/web-frosted-glass.md` — new "Accessibility first" paragraph immediately after the opening sentence. Existing Accessibility block expanded into the kit's headline rule with WCAG citations, A26 / A27 expectations, and explicit framing of reduced-transparency as "the escape hatch, not the design."
+  - `README.md` — new "The kit's position" section right after the tagline, citing NN/g / Infinum / 45%-adoption and naming the WCAG criteria the kit enforces. Tagline updated.
+  - `docs/design-system.md` — new "Position" section at the top mirroring the README. The existing "Accessibility" section expanded into the headline rule with a full WCAG-criterion → enforcement table.
+- **Two new audit IDs: A26 (focus indicator) + A27 (icon-only accessible name).**
+  - `audit/liquid-glass-audit.mjs` — new `checkFocusVisible` (A26) requires any CSS file with `.lg-glass` rules to declare a `:focus-visible { outline: ... }` rule (lenient: global `:focus-visible` satisfies the cascade). New `checkIconOnlyAccessibleName` (A27) scans `<button>` and `<summary>` opening tags whose class matches the kit's icon-only patterns (`lg-icon-button`, `lg-toolbar-pill__item`, `lg-floating-hud__item`, `lg-sidebar-toggle`, `lg-stepper__button`, `lg-toolbar-button`) and fires when none of `aria-label` / `aria-labelledby` / `title` is present.
+  - `audit/README.md` — A26 and A27 listed in the "What it catches" section; prefix taxonomy updated to note A25–A27 are web-only.
+  - `spec/rules/anti-patterns.md` — full A26 + A27 entries with WCAG mapping (2.4.7 and 4.1.2 respectively), native scope, and pointers to `accessibility-rules.md`.
+  - `AGENTS.md` — audit ID prefix taxonomy line updated to enumerate A25 / A26 / A27 as web-only.
+  - `spec/rules/when-not-to-use-glass.md` — the F-vs-A namespace note now lists A25 / A26 / A27 as web-only.
+  - `docs/design-system.md` — Anti-patterns section heading bumped to "(A1-A10, A25-A27 web-only) and budget (B1)"; the enumeration adds A25, A26, A27 with one-line descriptions.
+- **Native plugin gets a first-class accessibility reference.**
+  - `plugins/liquid-glass-native/skills/liquid-glass-native-ui/references/accessibility.md` (new) — the native side of the headline rule. Auto-degradation table (`accessibilityReduceTransparency` / `accessibilityReduceMotion` / `accessibilityDifferentiateWithoutColor` / `accessibilityIncreaseContrast` → SwiftUI + AppKit signals), `accessibilityLabel` / `accessibilityHint` examples, focus-state recipe, 44×44 hit-area recipe, color-isn't-the-only-signal recipe, native-scope mapping for A2 / A8 / A9 / A26 / A27. Cites WWDC25 session 219, Apple Accessibility Inspector, NN/g, Infinum, Axess Lab.
+  - `plugins/liquid-glass-native/skills/liquid-glass-native-ui/SKILL.md` — reference map adds `accessibility.md` (flagged as the kit's headline rule). Self-audit "Web-only IDs" subsection expanded to enumerate A25, A26, A27 with native-scope notes.
+  - `plugins/liquid-glass-native/agents/liquid-glass-native-implementer.md` — self-check now references `references/accessibility.md`; mentions A25–A27 as web-only.
+  - `plugins/liquid-glass-native/agents/liquid-glass-native-auditor.md` — A9 rewritten to include the native scope of A26 (custom hit area with no focus reflection) and A27 (icon-only `Button` / `NSButton` without `accessibilityLabel`); rule-set listing notes A25 / A26 / A27 are web-only as literal IDs but have native scopes.
+
+### Added (#14 — Mac craft beyond glass)
+
+- **Three new Mac craft patterns** codify the conventions Linear / Raycast / Things / Arc share but Apple doesn't document in one place. Liquid Glass remains the headline; these are the rest of the chapters.
+  - `spec/patterns/menu-bar-extra.md` (new) — `MenuBarExtra` / `NSStatusBar.statusItem`, `.menuBarExtraStyle(.window | .menu)`, geometry, template-image discipline, hover / animated-icon anti-patterns, global-hotkey path for `.window` style. Cites Apple HIG menu-bar chapter, Sindre Sorhus blog, Bartender.
+  - `spec/patterns/multi-window.md` (new) — `WindowGroup` vs `Window` vs `DocumentGroup`, `openWindow(id:value:)`, `@SceneStorage` restoration, per-window `.toolbar` rule (sharing across scenes is A13), Cmd-N / Cmd-Shift-T / Cmd-W discipline, `applicationShouldTerminateAfterLastWindowClosed` policy. Cites WWDC22 session 10054, Apple SwiftUI / AppKit docs.
+  - `spec/patterns/keyboard-shortcuts.md` (new) — modifier conventions (⌘ app, ⇧ inverse, ⌥ variant, ⌃ system, fn system), four-scope taxonomy (app / document / modal / letter-only), what NOT to override (⌘W, ⌘N, ⌘Q, ⌘H, ⌘M, ⌘\`, ⌘⇧/, ⌘,), discoverability requirements, letter-only-in-text-input pitfall. Cites Apple HIG, Raycast deep-dive, Things, Linear, Arc, Sublime / VS Code.
+- **Native plugin mirrors the three patterns.**
+  - `plugins/liquid-glass-native/skills/liquid-glass-native-ui/references/patterns/menu-bar-extra.md` (new) — SwiftUI + AppKit recipes, template-image discipline, popover anti-patterns, global-hotkey path. Native scope of A27 noted.
+  - `plugins/liquid-glass-native/skills/liquid-glass-native-ui/references/patterns/multi-window.md` (new) — scene-picker table, `WindowGroup(id:for:)` recipe, `NSWindowController` recipe, restoration primitives, per-window toolbar rule.
+  - `plugins/liquid-glass-native/skills/liquid-glass-native-ui/references/patterns/keyboard-shortcuts.md` (new) — `keyboardShortcut(_:modifiers:)` recipe, AppKit `NSMenuItem.keyEquivalent` + `keyDown(with:)` recipe, system-wide hotkey pointers (`KeyboardShortcuts` package / Carbon).
+  - `plugins/liquid-glass-native/skills/liquid-glass-native-ui/SKILL.md` — reference map adds the three patterns under "Mac craft beyond glass."
+- **Positioning shift in README + design-system.**
+  - `README.md` tagline rewritten: "A Mac craft toolkit for AI tools. Liquid Glass is the headline … and the rest of the conventions that make a Mac app feel like a Mac app." Native delivery mode now flags "plus the broader Mac craft chapters."
+  - `docs/design-system.md` — new top-level "Mac craft (beyond glass)" section with full entries for menu-bar-extra, multi-window, and keyboard-shortcuts (spec / web / native plugin / Apple API / caveats pointers).
+- **Plugin manifest + marketplace catalog reframed.**
+  - `plugins/liquid-glass-native/.claude-plugin/plugin.json`, `plugins/liquid-glass-native/.codex-plugin/plugin.json` — description updated: "Build authentic macOS 26 (Tahoe) Mac apps: Liquid Glass materials, NavigationSplitView, NSGlassEffectView, toolbars, Cmd-K palette, menu-bar extras, multi-window scenes, keyboard shortcuts, app icons, accessibility ladder, anti-patterns. Liquid Glass is the headline, plus the rest of the Mac craft chapters."
+  - `.claude-plugin/marketplace.json` — description and tags broadened; `mac-craft` and `accessibility` added.
+
+### Changed
+
+- `package.json` — `"version": "0.5.0"`; description rewritten to reflect the Mac craft reframing.
+- `plugins/liquid-glass-native/.claude-plugin/plugin.json`, `plugins/liquid-glass-native/.codex-plugin/plugin.json`, `.claude-plugin/marketplace.json` — version bumped 0.4.0 → 0.5.0.
+
+### Migration
+
+No code, API, or token renames. The audit ID namespace grew by two web-only IDs (A26, A27) — consumers running `npm run audit` against `examples/macos-web` see no new findings because the showcase already ships a global `:focus-visible { outline: ... }` rule and `aria-label` on every icon-only button. Pages that hand-roll icon-only `<button>` markup with a kit class name now need to declare `aria-label` / `aria-labelledby` / `title`; pages without any `:focus-visible` rule on a stylesheet that uses `.lg-glass` now fail A26. The renderer-tier ladder is unchanged.
+
+The three new Mac craft patterns are additive — existing spec / showcase / native code is unaffected. The plugin description and marketplace tags broadened; users who installed `liquid-glass-native@0.4.0` will see the new patterns the next time they pull the plugin.
+
 ## 0.4.0 — T3 pass · web tier ladder (#8) + token export (#10) + Figma kit (#11) + Metal shaders (#9)
 
 ### Added (#9 — Metal shader companion for the native side)

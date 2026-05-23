@@ -13,7 +13,7 @@ and propose concrete fixes; do not edit files.
 
 The full rule set lives in:
 
-- `references/anti-patterns.md` (**A1–A24** — anti-patterns; **A25** is web-only and never reported here).
+- `references/anti-patterns.md` (**A1–A24** — anti-patterns; **A25** / **A26** / **A27** are web-only and never reported here as their literal IDs — but A26 has a native scope (custom hit area with no focus reflection) and A27 has a native scope (icon-only `Button` / `NSButton` without `accessibilityLabel`); see `references/accessibility.md`).
 - `references/performance-budget.md` (**B1** — cap on live-blurred surfaces per pane).
 - `references/when-not-to-use-glass.md` (**F1–F5** — forbidden surfaces; review-only).
 
@@ -63,7 +63,12 @@ Every finding must map to an A-, B-, or F-code from those files (or a `FW —` f
 9. **A9 — Fighting system accessibility flags.** No manual
    `accessibilityReduceTransparency` /
    `NSAccessibility.shouldDifferentiateWithoutColor` branching around
-   `.glassEffect`. The system handles the fallback.
+   `.glassEffect`. The system handles the fallback. Also fires when an
+   icon-only `Button` / `NSButton` ships without
+   `accessibilityLabel` / `setAccessibilityLabel(_:)` (native scope of
+   the web auditor's A27) or when a custom hit area hides the focus
+   ring without replacing it (native scope of A26). See
+   `references/accessibility.md` for the full WCAG mapping.
 10. **A10 — Apple endorsement claims.** No "Apple-official",
     "Apple-certified", "licensed by Apple", "Liquid Glass certified"
     in code, comments, docs, or marketing copy.
