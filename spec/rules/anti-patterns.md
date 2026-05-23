@@ -48,6 +48,12 @@ No `@media (prefers-reduced-transparency: reduce)` or `prefers-contrast: more` f
 
 Calling something "Liquid Glass certified" or "Apple-official". The kit is portable approximation, never an Apple endorsement.
 
+## A25 — Renderer tier missing or invalid
+
+Every `.lg-glass` element on the web side must declare a renderer tier via `data-tier="T0|T1|T2|T3"`. Tier selection is page-wide and the auditor cannot verify which fallback applies to a tier-less element. See `spec/rules/web-renderer-tiers.md` for the full rule and `spec/tokens/material.yaml` `tiers.*` / `tierSelection.*` for the data.
+
+The native side is unaffected — tiers are a web-only concept.
+
 ## B1 — Performance budget exceeded
 
 More live-blurred surfaces in one pane than `material.yaml` `budget.max` allows. The auditor counts elements with class `lg-glass` per HTML file. Above the cap, share sampling (native: `GlassEffectContainer`; web: collapse capsules or downgrade non-primary surfaces to solid).

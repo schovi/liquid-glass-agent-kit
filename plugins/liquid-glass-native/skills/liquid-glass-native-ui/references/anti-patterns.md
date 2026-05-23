@@ -213,6 +213,10 @@ The prominent style can paint outside the circle. Add
 `.clipShape(Circle())` *after* `.buttonStyle(.glassProminent)` when
 combined with `.buttonBorderShape(.circle)`.
 
+## A25 — Renderer tier missing (web-only)
+
+Web-only. The web profile has a four-tier rendering ladder (T0–T3) and the auditor requires every `.lg-glass` element to declare `data-tier="T0|T1|T2|T3"`. This A-code is documented here only so native auditors don't reissue it in cross-codebase reports. Native code is unaffected — Apple's `glassEffect` is the implementation, no tier model needed. See `spec/rules/web-renderer-tiers.md`.
+
 ## B1 — Performance budget exceeded
 
 More live-blurred surfaces in one pane than `material.yaml`
@@ -226,4 +230,4 @@ the range (recommended 3 / busy 5 / ceiling 6), and sources.
 
 The B-prefix is intentional: anti-patterns A1–A24 keep their meaning,
 the budget rule is a separate category emitted as `[B1]` by the
-auditor.
+auditor. A25 is web-only (renderer tier).

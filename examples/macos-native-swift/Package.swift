@@ -19,7 +19,19 @@ let package = Package(
     targets: [
         .executableTarget(
             name: "LiquidGlassShowcase",
-            path: "Sources/LiquidGlassShowcase"
+            path: "Sources/LiquidGlassShowcase",
+            // The .metal shader powers the ShaderHeroSection demo via
+            // `.layerEffect`. SwiftPM packages .metal sources into
+            // Bundle.module when declared as a resource, but does NOT
+            // compile them — see `scripts/build.sh` for the post-build
+            // step that runs `xcrun metal` + `xcrun metallib` and drops
+            // the result into the bundle. The SwiftUI call site reads
+            // via `ShaderLibrary.bundle(.module)`, not the implicit
+            // `.default` form. Full background:
+            // plugins/.../references/metal-shaders.md (SwiftPM packaging gotchas).
+            resources: [
+                .process("Shaders.metal"),
+            ]
         ),
     ]
 )

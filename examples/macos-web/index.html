@@ -10,6 +10,21 @@
     <div class="lg-stage__wallpaper" aria-hidden="true"></div>
 
     <!--
+      SVG defs for renderer tier T2 (Chromium-only edge refraction).
+      Numbers come from spec/tokens/material.yaml glass.regular.svg.
+      Referenced from CSS as `backdrop-filter: url(#lg-glass-edge)`.
+      Safari and Firefox ignore the URL gracefully and fall back to T1.
+    -->
+    <svg width="0" height="0" aria-hidden="true" style="position: absolute">
+      <defs>
+        <filter id="lg-glass-edge" x="-10%" y="-10%" width="120%" height="120%">
+          <feTurbulence type="fractalNoise" baseFrequency="0.0625" numOctaves="2" seed="3" result="noise" />
+          <feDisplacementMap in="SourceGraphic" in2="noise" scale="70" xChannelSelector="R" yChannelSelector="G" />
+        </filter>
+      </defs>
+    </svg>
+
+    <!--
       Static shell only. Glass surfaces (titlebar, sidebar, sheet, material
       cards) are written by hand so audit-liquid-glass-html.mjs can still
       scan them. Repeating inner content (sidebar items, token rows,
@@ -24,7 +39,7 @@
     -->
     <main class="lg-window" aria-label="Liquid Glass design system showcase">
 
-      <aside class="lg-sidebar lg-glass--regular" data-renderer="css" aria-label="Navigation">
+      <aside class="lg-sidebar lg-glass--regular" data-renderer="css" data-tier="T1" aria-label="Navigation">
         <div class="lg-sidebar__header">
           <div class="lg-traffic-lights" aria-hidden="true">
             <span class="lg-traffic-light lg-traffic-light--close"></span>
@@ -106,7 +121,7 @@
       hidden
     >
       <div class="lg-command-palette__scrim" aria-hidden="true"></div>
-      <div class="lg-command-palette__panel lg-glass--regular" data-renderer="css" data-role="hud">
+      <div class="lg-command-palette__panel lg-glass--regular" data-renderer="css" data-role="hud" data-tier="T1">
         <h2 id="lg-command-palette-title" class="lg-command-palette__sr-only">Command palette</h2>
         <input
           class="lg-command-palette__input"

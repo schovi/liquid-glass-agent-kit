@@ -29,6 +29,27 @@ Numbers come from observed Apple-ship apps plus JuniperPhoton's
 measurement of three offscreen textures per `CABackdropLayer` and the
 iOS 26.1 regression where deep glass-on-glass drops rendering.
 
+## Custom shaders sit alongside the budget, not inside it
+
+`.layerEffect`, `.colorEffect`, and `.distortionEffect` (Metal-shader
+surfaces — see `references/metal-shaders.md`) are **not** counted by
+B1 because they are not `CABackdropLayer` instances. They have their
+own cost class and their own cap:
+
+- **One shader-driven hero surface per top-level pane.** Multiple
+  shader surfaces compete for offscreen texture allocations and
+  bypass Apple's shared-sampling optimization, so the per-surface
+  cost is *higher* than a `.glassEffect`, not lower.
+- **Never wrap a `.glassEffect` view in a shader.** That's
+  snapshot-on-snapshot — folds conceptually into A1.
+- **Shaders do not auto-degrade** on `accessibilityReduceTransparency`.
+  Branch on the environment value and provide a fallback yourself.
+
+The `liquid-glass-native-shader-implementer` subagent enforces this
+when it produces shader code. The auditor flags shader-driven heroes
+that exceed one-per-pane even though B1's `lg-glass` counter doesn't
+see them directly.
+
 ## Patterns that stay under
 
 - **One container per logical group.** Toolbar items, stepper, HUD

@@ -22,13 +22,14 @@ The auditor enforces anti-patterns from `spec/rules/anti-patterns.md` (A-prefix)
 - **A8** Clear glass without a `data-dim="true"` or `.lg-dim` sibling
 - **A9** Missing `prefers-reduced-transparency` / `prefers-contrast` / `prefers-reduced-motion` fallback in CSS
 - **A10** Apple endorsement phrases ("apple-official", "apple-certified", "licensed by apple")
+- **A25** `lg-glass` element missing or with invalid `data-tier="T0|T1|T2|T3"` (see `spec/rules/web-renderer-tiers.md`)
 - **B1** Performance budget exceeded — more live-blur `lg-glass` elements in one file than `spec/tokens/material.yaml` `budget.max` (default 6) allows. Elements opted out via `data-role="windowBackground"` or `data-role="content"` (roles with `liveBlur: false`) are excluded.
 
 A4 (invented component dimensions) and A6 (broken concentricity) are not statically checkable; they're enforced by the prompt at generation time and by manual review. The forbidden-surface codes F1–F5 from `spec/rules/when-not-to-use-glass.md` are review rules, not audit IDs — F2 and F5 are partially covered by A2 and A1 respectively.
 
 ## Audit ID prefix taxonomy
 
-- **A** — anti-patterns. A1–A10 are cross-cutting; A11–A24 (in the native skill only) are macOS 26-specific.
+- **A** — anti-patterns. A1–A10 are cross-cutting; A11–A24 (in the native skill only) are macOS 26-specific. A25 is the renderer-tier check, web-only.
 - **B** — budget. B1 is the only entry today.
 - **F** — forbidden surfaces. Documentary, review-only. Live in `when-not-to-use-glass.md`.
 

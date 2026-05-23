@@ -15,6 +15,7 @@ const ALLOWED_BLUR_PX = new Set([0, 28, 40]);
 const ALLOWED_SATURATION_PCT = new Set([100, 140, 160, 180]);
 const ALLOWED_RADIUS_PX = new Set([0, 12, 16, 24, 28, 32]);
 const ALLOWED_CAPSULE_RADIUS = new Set([9999]);
+const ALLOWED_TIERS = new Set(["T0", "T1", "T2", "T3"]);
 
 // B1 — Performance budget. Per spec/tokens/material.yaml budget.max.
 // A live-blurred surface is any element carrying class "lg-glass" whose role
@@ -62,6 +63,7 @@ function audit(file, src) {
   checkAccessibilityFallbacks(file, src);
   checkInventedAppleTerminology(file, src);
   checkBudget(file, src);
+  checkTierDeclaration(file, src);
 }
 
 // A1 and A2 share a depth scan so they reflect real nesting, not source order.
@@ -205,6 +207,31 @@ function checkBudget(file, src) {
       "B1",
       `Performance budget exceeded: ${count} live-blur lg-glass surfaces in this file; cap is ${GLASS_BUDGET_MAX} per pane. Share sampling (GlassEffectContainer / shared capsule), downgrade non-primary surfaces to solid, or label opaque tints with data-role="windowBackground". See spec/rules/performance-budget.md.`,
     );
+  }
+}
+
+// A25 — Renderer tier missing or invalid. Every element carrying class
+// `lg-glass` (or the variant `lg-glass--regular` / `lg-glass--clear`) MUST
+// declare a renderer tier via `data-tier="T0|T1|T2|T3"`. Tier selection
+// is page-wide; an element with no tier can't be reasoned about
+// statically (which fallback should it carry? which feDisplacementMap
+// filter?). See spec/rules/web-renderer-tiers.md.
+function checkTierDeclaration(file, src) {
+  const ext = extname(file);
+  if (![".html", ".htm", ".js", ".mjs"].includes(ext)) return;
+
+  const tagRe = /<[a-z][^>]*\bclass\s*=\s*["'][^"']*\blg-glass(?:--regular|--clear)?\b[^"']*["'][^>]*>/gi;
+  let m;
+  while ((m = tagRe.exec(src))) {
+    const tag = m[0];
+    const tierMatch = /\bdata-tier\s*=\s*["']([^"']+)["']/.exec(tag);
+    if (!tierMatch) {
+      record(file, "A25", "lg-glass element missing data-tier attribute (T0|T1|T2|T3). See spec/rules/web-renderer-tiers.md.", tag);
+      continue;
+    }
+    if (!ALLOWED_TIERS.has(tierMatch[1])) {
+      record(file, "A25", `Invalid data-tier="${tierMatch[1]}"; allowed: ${[...ALLOWED_TIERS].join(", ")}.`, tag);
+    }
   }
 }
 

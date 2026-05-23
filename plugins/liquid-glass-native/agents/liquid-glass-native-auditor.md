@@ -13,7 +13,7 @@ and propose concrete fixes; do not edit files.
 
 The full rule set lives in:
 
-- `references/anti-patterns.md` (**A1–A24** — anti-patterns).
+- `references/anti-patterns.md` (**A1–A24** — anti-patterns; **A25** is web-only and never reported here).
 - `references/performance-budget.md` (**B1** — cap on live-blurred surfaces per pane).
 - `references/when-not-to-use-glass.md` (**F1–F5** — forbidden surfaces; review-only).
 
@@ -136,6 +136,19 @@ Count the live-blurred surfaces visible per top-level pane (sidebar, content, in
 - **At rest** above `material.yaml` `budget.recommended` (3) with no transient reason (no popover / HUD / sheet open) → flag as B1.
 - **Any visible state** above `budget.max` (6) → flag as B1, hard.
 - Suggest grouping into a single container or downgrading non-primary surfaces to solid.
+
+### Shader-driven hero surfaces
+
+`.layerEffect`, `.colorEffect`, and `.distortionEffect` (Metal-shader
+surfaces — `references/metal-shaders.md`) sit alongside B1, not inside
+it. Their cap is **one shader-driven hero per top-level pane**. Flag
+as `FW — shader budget` when a single pane carries more than one
+shader-driven hero, even if the B1 `.glassEffect` count is under.
+
+Also flag when a shader-driven hero lacks a
+`@Environment(\.accessibilityReduceTransparency)` fallback branch
+(custom shaders do not auto-degrade — mirror of A9 but the underlying
+modifier is different).
 
 ## Forbidden surfaces (F1–F5, review-only)
 

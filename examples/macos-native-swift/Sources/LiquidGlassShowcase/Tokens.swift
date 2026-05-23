@@ -1,33 +1,16 @@
 import SwiftUI
 
-// Tokens lifted verbatim from spec/tokens/*.yaml.
-// Do not invent values here; add to the spec first.
+// Tokens namespace declaration + showcase-only helpers.
+//
+// Numeric values (Radius, Spacing, Duration, Weight, TypeScale, Glass,
+// Budget, Tier) are generated from spec/tokens/*.yaml into
+// Tokens.generated.swift — do not hand-edit those there. Regenerate
+// with `npm run build:tokens`. Easing helpers below stay hand-written
+// because they wrap SwiftUI Animation factories (logic, not values).
 
-enum Tokens {
-    enum Radius {
-        static let sm: CGFloat = 12
-        static let md: CGFloat = 16
-        static let lg: CGFloat = 24
-        static let xl: CGFloat = 28
-    }
+enum Tokens { }
 
-    enum Spacing {
-        static let controlGap: CGFloat = 8
-        static let groupGap: CGFloat = 12
-        static let panelGap: CGFloat = 16
-        static let screenMarginCompact: CGFloat = 16
-        static let screenMarginRegular: CGFloat = 24
-        static let sectionGap: CGFloat = 32
-    }
-
-    enum Duration {
-        static let instant: Double = 0.080
-        static let fast: Double = 0.160
-        static let base: Double = 0.240
-        static let slow: Double = 0.360
-        static let sheet: Double = 0.420
-    }
-
+extension Tokens {
     enum Easing {
         // Curves come from spec/tokens/motion.yaml. Each helper returns a ready
         // SwiftUI Animation so call sites can write `.animation(Tokens.Easing.standard(duration: ...))`

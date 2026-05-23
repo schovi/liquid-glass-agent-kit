@@ -91,6 +91,15 @@ For a real macOS app with the actual `glassEffect` API, install the `liquid-glas
 > - Default to a CSS renderer using `backdrop-filter` and `-webkit-backdrop-filter`.
 > - Mark every glass element with `class="lg-glass lg-glass--regular"` (or `--clear`) and `data-renderer="css"`.
 >
+> **Renderer tiers (T0–T3).** The web profile has a four-step degradation ladder. Pick one tier per page from stated browser support; never mix tiers inside one shared group. Mark every glass element with `data-tier="T0|T1|T2|T3"`.
+>
+> - **T0** — solid tint (`rgba(255,255,255,0.92)` / `rgba(20,20,20,0.92)`) + 1 px stroke, **no backdrop sampling**. Forced when `prefers-reduced-transparency: reduce`, when `backdrop-filter` is unsupported, or on explicit opt-out. Always available — this is the floor.
+> - **T1 (default)** — `backdrop-filter: blur(40px) saturate(180%)` + tint, as defined above. Use this unless the user explicitly asks for T2 / T3. Audited statically (A3 catches off-token blur / saturation).
+> - **T2** — T1 plus an SVG `feDisplacementMap` filter on the edge (`displacementScale 70`, `aberrationIntensity 2`, `elasticity 0.15`). **Chromium-only.** Renderers MUST detect Chromium (`navigator.userAgentData.brands` includes "Chromium") and fall to T1 elsewhere. Not statically audited.
+> - **T3** — WebGL2 backdrop sampling with chromatic dispersion (`chromaticAberration 0.4`) and specular (`specular 0.6`, `lightDirection [0.5, -0.7]`). Highest fidelity, render-loop cost. Fall to T1 when WebGL2 is unavailable. Not statically audited.
+>
+> Selection policy is strict and short-circuits in order: (1) reduced-transparency → T0; (2) no `backdrop-filter` → T0; (3) author opted into T3 + WebGL2 available → T3; (4) author opted into T2 + Chromium → T2; (5) default → T1. Tier selection runs once at page load and applies to every glass element on the page. Full rule: `spec/rules/web-renderer-tiers.md`.
+>
 > **Accessibility.**
 >
 > Always emit `@media (prefers-reduced-transparency: reduce)`, `@media (prefers-contrast: more)`, and `@media (prefers-reduced-motion: reduce)` rules. Touch targets ≥ 44×44 px. Focus indicators visible.

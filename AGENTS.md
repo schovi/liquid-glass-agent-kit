@@ -9,17 +9,18 @@ This repo ships Apple-inspired Liquid Glass guidance in **two delivery modes** f
 - **Web** — a paste-once prompt (`prompts/web-frosted-glass.md`) that any AI tool can consume, plus a showcase (`examples/macos-web/`) and a standalone audit (`audit/`).
 - **Native macOS 26** — a Codex + Claude Code plugin (`plugins/liquid-glass-native/`) wrapping the real `glassEffect` / `NavigationSplitView` / `ConcentricRectangle` APIs, plus a showcase (`examples/macos-native-swift/`).
 
-There is no build step. The plugin folder serves both Codex (`.codex-plugin/`) and Claude Code (`.claude-plugin/`) from one place.
+There is no runtime build step (the showcases load directly). One *optional* dev-time build does exist: `spec/build/build-tokens.mjs` regenerates the platform-specific token exports under `dist/`. Run it after any change to `spec/tokens/*.yaml`. The plugin folder serves both Codex (`.codex-plugin/`) and Claude Code (`.claude-plugin/`) from one place.
 
 Edit only:
 
-- `spec/`
+- `spec/` (including `spec/build/` — the token generator)
 - `prompts/web-frosted-glass.md`
 - `plugins/liquid-glass-native/skills/liquid-glass-native-ui/`
 - `plugins/liquid-glass-native/agents/` (Claude subagents)
 - `examples/`
 - `audit/`
 - `docs/`
+- `kit-figma/` (designer-facing import recipe + Tokens Studio pointers)
 - `.claude/skills/liquid-glass-sync/` (local sync workflow)
 
 ## Cross-cutting changes
@@ -32,7 +33,7 @@ For any change that touches tokens, components, rules, or cross-cutting patterns
 
 Order of operations (lockstep — skipping a step is the bug):
 
-1. **`spec/`** — tokens, components, rules.
+1. **`spec/`** — tokens, components, rules. After any token-value change, run `npm run build:tokens` to regenerate `dist/*` and the showcase mirror `Tokens.generated.swift`.
 2. **`docs/design-system.md`** — inventory entries with `spec` / `web` / `native` / `apple` / `caveats` pointers.
 3. **`prompts/web-frosted-glass.md`** — token block + rule reminders.
 4. **`examples/macos-web/`** — HTML / CSS / JS that exercises the new state.
@@ -53,7 +54,7 @@ Single-rendering bug fixes (CSS typo in the showcase, Swift compile error that d
 
 The auditor (`audit/liquid-glass-audit.mjs`) and review-only rules share one ID namespace partitioned by prefix:
 
-- **A** — anti-patterns. A1–A10 are cross-cutting (web + native); A11–A24 are macOS 26-specific (native skill only).
+- **A** — anti-patterns. A1–A10 are cross-cutting (web + native); A11–A24 are macOS 26-specific (native skill only); A25 is the renderer-tier check, web-only.
 - **B** — budget. B1 = performance budget. New budget rules go to B2+.
 - **F** — forbidden surfaces. Review-only, lives in `spec/rules/when-not-to-use-glass.md` and the native mirror. F2 and F5 overlap with A2 and A1; the auditor catches the worst statically.
 
@@ -70,6 +71,7 @@ Run the validators that match what you touched:
 | If you touched | Run |
 |---|---|
 | `audit/`, `prompts/web-frosted-glass.md`, `examples/macos-web/`, `spec/tokens/material.yaml`, `spec/rules/*.md` | `npm run audit` |
+| `spec/tokens/*.yaml` (any token value) | `npm run build:tokens` (regenerates `dist/*` + the showcase mirror); CI gate is `npm run check:tokens` |
 | `examples/macos-native-swift/`, native skill references that include code blocks | `swift build` or `npm run example:native:build` |
 | Anything that changes the audit ID space or rule structure | both, plus a grep for any stale ID lists (see "Drift sweep" below) |
 

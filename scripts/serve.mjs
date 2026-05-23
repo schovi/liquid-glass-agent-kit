@@ -13,6 +13,12 @@ import { extname, join, resolve, sep } from "node:path";
 const port = Number(process.argv[2] ?? 8000);
 const root = resolve(process.argv[3] ?? "examples/macos-web");
 
+// Alias: requests for /dist/* are served from <repo>/dist regardless of the
+// chosen webRoot. examples/macos-web/styles.css imports `../../dist/tokens.css`
+// at the file-system level, but in the browser that resolves to /dist/... —
+// without this alias the path-escape guard 404s the generated tokens.
+const distRoot = resolve("dist");
+
 const TYPES = {
   ".html": "text/html; charset=utf-8",
   ".css":  "text/css; charset=utf-8",
@@ -30,9 +36,18 @@ createServer(async (req, res) => {
     let urlPath = decodeURIComponent(req.url.split("?")[0]);
     if (urlPath.endsWith("/")) urlPath += "index.html";
 
-    const filePath = resolve(join(root, urlPath));
-    // Reject anything that escapes the root directory.
-    if (!filePath.startsWith(root + sep) && filePath !== root) {
+    // /dist/* maps to the repo-root dist/ so the showcase can @import
+    // generated tokens via the relative path it uses on disk.
+    let baseRoot = root;
+    let mappedPath = urlPath;
+    if (urlPath === "/dist" || urlPath.startsWith("/dist/")) {
+      baseRoot = distRoot;
+      mappedPath = urlPath.slice("/dist".length) || "/";
+    }
+
+    const filePath = resolve(join(baseRoot, mappedPath));
+    // Reject anything that escapes its resolved root directory.
+    if (!filePath.startsWith(baseRoot + sep) && filePath !== baseRoot) {
       res.writeHead(403); res.end("forbidden"); return;
     }
 

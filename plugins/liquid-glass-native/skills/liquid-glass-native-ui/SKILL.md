@@ -61,6 +61,10 @@ Core (A1-A10):
 - A9 — fighting system accessibility flags
 - A10 — Apple-endorsement claims
 
+Web-only ID (do not raise on native code):
+
+- A25 — renderer tier missing or invalid (web `data-tier`; covered by the web auditor)
+
 macOS 26 gotchas (A11-A24):
 
 - A11 — legacy `.sidebar` material retained
@@ -119,5 +123,9 @@ Forbidden surfaces (`references/when-not-to-use-glass.md`, review-only):
   tooltips. "Use the system, don't restyle."
 - `references/icon.md` — app-icon guidance: Icon Composer, squircle
   grid, light / dark / tinted variants.
+- `references/metal-shaders.md` — `.layerEffect` / `.colorEffect` /
+  `.distortionEffect` recipes for hero surfaces and brand
+  transitions when `.glassEffect` is insufficient. Used by the
+  `liquid-glass-native-shader-implementer` subagent.
 
 All claims trace to `docs/resources.md` at the repo root.

@@ -12,14 +12,14 @@ function materialsBody() {
     <div class="lg-materials">
       <article class="lg-material-card" aria-label="Regular glass over busy photo">
         <div class="lg-material-card__photo lg-material-card__photo--photo" aria-hidden="true"></div>
-        <div class="lg-material-card__pane lg-glass--regular" data-renderer="css">
+        <div class="lg-material-card__pane lg-glass--regular" data-renderer="css" data-tier="T1">
           <span class="lg-material-card__label">Regular</span>
           <span class="lg-material-card__detail">.glassEffect(.regular, in: rect)</span>
         </div>
       </article>
       <article class="lg-material-card" aria-label="Regular glass tinted indigo over calmer backdrop">
         <div class="lg-material-card__photo lg-material-card__photo--tinted" aria-hidden="true"></div>
-        <div class="lg-material-card__pane lg-glass--regular lg-glass--tint-indigo" data-renderer="css">
+        <div class="lg-material-card__pane lg-glass--regular lg-glass--tint-indigo" data-renderer="css" data-tier="T1">
           <span class="lg-material-card__label">Regular · tinted</span>
           <span class="lg-material-card__detail">.glassEffect(.regular.tint(.indigo))</span>
         </div>
@@ -444,6 +444,7 @@ function morphingBody() {
         type="button"
         class="lg-morph-pill lg-glass--regular"
         data-renderer="css"
+        data-tier="T1"
         aria-label="Toolbar — hover to expand"
       >
         <span class="lg-morph-pill__compact" aria-hidden="true">⋯</span>
@@ -593,7 +594,7 @@ function clearVariantBody() {
     <article class="lg-material-card lg-material-card--tall" aria-label="Clear glass with required dim">
       <div class="lg-material-card__photo lg-material-card__photo--photo" aria-hidden="true"></div>
       <div class="lg-material-card__dim" aria-hidden="true"></div>
-      <div class="lg-material-card__pane lg-glass--clear" data-renderer="css" data-dim="true">
+      <div class="lg-material-card__pane lg-glass--clear" data-renderer="css" data-dim="true" data-tier="T1">
         <span class="lg-material-card__label">Clear</span>
         <span class="lg-material-card__detail">.glassEffect(.clear, in: rect)</span>
       </div>

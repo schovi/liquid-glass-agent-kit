@@ -3,7 +3,7 @@ import SwiftUI
 enum SectionID: String, CaseIterable, Identifiable, Hashable {
     case materials, shape, spacing, typography, motion
     case buttons, controls, inputsOverlays, formsLists, surfaces, sheet
-    case commandPalette, morphing, scrollEdgeEffects
+    case commandPalette, morphing, scrollEdgeEffects, shaderHero
     case rules, antiPatterns, clearVariant
 
     var id: Self { self }
@@ -24,6 +24,7 @@ enum SectionID: String, CaseIterable, Identifiable, Hashable {
         case .commandPalette: return "Command palette"
         case .morphing: return "Morphing"
         case .scrollEdgeEffects: return "Scroll edge effects"
+        case .shaderHero: return "Shader hero"
         case .rules: return "Rules"
         case .antiPatterns: return "Anti-patterns"
         case .clearVariant: return "Clear variant"
@@ -46,6 +47,7 @@ enum SectionID: String, CaseIterable, Identifiable, Hashable {
         case .commandPalette: return "command"
         case .morphing: return "arrow.triangle.merge"
         case .scrollEdgeEffects: return "line.horizontal.3.decrease"
+        case .shaderHero: return "wand.and.stars"
         case .rules: return "checkmark.seal"
         case .antiPatterns: return "xmark.seal"
         case .clearVariant: return "drop"
@@ -63,7 +65,7 @@ enum SectionID: String, CaseIterable, Identifiable, Hashable {
         switch self {
         case .materials, .shape, .spacing, .typography, .motion: return .foundations
         case .buttons, .controls, .inputsOverlays, .formsLists, .surfaces, .sheet: return .components
-        case .commandPalette, .morphing, .scrollEdgeEffects: return .patterns
+        case .commandPalette, .morphing, .scrollEdgeEffects, .shaderHero: return .patterns
         case .rules, .antiPatterns, .clearVariant: return .reference
         }
     }

@@ -4,16 +4,23 @@
 # approximation chosen to look correct in HTML/CSS/SVG/WebGL across light
 # and dark backgrounds. Renderers should consume only the values listed here.
 #
-# Two-axis model:
+# Three-axis model:
 #   - `glass.*`     — the primitive material variants (regular, clear). What
-#                     the surface *is*.
+#                     the surface *is*. Each variant carries `css:` / `svg:`
+#                     / `webgl:` knob sets — one per renderer tier that can
+#                     consume the variant.
 #   - `roles.*`     — semantic roles (sidebar, toolbar, menu, popover, hud,
 #                     sheet, header, windowBackground, content). Where the
 #                     surface *lives*. Picks the right Apple API per platform
 #                     and decides whether the surface counts against the
 #                     B1 live-blur budget.
+#   - `tiers.*`     — graceful-degradation rendering ladder (T0–T3). How the
+#                     surface is *drawn* on the web. A tier names a complete
+#                     rendering strategy that consumes a subset of the
+#                     glass.* primitive knobs. The prompt picks a tier from
+#                     stated browser support; renderers honor `tierSelection`.
 # Renderers consume roles when they know the surface's role (almost always),
-# and fall back to glass.* primitives when they don't.
+# fall back to glass.* primitives when they don't, and always pick a tier.
 
 glass:
   regular:
@@ -153,6 +160,75 @@ budget:
     and an iOS 26.1 regression where deep glass-on-glass drops rendering.
     Above 6 the experience is expensive (every blur costs a frame budget
     chunk) and fragile (regressions show first in the busiest screens).
+
+# Renderer tiers — graceful-degradation ladder for the web profile.
+# See spec/rules/web-renderer-tiers.md for the full rule and selection policy.
+#
+# A tier is a complete rendering strategy. Each tier names which primitives
+# from glass.* / fallbacks.* it consumes, what browser feature gates it
+# requires, and whether the auditor can verify it statically. The prompt
+# selects a tier from stated browser support; the user-agent's accessibility
+# preferences always override toward T0.
+tiers:
+  T0:
+    label: "Solid tint + 1 px stroke (fallback)"
+    description: |
+      No backdrop sampling. Used when prefers-reduced-transparency is on,
+      backdrop-filter is unsupported, or the author explicitly opts out
+      of live-blurred glass. Always available; this is the floor.
+    consumes: [fallbacks.reducedTransparency.css]
+    requires: []
+    auditable: true                  # A9 enforces the fallback exists in CSS
+  T1:
+    label: "backdrop-filter blur + saturate + tint (default)"
+    description: |
+      Current default. CSS backdrop-filter on the regular or clear
+      primitive. Broadest cross-browser support among glass tiers
+      (Safari 18+, Chrome / Edge 117+, Firefox 103+ with vendor prefix).
+    consumes: [glass.regular.css, glass.clear.css]
+    requires: ["backdrop-filter"]
+    auditable: true                  # A3 covers off-token blur/saturation
+  T2:
+    label: "T1 + SVG feDisplacementMap edge refraction"
+    description: |
+      T1 plus an SVG filter that displaces backdrop pixels at the surface
+      edge to suggest refraction. Chromium-class browsers render this
+      acceptably; Safari's feDisplacementMap is too slow at the scale
+      required and Firefox lacks `backdrop-filter: url(...)`. Renderers
+      MUST gate T2 behind a Chromium check and fall to T1 otherwise.
+    consumes: [glass.regular.css, glass.regular.svg, glass.clear.css]
+    requires: ["backdrop-filter", "svg-displacement-map", "chromium"]
+    auditable: false                 # opt-in; renderers self-attest
+  T3:
+    label: "WebGL backdrop sampling + chromatic dispersion + specular"
+    description: |
+      Real backdrop sampling via WebGL2. Highest fidelity (chromatic
+      aberration, specular highlight, normal-based refraction) and
+      highest cost — needs a render loop, same-origin or CORS access to
+      the backdrop, and a fallback path when context is lost. Renderers
+      MUST fall to T1 when WebGL2 is unavailable.
+    consumes: [glass.regular.webgl]
+    requires: ["webgl2", "render-loop"]
+    auditable: false                 # opt-in; renderers self-attest
+
+# Tier selection policy. Renderers and the web prompt MUST follow this order.
+# The order is strict: accessibility preferences win, then explicit opt-ins,
+# then the default.
+tierSelection:
+  default: T1
+  policy:
+    - "If prefers-reduced-transparency: reduce → force T0 regardless of opt-in."
+    - "If backdrop-filter is unsupported by the runtime → fall to T0."
+    - "If author opts into T3 and webgl2 + render loop are available → T3."
+    - "If author opts into T2 and the user agent is Chromium-class → T2; otherwise fall to T1."
+    - "Otherwise → T1 (the default)."
+  markup:
+    description: |
+      Mark every glass element with the tier it's rendering at via
+      `data-tier="T0|T1|T2|T3"`. Tier selection happens once at the
+      page / app level (a `:root` class or a JS feature check that sets
+      `data-tier` on every glass node). Renderers MUST NOT mix tiers
+      inside one shared GlassEffectContainer-equivalent group.
 
 # Accessibility fallbacks. Renderers MUST emit these alongside the material.
 fallbacks:

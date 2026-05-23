@@ -37,16 +37,24 @@ const VARIANT_TOKENS = {
   Clear:   { blur: "28 px", saturation: "160 %" },
 };
 
+const TIER_LABEL = {
+  T0: "T0 — solid fallback",
+  T1: "T1 — backdrop-filter (default)",
+  T2: "T2 — CSS + SVG refraction (Chromium-only)",
+  T3: "T3 — WebGL backdrop sampling",
+};
+
 const FIELDS = [
-  { label: "Section",       bind: "section" },
-  { label: "Renderer",      static: "css (backdrop-filter)" },
-  { label: "Variant",       bind: "variant" },
-  { label: "Blur",          bind: "blur" },
-  { label: "Saturation",    bind: "saturation" },
-  { label: "Outer radius",  static: "28 px (concentric to toolbar pill)" },
-  { label: "Surface rule",  bind: "surfaceRule" },
-  { label: "Accessibility", static: "reduced-transparency · prefers-contrast · reduced-motion" },
-  { label: "Source spec",   static: "spec/liquid-glass.profile.yaml" },
+  { label: "Section",        bind: "section" },
+  { label: "Renderer",       static: "css (backdrop-filter)" },
+  { label: "Renderer tier",  bind: "tier" },
+  { label: "Variant",        bind: "variant" },
+  { label: "Blur",           bind: "blur" },
+  { label: "Saturation",     bind: "saturation" },
+  { label: "Outer radius",   static: "28 px (concentric to toolbar pill)" },
+  { label: "Surface rule",   bind: "surfaceRule" },
+  { label: "Accessibility",  static: "reduced-transparency · prefers-contrast · reduced-motion" },
+  { label: "Source spec",    static: "spec/liquid-glass.profile.yaml" },
 ];
 
 function fieldMarkup({ label, bind, static: staticValue }) {
@@ -73,6 +81,9 @@ export function updateInspector(sectionId) {
   setField("blur",        tokens.blur);
   setField("saturation",  tokens.saturation);
   setField("surfaceRule", meta.surfaceRule);
+
+  const tier = document.documentElement.dataset.tier;
+  setField("tier", TIER_LABEL[tier] ?? "T1 — backdrop-filter (default)");
 }
 
 function setField(name, value) {

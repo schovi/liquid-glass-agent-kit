@@ -112,6 +112,7 @@ struct DetailView: View {
                             case .commandPalette: CommandPaletteSection()
                             case .morphing: MorphingSection()
                             case .scrollEdgeEffects: ScrollEdgeEffectsSection()
+                            case .shaderHero: ShaderHeroSection()
                             case .rules: RulesSection()
                             case .antiPatterns: AntiPatternsSection()
                             case .clearVariant: ClearVariantSection()

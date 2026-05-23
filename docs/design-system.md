@@ -87,6 +87,20 @@ Each surface picks a role by where it lives. Roles map to the closest real Apple
 - apple: SwiftUI `NavigationSplitView` (sidebar), `.toolbar` (toolbar), `Menu` (menu), `.popover` (popover), `.overlay(alignment:)` (hud), `.sheet` + `.presentationDetents` (sheet); AppKit `NSVisualEffectView.Material` enum is the canonical role taxonomy on the macOS side (`.sidebar`, `.titlebar`, `.menu`, `.popover`, `.hudWindow`, `.sheet`, `.headerView`, `.windowBackground`).
 - caveats: roles are documentation + audit-filter — they do not generate code. The renderer still picks a primitive (Regular or Clear glass) per role.
 
+### Material — web renderer tiers (T0–T3)
+
+Graceful-degradation ladder for the web profile. One source, four rendering strategies — picked at runtime by browser support and accessibility preferences. Native is unaffected; Apple's `glassEffect` is the implementation, not an approximation.
+
+- T0 — solid tint + 1 px stroke. Fallback for `prefers-reduced-transparency` and runtimes without `backdrop-filter`.
+- T1 — `backdrop-filter: blur() saturate()` + tint. **Default.** Broad cross-browser support.
+- T2 — T1 plus SVG `feDisplacementMap` edge refraction. Chromium-only.
+- T3 — WebGL2 backdrop sampling with chromatic dispersion + specular. Highest fidelity, highest cost.
+- spec: `spec/tokens/material.yaml` (`tiers.*`, `tierSelection.*`), `spec/rules/web-renderer-tiers.md`
+- web: `examples/macos-web/styles.css` (selector `[data-tier="T0|T1|T2|T3"].lg-glass--regular`); `examples/macos-web/tier.js` (runtime tier pick + propagation)
+- native: n/a — Apple `glassEffect` is the implementation, no tier model needed
+- apple: `glassEffect(_:in:isEnabled:)` (`SwiftUI.Glass`) is what T3 is reaching for; T0 mirrors Apple's automatic reduced-transparency fallback
+- caveats: tier selection runs once per page. Mixing tiers inside one shared container is forbidden — pick the lowest tier any member supports. Audit covers T0 (A9 fallback presence) and T1 (A3 numeric values); T2 / T3 are opt-in and renderer-attested. Sources: [kube.io](https://kube.io/blog/liquid-glass-css-svg/), [Max Geris (dev.to)](https://dev.to/maxgeris/recreating-apples-liquid-glass-effect-on-the-web-with-css-svg-and-physics-based-refraction-5cek), [naughtyduk/liquidGL](https://github.com/naughtyduk/liquidGL), [rizroze/liquid-glass](https://github.com/rizroze/liquid-glass).
+
 ### Material — accessibility fallbacks
 
 Reduced transparency / increased contrast / reduced motion. Web emits explicit fallbacks. Native is system-driven — do not hand-roll fallbacks.
@@ -440,6 +454,17 @@ Glass elements morph — they don't pop — when they appear, disappear, swap sh
 - apple: SwiftUI `@Namespace` + `glassEffectID(_:in:)` + `glassEffectUnion(id:in:)` inside a shared `GlassEffectContainer`, with `withAnimation`; AppKit `NSGlassEffectContainerView` + `NSAnimationContext.runAnimationGroup`
 - caveats: native morph requires same container, same namespace, animated transaction, and `spacing:` chosen so the resting state is either fused or fully separated (never the half-merged blob in between). The web approximation covers only the single-capsule shape change; reduced-motion drops the transition.
 
+### Shader hero (`.layerEffect`)
+
+Native-only escape hatch for hero surfaces and brand transitions when `.glassEffect` cannot express the effect (chromatic dispersion, SDF metaball merge, head-tracked specular). Runs a Metal fragment shader as the last modifier in the chain. One per top-level pane.
+
+- spec: n/a — there is no portable web-side approximation; this is a native macOS 26 / iOS 26 pattern
+- web: n/a (web tier T3 covers the parallel WebGL story; see `spec/rules/web-renderer-tiers.md`)
+- native: `examples/macos-native-swift/Sources/LiquidGlassShowcase/ShaderHeroSection.swift` + `examples/macos-native-swift/Sources/LiquidGlassShowcase/Shaders.metal` (lensRefract SDF demo); `examples/macos-native-swift/Package.swift` declares `Shaders.metal` as a resource so SwiftPM compiles it
+- native plugin: `plugins/liquid-glass-native/skills/liquid-glass-native-ui/references/metal-shaders.md` (recipes, math, citations); `plugins/liquid-glass-native/agents/liquid-glass-native-shader-implementer.md` (dedicated subagent — reaches for `.glassEffect` first; writes Metal only when the brief actually needs it)
+- apple: SwiftUI `.layerEffect(_:maxSampleOffset:isEnabled:)`, `.colorEffect(_:isEnabled:)`, `.distortionEffect(_:maxSampleOffset:isEnabled:)`; `ShaderLibrary.bundle(.module)` (for SPM resources — never the implicit `.default` form); Metal `[[ stitchable ]]` functions
+- caveats: shaders bypass B1 because they aren't `CABackdropLayer`s, but they sit alongside it with a one-per-pane cap (`plugins/.../references/performance-budget.md`). Custom shaders do **not** auto-degrade — the implementer must branch on `@Environment(\.accessibilityReduceTransparency)` (a manual mirror of A9). Animated shader arguments must be wrapped in `withAnimation` or the GPU pops (extension of A18). Sources: [Victor Baro — Metal refraction](https://medium.com/@victorbaro/implementing-a-refractive-glass-shader-in-metal-3f97974fbc24), [Hacking with Swift — Metal shaders in SwiftUI](https://www.hackingwithswift.com/quick-start/swiftui/how-to-add-metal-shaders-to-swiftui-views-using-layer-effects), [twostraws/Inferno](https://github.com/twostraws/Inferno).
+
 ### Scroll edge effects
 
 Per-edge fade / harden treatment beneath floating chrome.
@@ -561,5 +586,8 @@ independent reviews, screenshot URLs — lives in `docs/resources.md`.
 
 - `prompts/web-frosted-glass.md` — paste-once prompt for any AI tool that produces web output. Compresses the spec's web tokens, geometry, and accessibility rules into one block.
 - `audit/liquid-glass-audit.mjs` — standalone static check on web output (HTML/CSS/JS).
+- `spec/build/build-tokens.mjs` — token export pipeline. Reads `spec/tokens/*.yaml` and writes `dist/tokens.css`, `dist/Tokens.swift`, `dist/tailwind.tokens.js`, `dist/tokens.tokensstudio.json`, plus the showcase mirror `examples/macos-native-swift/Sources/LiquidGlassShowcase/Tokens.generated.swift`. Run with `npm run build:tokens`; CI guard is `npm run check:tokens`.
+- `dist/` — generated platform-specific token exports (CSS, Swift, Tailwind, Tokens Studio JSON). Downstream consumers pull from here.
+- `kit-figma/` — designer-facing import recipe. Tells Figma users how to load `dist/tokens.tokensstudio.json` via the Tokens Studio plugin and which community Figma kits to use as the visual baseline (no `.fig` file lives in this repo).
 - `plugins/liquid-glass-native/` — Codex + Claude Code plugin for native macOS UI guidance (consumed by `liquid-glass-native-implementer` + `liquid-glass-native-auditor` Claude subagents).
 - `.claude/skills/liquid-glass-sync/` — local repo skill that orchestrates cross-cutting changes across spec, this doc, the web prompt, the web showcase, the native plugin references, and the native showcase.

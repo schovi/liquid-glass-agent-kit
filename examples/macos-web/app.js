@@ -7,6 +7,7 @@ import { renderSidebar }                  from "./sidebar.js";
 import { renderSections }                 from "./sections.js";
 import { renderInspector, updateInspector, SECTION_META } from "./inspector.js";
 import { initCommandPalette, openCommandPalette } from "./command-palette.js";
+import { initTier }                       from "./tier.js";
 
 const sidebarHost   = document.querySelector(".lg-sidebar__sections");
 const contentHost   = document.querySelector(".lg-content");
@@ -15,6 +16,11 @@ const inspectorHost = document.querySelector(".lg-inspector");
 renderSidebar(sidebarHost);
 renderSections(contentHost);
 renderInspector(inspectorHost);
+
+// Pick a renderer tier (T0–T3) and stamp every existing .lg-glass node.
+// Must run after sections/inspector mount so the dynamic glass surfaces
+// emitted by sections.js are tagged too. See spec/rules/web-renderer-tiers.md.
+const activeTier = initTier();
 
 const sidebarItems = document.querySelectorAll(".lg-sidebar__item");
 

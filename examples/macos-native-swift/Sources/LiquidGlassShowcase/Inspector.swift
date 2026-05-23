@@ -43,6 +43,8 @@ struct Inspector: View {
             return "Animated identity; one GlassEffectContainer + @Namespace."
         case .scrollEdgeEffects:
             return "Boundary treatment; only where chrome overlaps."
+        case .shaderHero:
+            return "Metal shader (.layerEffect); one per pane; owns reduce-transparency fallback."
         case .rules, .antiPatterns:
             return "Reference documentation."
         case .clearVariant:

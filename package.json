@@ -1,18 +1,25 @@
 {
   "name": "liquid-glass-agent-kit",
-  "version": "0.2.0",
+  "version": "0.4.0",
   "private": true,
   "description": "Apple-inspired Liquid Glass kit: portable web prompt, native macOS 26 plugin (SwiftUI/AppKit), canonical spec, and a standalone web audit.",
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "example:web":          "node scripts/serve.mjs",
-    "example:native":       "examples/macos-native-swift/scripts/run.sh",
+    "example:web": "node scripts/serve.mjs",
+    "example:native": "examples/macos-native-swift/scripts/run.sh",
     "example:native:build": "examples/macos-native-swift/scripts/build.sh",
     "example:native:xcode": "examples/macos-native-swift/scripts/xcode.sh",
     "example:native:clean": "examples/macos-native-swift/scripts/clean.sh",
-    "audit":                "node audit/liquid-glass-audit.mjs examples/macos-web",
-    "validate":             "npm run audit"
+    "audit": "node audit/liquid-glass-audit.mjs examples/macos-web",
+    "build:tokens": "node spec/build/build-tokens.mjs",
+    "check:tokens": "node spec/build/build-tokens.mjs --check",
+    "validate": "npm run audit && npm run check:tokens"
   },
-  "engines": { "node": ">=18" }
+  "devDependencies": {
+    "yaml": "^2.9.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
 }

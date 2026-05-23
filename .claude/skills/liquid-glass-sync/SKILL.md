@@ -9,7 +9,7 @@ This skill owns the workflow for changes that affect the design system
 itself: tokens, components, rules, patterns. The kit has multiple
 surfaces and they must move together:
 
-1. **Spec** — `spec/tokens/*.yaml`, `spec/components/*.yaml`, `spec/rules/*.md` (structured data + rules)
+1. **Spec** — `spec/tokens/*.yaml`, `spec/components/*.yaml`, `spec/rules/*.md` (structured data + rules); `spec/build/build-tokens.mjs` regenerates `dist/*` from tokens (run `npm run build:tokens`). `dist/tokens.tokensstudio.json` feeds the Figma kit (`kit-figma/`).
 2. **Inventory doc** — `docs/design-system.md` (the human-readable map)
 3. **Web prompt** — `prompts/web-frosted-glass.md` (token block at the top)
 4. **Web showcase** — `examples/macos-web/` (HTML/CSS reference output)
@@ -51,6 +51,7 @@ If the change adds or modifies a numeric token, geometry value, or component def
 - Edit the relevant file under `spec/tokens/*.yaml` or `spec/components/*.yaml`.
 - For rules / anti-patterns: edit the relevant `spec/rules/*.md`.
 - For new tokens: add an entry to `spec/liquid-glass.profile.yaml` `imports` if a new file was created.
+- For any token-value change: run `npm run build:tokens` to regenerate `dist/*` (CSS / Swift / Tailwind / Tokens Studio) and the showcase mirror `examples/macos-native-swift/Sources/LiquidGlassShowcase/Tokens.generated.swift`. CI runs `npm run check:tokens` and fails if you skipped this. If the build script itself needs updating (new YAML key, new output format), edit `spec/build/build-tokens.mjs`.
 
 If the change is purely architectural (a new pattern, a renamed concept) and not a numeric value, you may skip this step. Document the choice in the doc step.
 
