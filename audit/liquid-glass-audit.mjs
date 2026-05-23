@@ -16,6 +16,11 @@ const ALLOWED_SATURATION_PCT = new Set([100, 140, 160, 180]);
 const ALLOWED_RADIUS_PX = new Set([0, 12, 16, 24, 28, 32]);
 const ALLOWED_CAPSULE_RADIUS = new Set([9999]);
 
+// B1 — Performance budget. Per spec/tokens/material.yaml budget.max.
+// A live-blurred surface is any element carrying class "lg-glass". Per-file
+// proxy for the "per visible pane" rule. See spec/rules/performance-budget.md.
+const GLASS_BUDGET_MAX = 6;
+
 const findings = [];
 
 function record(file, id, message, snippet) {
@@ -49,6 +54,7 @@ function audit(file, src) {
   checkUnreadableClear(file, src);
   checkAccessibilityFallbacks(file, src);
   checkInventedAppleTerminology(file, src);
+  checkBudget(file, src);
 }
 
 // A1 and A2 share a depth scan so they reflect real nesting, not source order.
@@ -164,6 +170,23 @@ function checkInventedAppleTerminology(file, src) {
   const m = re.exec(src);
   if (m) {
     record(file, "A10", `Invented Apple endorsement phrase: "${m[1]}".`);
+  }
+}
+
+// B1 — Performance budget exceeded. Counts elements with class "lg-glass"
+// per file (proxy for "per visible pane"). HTML and JS template strings are
+// both scanned because the showcase emits glass markup from sections.js.
+function checkBudget(file, src) {
+  const ext = extname(file);
+  if (![".html", ".htm", ".js", ".mjs"].includes(ext)) return;
+  const re = /class\s*=\s*["'][^"']*\blg-glass\b[^"']*["']/g;
+  const count = (src.match(re) || []).length;
+  if (count > GLASS_BUDGET_MAX) {
+    record(
+      file,
+      "B1",
+      `Performance budget exceeded: ${count} lg-glass surfaces in this file; cap is ${GLASS_BUDGET_MAX} per pane. Share sampling (GlassEffectContainer / shared capsule) or downgrade non-primary surfaces to solid. See spec/rules/performance-budget.md.`,
+    );
   }
 }
 

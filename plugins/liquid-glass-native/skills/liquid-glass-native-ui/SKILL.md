@@ -78,6 +78,18 @@ macOS 26 gotchas (A11-A24):
 - A23 — icon + label glued into one tap target
 - A24 — `.glassProminent` + `.circle` border shape artifact
 
+Performance budget (`references/performance-budget.md`):
+
+- B1 — more live-blurred surfaces per pane than `material.yaml` `budget.max` (6). A `GlassEffectContainer` counts as one surface; share sampling instead of stacking.
+
+Forbidden surfaces (`references/when-not-to-use-glass.md`, review-only):
+
+- F1 — glass on the window background
+- F2 — glass behind long-form text (catches what A2 misses)
+- F3 — glass behind forms / inputs
+- F4 — glass behind dense tables
+- F5 — glass on glass (matches A1 conceptually; cite when the issue is *where* glass goes)
+
 ## What this skill is not
 
 - Not an Apple-official design system.
@@ -89,6 +101,8 @@ macOS 26 gotchas (A11-A24):
 
 - `references/tokens.md` — radii, spacing, motion, typography tokens.
 - `references/where-glass-goes.md` — layer rules and the canonical "yes / no" list.
+- `references/when-not-to-use-glass.md` — F1–F5 forbidden surfaces with failure modes and external citations (NN/g, Infinum, JuniperPhoton).
+- `references/performance-budget.md` — cap on live-blurred surfaces per pane (B1).
 - `references/swiftui.md` — SwiftUI cheat-sheet with signatures.
 - `references/appkit.md` — AppKit cheat-sheet with class / enum names.
 - `references/anti-patterns.md` — the ten things to never ship.

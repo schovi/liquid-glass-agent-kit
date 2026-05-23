@@ -22,7 +22,7 @@ For a real macOS app with the actual `glassEffect` API, install the `liquid-glas
 >
 > - Button: min-height 44, padding 16/8, icon 18, font 15/600, capsule.
 > - Icon button: 44×44, icon 20, capsule.
-> - Toolbar: min-height 52, padding 6, gap 4, item 40, icon 20, capsule.
+> - Toolbar: min-height 52, padding 6, gap 4, item 40, icon 20, capsule. Inside one shared capsule, a fixed-width spacer (e.g. `width: 12px`) inserts a hard gap; a flexible spacer (`flex: 1`) splits the capsule into two visually separate groups.
 > - Tab bar: height 64, padding 8/6, radius 32, item min-width 56, icon 22, label 11; 2-5 items.
 > - Sheet: top radius 28, padding 24, grabber 36×5; backdrop dim 24% black.
 > - Card: radius 24, padding 24, gap 12. Glass on cards is optional and only above content.
@@ -30,7 +30,7 @@ For a real macOS app with the actual `glassEffect` API, install the `liquid-glas
 > - Text field: min-height 44, padding 12/10, radius 12. **Solid surface, no glass.**
 > - Popover: min-width 220, radius 16, padding 8; item padding 10/8, item radius 12. Regular glass.
 > - Menu: min-width 200, radius 12, padding 6; item min-height 28, item padding 10/4, item radius 12, shortcut gap 24. Regular glass.
-> - Search field (toolbar): min-height 32, padding 12/6, capsule, icon 14. **Solid.** Inline variant: min-height 44, radius 12.
+> - Search field (toolbar): min-height 32, padding 12/6, capsule, icon 14. **Solid.** Inline variant: min-height 44, radius 12. May also collapse to a 32×32 icon-only capsule that expands to the full field on focus (web translation of `searchToolbarBehavior(.minimize)`).
 > - Toggle: track 38×22 capsule, knob 18 with 2 inset; label gap 12. **Solid track.**
 > - Slider: track height 4 capsule, thumb 22 circle, min-width 120. **Solid track**; only the thumb gets glass when system-rendered in a toolbar.
 > - Progress: linear height 4 capsule, min-width 120; circular small 16 / medium 24 / large 32, stroke 2. **Solid.**
@@ -54,14 +54,19 @@ For a real macOS app with the actual `glassEffect` API, install the `liquid-glas
 > **Layering.**
 >
 > - Glass lives in the floating layer only: navigation, toolbars, tab bars, sheets, menus, primary actions.
-> - **Never glass-on-glass.** No glass element inside another glass element.
-> - **Never glass behind body text or forms.**
+> - **Background extension.** When a floating sidebar or inspector sits over content, let hero media extend full-bleed under it. The sidebar's `backdrop-filter` does the blending. Don't crop the image at the sidebar edge.
+> - **Never glass-on-glass** (F5). No glass element inside another glass element. On macOS 26 / iOS 26 the inner element can fail to render entirely.
+> - **Never glass behind body text** (F2), **forms** (F3), **dense tables** (F4), or **page background** (F1). Background-layer glass measurably fails WCAG AA on busy backdrops (NN/g, Infinum). The reduced-transparency fallback is the opaque escape hatch — needing it means you used glass in the wrong place.
 > - **Never mix Regular and Clear in one group.**
 >
 > **Shape.**
 >
 > - Capsule: `border-radius: 9999px` (equivalent to `height / 2`).
 > - Nested shapes are concentric: `child = parent − inset`.
+>
+> **Budget.**
+>
+> - Cap live-blurred surfaces per visible pane: 3 recommended (calm) · 5 transient (popover / HUD open) · 6 hard ceiling. Above the ceiling, the auditor fails with `[B1]`. Share sampling or downgrade non-primary surfaces to solid instead of adding more glass.
 >
 > **Renderer.**
 >

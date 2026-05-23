@@ -19,11 +19,14 @@ content. The rules below mirror Apple's HIG (sourced from WWDC25 session
 
 ## Forbidden
 
-- **Page background.** Glass needs something behind it. The page is the *something behind*, not the something glass.
-- **Long-form text containers.** Glass shimmers under scroll and pulls contrast below WCAG AA.
-- **Forms and input fields.** Glass behind text fields breaks contrast under autocomplete / validation states. Use a solid input.
-- **Dense data tables.** Glass under tables erodes legibility row-by-row.
-- **Anything that sits behind another glass element ("glass-on-glass").** Two stacked glass surfaces produce no real refraction and read as muddy.
+- **Page background** (F1). Glass needs something behind it. The page is the *something behind*, not the something glass.
+- **Long-form text containers** (F2). Glass shimmers under scroll and pulls contrast below WCAG AA on busy backdrops (NN/g documented this on iOS 26 Lock Screen; Infinum on Control Center).
+- **Forms and input fields** (F3). Glass behind text fields breaks contrast under autocomplete / validation states. Use a solid input.
+- **Dense data tables** (F4). Glass under tables erodes legibility row-by-row.
+- **Anything that sits behind another glass element** (F5, "glass-on-glass"). Two stacked glass surfaces produce no real refraction and read as muddy; on macOS 26 / iOS 26 the inner element can fail to render (JuniperPhoton documented an iOS 26.1 `Menu`-in-`GlassEffectContainer` regression).
+
+Full failure cases and citations live in `when-not-to-use-glass.md`
+(this directory).
 
 ## Native-specific gotchas
 

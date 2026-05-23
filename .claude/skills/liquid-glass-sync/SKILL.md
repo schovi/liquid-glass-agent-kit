@@ -13,10 +13,13 @@ surfaces and they must move together:
 2. **Inventory doc** — `docs/design-system.md` (the human-readable map)
 3. **Web prompt** — `prompts/web-frosted-glass.md` (token block at the top)
 4. **Web showcase** — `examples/macos-web/` (HTML/CSS reference output)
-5. **Native plugin references** — `plugins/liquid-glass-native/skills/liquid-glass-native-ui/references/` (tokens.md, swiftui.md, appkit.md, etc.)
-6. **Native showcase** — `examples/macos-native-swift/` (real SwiftUI on macOS 26)
+5. **Audit** — `audit/liquid-glass-audit.mjs` + `audit/README.md` (paired — when you add a check, update both)
+6. **Native plugin skill** — `plugins/liquid-glass-native/skills/liquid-glass-native-ui/` (`SKILL.md` reference map + `references/*.md`)
+7. **Native plugin agents** — `plugins/liquid-glass-native/agents/*.md` (implementer + auditor enumerate audit IDs; refresh when IDs change)
+8. **Native showcase** — `examples/macos-native-swift/` (real SwiftUI on macOS 26)
+9. **Changelog** — `CHANGELOG.md` (one entry per shipped change)
 
-If you change one, you change all of them, in the order below.
+If you change one, you change all of the relevant others, in the order below.
 
 ## When to invoke
 
@@ -86,7 +89,18 @@ npm run audit
 
 It must pass before moving on. If it complains, fix the HTML / CSS. Do not lower the standard.
 
-### 5. Native plugin references (`plugins/liquid-glass-native/.../references/`)
+### 5. Audit (`audit/`)
+
+If the change adds, renames, or removes an audit ID, both files must move together:
+
+- `audit/liquid-glass-audit.mjs` — the check function and the ID it emits.
+- `audit/README.md` — the human-readable list of what each ID catches plus the prefix taxonomy.
+
+Audit ID prefixes: **A** (anti-patterns), **B** (budget), **F** (forbidden surfaces, review-only). Pick the prefix by category and stay numerically distinct from existing IDs across all prefixes.
+
+If only token values shifted (no new check, no new ID), this step is often unchanged.
+
+### 6. Native plugin references (`plugins/liquid-glass-native/.../references/`)
 
 Update the references the native skill loads on demand:
 
@@ -95,7 +109,11 @@ Update the references the native skill loads on demand:
 - `anti-patterns.md` — if the change introduces a new anti-pattern.
 - `where-glass-goes.md` — if the change affects the "yes / no" surface list.
 
-### 6. Native showcase (`examples/macos-native-swift/`)
+### 7. Native plugin agents (`plugins/liquid-glass-native/agents/*.md`)
+
+If the audit ID space or rule structure changed, update the implementer / auditor agent definitions so their `What to check` sections enumerate the new IDs. Pure value tweaks (a different blur number) often don't need this.
+
+### 8. Native showcase (`examples/macos-native-swift/`)
 
 Edit `examples/macos-native-swift/Sources/LiquidGlassShowcase/`:
 
@@ -111,9 +129,13 @@ cd examples/macos-native-swift && swift build
 
 It must compile. If it doesn't, fix it. Don't ship broken native code.
 
+### 9. Changelog (`CHANGELOG.md`)
+
+Add one section per shipped change at the top of the file. Bump the version. List paths touched and the user-facing effect.
+
 ## Self-audit before returning
 
-Before you say "done", state explicitly which of these six locations you touched. If a location was intentionally skipped, say why.
+Before you say "done", state explicitly which of these nine locations you touched. If a location was intentionally skipped, say why.
 
 ```
 sync audit:
@@ -121,12 +143,26 @@ sync audit:
 - docs:               <touched | n/a: reason>
 - web prompt:         <touched | n/a: reason>
 - web showcase:       <touched | n/a: reason>  (audit: pass | fail)
+- audit code+readme:  <touched | n/a: reason>
 - native references:  <touched | n/a: reason>
+- native agents:      <touched | n/a: reason>
 - native showcase:    <touched | n/a: reason>  (build: pass | fail)
+- changelog:          <touched | n/a: reason>
 ```
 
 If the web showcase was touched but `npm run audit` wasn't run, that's a failure. Run it.
 If the native showcase was touched but `swift build` wasn't run, that's a failure. Run it.
+
+### Drift sweep
+
+When adding or renaming audit IDs / rule codes / API references, grep for stale references before declaring done:
+
+```bash
+grep -rn "A1-A10\|A1–A10" --include="*.md" .                              # stale ID lists
+grep -rn "\bF[1-9]\b\|\bB[1-9]\b" --include="*.md" --include="*.yaml" .   # F/B codes
+```
+
+Every place that enumerates IDs must enumerate the new one.
 
 ## Hard rules
 

@@ -17,11 +17,28 @@ glass.tintColor = .controlAccentColor
 glass.contentView = MyContentView()
 ```
 
+### `contentView` is the only safe place
+
+Only the `contentView` of `NSGlassEffectView` is guaranteed to be
+inside the glass effect. Arbitrary `addSubview(_:)` calls onto the
+glass view itself may not z-order consistently with the glass layer
+— put content into `contentView`, not directly on the glass view.
+
+```swift
+// ✅ Correct
+glass.contentView = MyContentView()
+
+// ❌ Risky — z-order not guaranteed
+glass.addSubview(myLabel)
+```
+
 For multiple grouped glass capsules in a toolbar:
 
 ```swift
 let container = NSGlassEffectContainerView()
 container.subviews = [reply, forward, archive, delete]
+// container.spacing defaults to 0 — suitable for batch sampling
+// without merging. Raise it only when close siblings should fuse.
 ```
 
 ## Visual effect materials (semantic)

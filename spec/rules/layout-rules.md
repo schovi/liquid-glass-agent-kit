@@ -10,11 +10,15 @@
 
 ## Surfaces that must NOT use glass
 
-- Page background.
-- Long-form text containers.
-- Forms and input fields (use a solid surface — see `components/text-field.yaml`).
-- Dense data tables.
-- Any element that sits behind another glass element ("glass-on-glass").
+- Page background (F1).
+- Long-form text containers (F2).
+- Forms and input fields (F3) — use a solid surface; see `components/text-field.yaml`.
+- Dense data tables (F4).
+- Any element that sits behind another glass element ("glass-on-glass", F5).
+
+The codes (F1–F5) point to `when-not-to-use-glass.md` for the failure
+mode and citations. The auditor catches F2 and F5 directly via A1 / A2;
+F1 / F3 / F4 are review rules.
 
 ## Spacing
 

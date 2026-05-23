@@ -30,21 +30,68 @@ For any change that touches tokens, components, rules, or cross-cutting patterns
 
 - `.claude/skills/liquid-glass-sync/SKILL.md`
 
-Order of operations: **spec → docs/design-system.md → prompts/web-frosted-glass.md (token block) → examples/macos-web → plugins/liquid-glass-native (references) → examples/macos-native-swift**. Self-audit with `npm run audit` for web and `swift build` for native before declaring done.
+Order of operations (lockstep — skipping a step is the bug):
+
+1. **`spec/`** — tokens, components, rules.
+2. **`docs/design-system.md`** — inventory entries with `spec` / `web` / `native` / `apple` / `caveats` pointers.
+3. **`prompts/web-frosted-glass.md`** — token block + rule reminders.
+4. **`examples/macos-web/`** — HTML / CSS / JS that exercises the new state.
+5. **`audit/`** — if a new check or audit ID is added: update `audit/liquid-glass-audit.mjs` *and* `audit/README.md` (these are paired). If only token values shifted, often unchanged.
+6. **`plugins/liquid-glass-native/skills/liquid-glass-native-ui/`** — `SKILL.md` reference map + `references/*.md`.
+7. **`plugins/liquid-glass-native/agents/*.md`** — if the audit ID space, anti-pattern list, or rule structure changed, update the implementer / auditor agent definitions so they enumerate the new IDs.
+8. **`examples/macos-native-swift/`** — Tokens / Sections / ContentView wiring.
+9. **`CHANGELOG.md`** — one entry per shipped change with paths touched.
+
+Self-audit:
+
+- `npm run audit` for the web side.
+- `swift build` (or `npm run example:native:build`) for the native side.
 
 Single-rendering bug fixes (CSS typo in the showcase, Swift compile error that doesn't touch the design system) do NOT need this skill. Fix them in place.
 
+## Audit ID prefix taxonomy
+
+The auditor (`audit/liquid-glass-audit.mjs`) and review-only rules share one ID namespace partitioned by prefix:
+
+- **A** — anti-patterns. A1–A10 are cross-cutting (web + native); A11–A24 are macOS 26-specific (native skill only).
+- **B** — budget. B1 = performance budget. New budget rules go to B2+.
+- **F** — forbidden surfaces. Review-only, lives in `spec/rules/when-not-to-use-glass.md` and the native mirror. F2 and F5 overlap with A2 and A1; the auditor catches the worst statically.
+
+When adding a new check:
+
+- Pick the prefix by category (anti-pattern → A; budget / perf → B; surface rule → F).
+- Stay numerically distinct (don't reuse a number across prefixes).
+- Update **every** place that lists IDs: `audit/README.md`, `spec/rules/anti-patterns.md`, `plugins/.../references/anti-patterns.md`, the auditor agent definition, `docs/design-system.md`.
+
 ## After every change
 
-If you touched the audit, the web prompt token block, or `examples/macos-web/`, run:
+Run the validators that match what you touched:
+
+| If you touched | Run |
+|---|---|
+| `audit/`, `prompts/web-frosted-glass.md`, `examples/macos-web/`, `spec/tokens/material.yaml`, `spec/rules/*.md` | `npm run audit` |
+| `examples/macos-native-swift/`, native skill references that include code blocks | `swift build` or `npm run example:native:build` |
+| Anything that changes the audit ID space or rule structure | both, plus a grep for any stale ID lists (see "Drift sweep" below) |
+
+## Drift sweep
+
+When you add or rename rules / IDs / API references, do a final grep so nothing stale lingers:
 
 ```bash
-npm run audit
+# Stale audit ID lists (anything mentioning A1-A10 without the new code)
+grep -rn "A1-A10\|A1–A10" --include="*.md" .
+
+# Forbidden-surface code consistency
+grep -rn "\bF[1-9]\b" --include="*.md" --include="*.yaml" .
+
+# Budget code consistency
+grep -rn "\bB[1-9]\b" --include="*.md" --include="*.yaml" --include="*.mjs" .
+
+# New API references — confirm each one is mentioned in design-system.md
+grep -rn "searchToolbarBehavior\|DefaultToolbarItem\|scrollExtensionMode" --include="*.md" .
 ```
 
-That runs the standalone auditor against `examples/macos-web`.
-
-The native side has no audit script yet. The native plugin skill is consumed by an LLM and verified by building `examples/macos-native-swift` (`swift build` or `npm run example:native:build`).
+The native side has no automated audit. The native plugin skill is consumed by an LLM and verified by building `examples/macos-native-swift`.
 
 ## Token discipline (web)
 

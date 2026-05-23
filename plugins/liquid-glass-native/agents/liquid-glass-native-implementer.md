@@ -24,7 +24,7 @@ hand-roll a `CIFilter` to imitate glass.
 3. Apply Liquid Glass with the *system* API: `.glassEffect(...)`, `GlassEffectContainer`, `.buttonStyle(.glass)` / `.glassProminent` (SwiftUI), or `NSGlassEffectView` / `NSGlassEffectContainerView` (AppKit).
 4. Honor concentricity: declare `.containerShape(...)` on the parent and use `ConcentricRectangle()` on children (SwiftUI), or pick matching radii manually (AppKit).
 5. Pick tokens from `references/tokens.md`. Do not improvise sizes, radii, or motion timings.
-6. Self-check against `references/anti-patterns.md` (A1-A10 + macOS 26-specific gotchas) before returning.
+6. Self-check against `references/anti-patterns.md` (A1–A24), `references/performance-budget.md` (B1 — cap on live-blurred surfaces per pane), and `references/when-not-to-use-glass.md` (F1–F5 forbidden surfaces) before returning.
 
 ## What you never do
 

@@ -10,20 +10,30 @@ Two glass surfaces stacked. On native, this happens when you wrap a
 `NSGlassEffectView` inside another `NSGlassEffectView`. The lower surface
 contributes no real refraction; the upper surface samples mostly glass.
 
+On macOS 26 / iOS 26 the inner element can fail to render — JuniperPhoton
+documented a regression in iOS 26.1 where a `Menu` inside a
+`GlassEffectContainer` drops its glass entirely, and each
+`CABackdropLayer` costs three offscreen textures.
+
 Fix: use `GlassEffectContainer` (SwiftUI) / `NSGlassEffectContainerView`
 (AppKit) to *group* sibling glass elements onto one sampling pass — that
 is not nesting, that is sharing.
+
+See `when-not-to-use-glass.md` F5 for citations.
 
 ## A2 — Glass behind body content
 
 Glass behind paragraphs, articles, forms, dense tables. Text shimmers
 under scroll and contrast drops below WCAG AA on busy backgrounds.
+NN/g documented this on iOS 26 Lock Screen; Infinum on Control Center.
 
 Native-specific:
 - Glass behind `Text` inside a `ScrollView` — bad.
 - Glass behind a `TextField` — bad. SwiftUI / AppKit text fields should be
   solid. If you need a tinted look, use `.background(.thinMaterial)` *not*
   `.glassEffect`.
+
+See `when-not-to-use-glass.md` F2–F4 for citations.
 
 ## A3 — Invented material values
 
@@ -202,3 +212,18 @@ genuinely need both behaviors, give them their own affordances.
 The prominent style can paint outside the circle. Add
 `.clipShape(Circle())` *after* `.buttonStyle(.glassProminent)` when
 combined with `.buttonBorderShape(.circle)`.
+
+## B1 — Performance budget exceeded
+
+More live-blurred surfaces in one pane than `material.yaml`
+`budget.max` (6) allows. A `GlassEffectContainer` /
+`NSGlassEffectContainerView` counts as **one** surface regardless of
+children — that is the point of the container.
+
+Fix: group siblings into one container, or downgrade non-primary
+surfaces to solid. See `performance-budget.md` for the full rule,
+the range (recommended 3 / busy 5 / ceiling 6), and sources.
+
+The B-prefix is intentional: anti-patterns A1–A24 keep their meaning,
+the budget rule is a separate category emitted as `[B1]` by the
+auditor.

@@ -64,6 +64,17 @@ More transparent. Only over rich media with a dim layer behind.
 - apple: SwiftUI `Glass.clear`
 - caveats: mixing Regular and Clear in one group is an anti-pattern (A7); show them in separate sections.
 
+### Material — performance budget
+
+Per-pane cap on live-blurred surfaces. Recommended 3 (calm) · busy transient 5 · ceiling 6. Auditor enforces the ceiling via B1; recommendation is documentary.
+
+- values: `budget.recommended: 3`, `budget.busyTransient: 5`, `budget.max: 6`
+- spec: `spec/tokens/material.yaml` (`budget`), `spec/rules/performance-budget.md`
+- web: enforced by `audit/liquid-glass-audit.mjs` (`checkBudget`, B1)
+- native: review-enforced by `liquid-glass-native-auditor`
+- apple: WWDC25 session 219 ("share sampling, don't stack"); rationale from JuniperPhoton's three-textures-per-`CABackdropLayer` measurement and the iOS 26.1 Menu regression.
+- caveats: a `GlassEffectContainer` / `NSGlassEffectContainerView` counts as **one** surface no matter how many children it groups — that is the point.
+
 ### Material — accessibility fallbacks
 
 Reduced transparency / increased contrast / reduced motion. Web emits explicit fallbacks. Native is system-driven — do not hand-roll fallbacks.
@@ -313,8 +324,8 @@ One Regular-glass strip across the top with traffic lights, title, and toolbar i
 
 - web: `examples/macos-web/index.html` (`.lg-titlebar` + `.lg-toolbar-items`)
 - native: `examples/macos-native-swift/Sources/LiquidGlassShowcase/ContentView.swift` (`.toolbar { ... }`)
-- apple: HIG toolbars; WWDC25 session 323 "Build a SwiftUI app with the new design"
-- caveats: prominent action uses `.buttonStyle(.glassProminent) + .tint(_:)`; isolate it with `.sharedBackgroundVisibility(.hidden)` to prevent merge artifacts.
+- apple: HIG toolbars; WWDC25 session 323 "Build a SwiftUI app with the new design"; `ToolbarSpacer(.fixed | .flexible)`, `DefaultToolbarItem(kind: .search | .sidebar, placement:)`, `ToolbarItem(placement: .largeSubtitle)`, `.navigationSubtitle(_:)`, `.searchToolbarBehavior(.minimize)`
+- caveats: prominent action uses `.buttonStyle(.glassProminent) + .tint(_:)`; isolate it with `.sharedBackgroundVisibility(.hidden)` to prevent merge artifacts. `.fixed` spacer keeps the capsule shared; `.flexible` splits it. `.largeSubtitle` placement overrides `.navigationSubtitle(_:)`.
 
 ### Concentricity
 
@@ -442,11 +453,15 @@ Top navigation, bottom navigation, tab bar, floating toolbar / action bar, sheet
 
 ### Forbidden glass surfaces
 
-Page background, long-form text containers, forms / text fields, dense data tables, any element behind another glass element ("glass-on-glass").
+Page background (F1), long-form text containers (F2), forms / text fields (F3), dense data tables (F4), any element behind another glass element (F5, "glass-on-glass").
 
-- spec: `spec/rules/layout-rules.md`
+- spec: `spec/rules/layout-rules.md` (short list), `spec/rules/when-not-to-use-glass.md` (long form with failure cases + citations)
+- web: enforced indirectly via the auditor (A1 / A2)
+- native: `plugins/liquid-glass-native/skills/liquid-glass-native-ui/references/when-not-to-use-glass.md` (mirror)
+- apple: WWDC25 session 219 ("don't stack")
+- caveats: NN/g, Infinum, Axess Lab, JuniperPhoton each contributed citations behind a specific F-code; see `docs/resources.md` section N.7.
 
-### Anti-patterns (A1-A10)
+### Anti-patterns (A1-A10) and budget (B1)
 
 The auditor in `audit/liquid-glass-audit.mjs` enforces these for the web profile. The native side relies on the implementer and auditor agents to enforce by review.
 
@@ -460,8 +475,9 @@ The auditor in `audit/liquid-glass-audit.mjs` enforces these for the web profile
 - A8 Unreadable Clear glass (no dim)
 - A9 Missing accessibility fallback (web) / fighting system flags (native)
 - A10 Invented Apple endorsement claims
+- B1 Performance budget exceeded (separate prefix; auditor counts `lg-glass` elements per file vs `material.yaml` `budget.max`).
 
-- spec: `spec/rules/anti-patterns.md`, `plugins/liquid-glass-native/skills/liquid-glass-native-ui/references/anti-patterns.md`
+- spec: `spec/rules/anti-patterns.md`, `spec/rules/performance-budget.md`, `plugins/liquid-glass-native/skills/liquid-glass-native-ui/references/anti-patterns.md`, `plugins/liquid-glass-native/skills/liquid-glass-native-ui/references/performance-budget.md`
 
 ### Native-only bonus pitfalls
 

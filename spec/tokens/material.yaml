@@ -55,6 +55,23 @@ glass:
       requiresBackgroundDimming: true
       backgroundDim: "rgba(0,0,0,0.24)"
 
+# Performance / cognitive budget for live-blurred surfaces.
+# See spec/rules/performance-budget.md for the full rule.
+#
+# A "surface" is one element with backdrop sampling (web: any .lg-glass;
+# native: any non-.identity .glassEffect, NSGlassEffectView, or the
+# contentView of a GlassEffectContainer / NSGlassEffectContainerView —
+# the container itself counts as one).
+budget:
+  recommended: 3            # calm: typical app at rest (Mail, Notes, Finder)
+  busyTransient: 5          # one popover or HUD is up
+  max: 6                    # hard ceiling per top-level pane
+  rationale: |
+    JuniperPhoton measured three offscreen textures per CABackdropLayer
+    and an iOS 26.1 regression where deep glass-on-glass drops rendering.
+    Above 6 the experience is expensive (every blur costs a frame budget
+    chunk) and fragile (regressions show first in the busiest screens).
+
 # Accessibility fallbacks. Renderers MUST emit these alongside the material.
 fallbacks:
   reducedTransparency:

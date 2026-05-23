@@ -100,6 +100,26 @@ Requirements: same `GlassEffectContainer`, same `@Namespace`, animated
 state change. Use `.glassEffectUnion(id:in:)` when participants live
 far apart (e.g. toolbar item morphing into a content-area capsule).
 
+### `.glassEffectUnion(id:in:)` — dynamic and cross-ancestor
+
+Apple's guidance: `glassEffectUnion` is "useful when creating views
+dynamically or with views that live outside of an HStack or VStack."
+Use it on:
+
+- Views generated in a `ForEach` whose count varies at runtime.
+- Two glass surfaces in different parent containers that should still
+  read as one shape (a toolbar pill morphing into a content-area
+  capsule).
+- Any case where you can't physically nest the participants inside
+  the same `GlassEffectContainer`.
+
+```swift
+ForEach(items) { item in
+    ItemPill(item)
+        .glassEffectUnion(id: "pill-row", in: ns)
+}
+```
+
 ## Background extension
 
 ```swift
@@ -110,6 +130,32 @@ HeroImage()
 Mirrors and blurs the view outside the safe area so it shows through
 floating sidebars and inspectors. Apply on the **content**, never on
 the chrome — the chrome already paints Liquid Glass.
+
+The split-view detail variant uses a per-column background:
+
+```swift
+NavigationSplitView {
+    Sidebar()
+} detail: {
+    Detail()
+        .background {
+            HeroImage()
+                .backgroundExtensionEffect()
+        }
+}
+```
+
+### Horizontal scroll under sidebar / inspector
+
+```swift
+ScrollView(.horizontal) { ... }
+    .scrollExtensionMode(.underSidebar)
+```
+
+Use `.scrollExtensionMode(.underSidebar)` when a horizontal scroll
+view should extend its content under a floating sidebar or inspector
+(media reels, photo strips). Without it, horizontal scroll content
+clips at the sidebar edge.
 
 ## Scroll edge effects
 
@@ -161,12 +207,13 @@ don't add `.sidebar` background materials manually.
 ## Toolbar
 
 ```swift
-.toolbar {
+.toolbar(id: "main") {
     ToolbarItem(placement: .principal) {
         Picker("View", selection: $mode) { ... }
             .pickerStyle(.segmented)
     }
-    ToolbarSpacer(.flexible)             // splits the shared glass capsule
+    ToolbarSpacer(.fixed)                // hard gap inside one shared capsule
+    ToolbarSpacer(.flexible)             // splits the shared capsule in two
     ToolbarItem {
         Menu { ... } label: { Label("More", systemImage: "ellipsis") }
     }
@@ -180,6 +227,45 @@ don't add `.sidebar` background materials manually.
 
 `CustomizableToolbarContent.sharedBackgroundVisibility(_:)` hides the
 shared glass background per group.
+
+### `ToolbarSpacer` — `.fixed` vs `.flexible`
+
+- `.fixed` inserts a hard gap *inside* one shared glass capsule
+  (keeps items grouped; just spaces them apart).
+- `.flexible` splits the shared capsule in two — items on either side
+  get their own capsule.
+
+Use `.fixed` for visual breathing room within a group; `.flexible`
+when adjacent items should read as separate controls.
+
+### `DefaultToolbarItem` — reposition system items
+
+```swift
+.toolbar {
+    DefaultToolbarItem(kind: .sidebar, placement: .navigationBarLeading)
+    DefaultToolbarItem(kind: .search, placement: .bottomBar)
+}
+```
+
+Use `DefaultToolbarItem(kind:placement:)` when the system-provided
+search or sidebar control needs to live in a non-default slot.
+
+### Title and subtitle
+
+```swift
+ContentView()
+    .navigationTitle("Inbox")
+    .navigationSubtitle("12 unread")
+    .toolbar {
+        ToolbarItem(placement: .largeSubtitle) {
+            CustomSubtitleView()       // takes precedence over navigationSubtitle
+        }
+    }
+```
+
+`ToolbarItem(placement: .largeSubtitle)` overrides the value passed
+to `.navigationSubtitle(_:)`. Use it when the subtitle needs a custom
+view (icon + label, progress count) rather than a string.
 
 ## Buttons
 
@@ -209,10 +295,16 @@ Picker("Density", selection: $d) { ForEach(...) }
 
 View()
     .searchable(text: $query, placement: .toolbar)
+    .searchToolbarBehavior(.minimize)    // collapse to button, expand on tap
 
 view
     .popover(isPresented: $shown, arrowEdge: .bottom) { PopoverContent() }
 ```
+
+`.searchToolbarBehavior(.minimize)` renders the search field as a
+button-like capsule that expands to the full field on focus.
+Recommended on space-constrained toolbars (smaller windows, sidebar
+inspector toolbars). The default behavior keeps the field expanded.
 
 ## Sheet — Liquid Glass is automatic
 
