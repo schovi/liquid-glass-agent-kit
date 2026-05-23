@@ -1,6 +1,6 @@
 {
   "name": "liquid-glass-native",
-  "version": "0.2.1",
+  "version": "0.4.0",
   "description": "Build authentic macOS 26 (Tahoe) Liquid Glass apps with AppKit and SwiftUI. Materials, window chrome, NavigationSplitView, NSGlassEffectView, toolbars, and anti-patterns.",
   "skills": "./skills/"
 }

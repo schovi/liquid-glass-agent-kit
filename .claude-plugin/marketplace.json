@@ -11,7 +11,7 @@
         "ref": "main"
       },
       "description": "Build authentic macOS 26 (Tahoe) Liquid Glass apps with SwiftUI and AppKit",
-      "version": "0.2.1",
+      "version": "0.4.0",
       "license": "MIT",
       "category": "Design",
       "tags": ["liquid-glass", "macos", "tahoe", "swiftui", "appkit", "design-system"]
