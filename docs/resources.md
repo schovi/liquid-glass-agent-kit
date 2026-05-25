@@ -296,6 +296,7 @@ Everything below was new at sweep time and is not duplicated above.
 
 ### N.3 Web / CSS / SVG recreations
 
+- [AndrewPrifer/liquid-dom](https://github.com/AndrewPrifer/liquid-dom) + [announcement thread](https://x.com/AndrewPrifer/status/2056923983581446529) — **High-potential exploration target.** WebGPU monorepo claiming a "complete and faithful" Liquid Glass on the web: shape morphing, all properties animatable, dynamic refraction and reflection, adaptive tint, adaptive specular highlight, chromatic dispersion, and arbitrary HTML inside the glass. Ships React, Three.js, and React Three Fiber bindings plus a renderer-agnostic layout engine. Goes beyond the T3 (WebGL) tier in our ladder — this is effectively a T4 (WebGPU) reference implementation. Worth diffing against `spec/tokens/material.yaml` profiles and considering as the basis for a new tier in O.3 #8.
 - [nikdelvin/liquid-glass](https://github.com/nikdelvin/liquid-glass) — Pure CSS + SVG `LiquidGlass / LiquidText / LiquidButton`. Aggressive `feDisplacementMap`.
 - [naughtyduk/liquidGL](https://github.com/naughtyduk/liquidGL) — WebGL/canvas with real backdrop sampling rather than `backdrop-filter`.
 - [rizroze/liquid-glass](https://github.com/rizroze/liquid-glass) — Zero-dependency single-file glass with three-pass chromatic aberration via `feColorMatrix`.
