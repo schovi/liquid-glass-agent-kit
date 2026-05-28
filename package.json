@@ -1,8 +1,8 @@
 {
-  "name": "liquid-glass-agent-kit",
-  "version": "0.5.0",
+  "name": "apple-agent-kit",
+  "version": "0.6.0",
   "private": true,
-  "description": "Mac craft kit for AI tools: Apple-inspired Liquid Glass headline (portable web prompt + native macOS 26 plugin) plus the rest of the conventions — Cmd-K palette, menu-bar extras, multi-window, keyboard shortcuts, app icons, accessibility ladder.",
+  "description": "Apple app kit for AI tools: native macOS plugin with two skills (macos-app-design for HIG / Mac craft, liquid-glass for the macOS 26 material), plus a portable web frosted-glass prompt for tools that can't install plugins. iOS coverage coming.",
   "license": "MIT",
   "type": "module",
   "scripts": {

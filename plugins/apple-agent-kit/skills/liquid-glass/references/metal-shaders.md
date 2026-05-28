@@ -271,7 +271,7 @@ animates.
   A18 for glass morph.
 
 These do not get new audit IDs — they are extensions of existing IDs
-the `liquid-glass-native-auditor` already flags.
+the `apple-app-reviewer` already flags.
 
 ## When NOT to use a shader
 

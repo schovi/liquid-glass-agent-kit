@@ -75,7 +75,7 @@ count exceeds `material.yaml` `budget.max` (6 by default). A warning
 is not emitted at the recommended threshold; the recommendation is
 documentary.
 
-The native side is review-enforced — `liquid-glass-native-auditor`
+The native side is review-enforced — `apple-app-reviewer`
 flags screens that exceed the recommended count per pane and rejects
 screens that exceed the ceiling.
 

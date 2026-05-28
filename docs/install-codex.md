@@ -5,7 +5,7 @@ This installs the **native macOS 26** plugin. For web Liquid Glass UI (in Codex 
 ## Marketplace install (recommended)
 
 ```bash
-codex plugin marketplace add schovi/liquid-glass-agent-kit --sparse .agents/plugins plugins/liquid-glass-native
+codex plugin marketplace add schovi/apple-agent-kit --sparse .agents/plugins plugins/apple-agent-kit
 ```
 
 Open Codex and run:
@@ -22,7 +22,7 @@ If you want the skill in a single repo without committing a plugin install, copy
 
 ```bash
 mkdir -p .agents/skills
-cp -R path/to/liquid-glass-agent-kit/plugins/liquid-glass-native/skills/liquid-glass-native-ui .agents/skills/
+cp -R path/to/liquid-glass-agent-kit/plugins/apple-agent-kit/skills/liquid-glass .agents/skills/
 ```
 
 Codex scans `.agents/skills` from the current directory up to the repo root.
@@ -30,9 +30,9 @@ Codex scans `.agents/skills` from the current directory up to the repo root.
 ## Usage
 
 ```text
-$liquid-glass-native-ui Build a SwiftUI sidebar app with NavigationSplitView and a Liquid Glass toolbar.
-$liquid-glass-native-ui Audit this SwiftUI view for Liquid Glass anti-patterns.
-$liquid-glass-native-ui Port this AppKit toolbar to use NSGlassEffectView.
+$liquid-glass Build a SwiftUI sidebar app with NavigationSplitView and a Liquid Glass toolbar.
+$liquid-glass Audit this SwiftUI view for Liquid Glass anti-patterns.
+$liquid-glass Port this AppKit toolbar to use NSGlassEffectView.
 ```
 
 You can also invoke it implicitly. Codex selects the skill from its description when the user asks for "Liquid Glass macOS app", "macOS 26 Tahoe UI", "SwiftUI glass effect", or similar.
@@ -41,7 +41,7 @@ For web HTML/CSS, paste `prompts/web-frosted-glass.md` instead of installing any
 
 ## How this plugin is laid out
 
-`plugins/liquid-glass-native/` contains `.codex-plugin/plugin.json` (which Codex reads) and `.claude-plugin/plugin.json` (which Claude Code reads). Both manifests point at the same `skills/` directory.
+`plugins/apple-agent-kit/` contains `.codex-plugin/plugin.json` (which Codex reads) and `.claude-plugin/plugin.json` (which Claude Code reads). Both manifests point at the same `skills/` directory.
 
 ## Update
 

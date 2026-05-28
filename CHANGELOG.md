@@ -1,5 +1,46 @@
 # Changelog
 
+## 0.6.0 — rebrand + skill split (apple-agent-kit)
+
+### Breaking
+
+- **Repo rebranded** `liquid-glass-agent-kit` → `apple-agent-kit`. The GitHub repo URL changes; the marketplace catalogs now point at `schovi/apple-agent-kit`. The old name is retired.
+- **Plugin rebranded** `liquid-glass-native` → `apple-agent-kit`. Plugin folder moved: `plugins/liquid-glass-native/` → `plugins/apple-agent-kit/`. Both Codex (`.codex-plugin/plugin.json`) and Claude (`.claude-plugin/plugin.json`) manifests updated.
+- **Single skill split into two.** The former `liquid-glass-native-ui` skill is now:
+  - `skills/liquid-glass/` — macOS 26 glass material only. Anti-patterns A1–A24, performance budget B1, forbidden surfaces F1–F5, tokens, accessibility auto-degradation, Metal shaders, glass-specific components and patterns.
+  - `skills/macos-app-design/` — HIG conformance and Mac craft. Principles, menu bar, file management, multi-window, keyboard shortcuts, menu bar extra, window chrome, system primitives, app icon, generic WCAG accessibility, structural patterns.
+  Compose the two for any non-trivial Mac app.
+- **Subagent rename + reorg.**
+  - `liquid-glass-native-auditor` → **removed**. Replaced by `apple-app-reviewer` (read-only, broader: covers both HIG and Liquid Glass IDs).
+  - `liquid-glass-native-implementer` → `liquid-glass-implementer`. Loads both `liquid-glass` and `macos-app-design`.
+  - `liquid-glass-native-shader-implementer` → `liquid-glass-shader-implementer`. Loads `liquid-glass`.
+- **Slash command prefix change.** Claude Code: `/liquid-glass-native:liquid-glass-native-ui …` → `/apple-agent-kit:liquid-glass …` or `/apple-agent-kit:macos-app-design …`. Codex: `$liquid-glass-native-ui …` → `$liquid-glass …` or `$macos-app-design …`.
+
+### Added
+
+- **`macos-app-design` skill** — HIG and Mac craft, glass-agnostic, macOS 14+. New SKILL.md with required workflow and full reference map. New references derived from Apple HIG: `principles.md` (behavioral checklist — system tool, drag in/out, onboard via doing, progressive disclosure, every primary action has a shortcut); `menu-bar.md` (required menu order, per-menu standards for App / File / Edit / Format / View / Window / Help, Dock menus, dynamic menu items); `file-management.md` (Save vs Duplicate, autosave dot, Quick Look, custom file browsers, Finder Sync); `windows-and-full-screen.md` (`WindowGroup` / `Window` / `DocumentGroup`, full-screen rules, Window menu); `accessibility.md` (generic WCAG mapping — A26 / A27 native scopes live here); `light-dark-and-accessibility.md` (appearance, system semantic colors, increase contrast, reduce transparency). Existing references moved in: `system-primitives.md`, `icon.md`, `keyboard-shortcuts.md`, `menu-bar-extra.md`, `multi-window.md`, `window-chrome.md`, `titlebar-accessory.md`, and the non-glass structural patterns (`form-rows`, `inset-list`, `disclosure-group`, `stepper`).
+- **`ios-app-design` skill placeholder** — stub for future iOS / iPadOS coverage. Description intentionally narrow so it doesn't auto-trigger.
+- **`apple-app-reviewer` subagent** — read-only, replaces the former `liquid-glass-native-auditor`. Reviews both HIG conformance (with `HIG —` prefix findings) and Liquid Glass anti-patterns (A / B / F IDs).
+- **Web prompt window-chrome mockup section.** `prompts/web-frosted-glass.md` gains a section on simulating real Mac windows in HTML containers: `-webkit-app-region: drag` on the top 50 px, traffic-light placement, behavioral conformance checklist (empty states, drag-and-drop in/out, keyboard parity, onboarding via doing) for full pseudo-app prompts. Cross-references the `macos-app-design` skill for real native conformance.
+
+### Changed
+
+- `liquid-glass/SKILL.md` — narrowed to the material. Reference map dropped non-glass entries (`system-primitives`, `icon`, and the non-glass patterns) which now live in `macos-app-design`. Added cross-skill pointer.
+- `liquid-glass/references/accessibility.md` — narrowed to glass-specific auto-degradation + A9 mapping. Generic WCAG content (labels, focus, target size, color signals — including A26 / A27 native scopes) moved to `macos-app-design/references/accessibility.md`.
+- `AGENTS.md` — "Native plugin layout" + "Slash command naming" + "Subagent boundaries" sections rewritten for the new structure. Order-of-operations step 6 now references both skills.
+- `.claude/skills/liquid-glass-sync/SKILL.md` — paths updated; step 6 now mentions both skills; pointer to subagents updated.
+- `README.md` — rewritten around the rebrand. Tagline shifted from "Mac craft toolkit / Liquid Glass headline" to "native Apple-app kit with HIG + glass". Install instructions updated.
+- `package.json` — name → `apple-agent-kit`, version → `0.6.0`, description rewritten.
+- Marketplace catalogs (`.claude-plugin/marketplace.json`, `.agents/plugins/marketplace.json`) — repo URL, plugin name, display name, description, tags updated.
+
+### Migration
+
+- **GitHub repo URL changes.** The local clone still works (you renamed the GitHub repo); existing checkouts continue to function. CI / CD references to `schovi/liquid-glass-agent-kit` need to point at `schovi/apple-agent-kit`. GitHub serves a redirect for the old URL but the marketplace entries should be updated.
+- **Slash commands change.** Users who had muscle memory for `/liquid-glass-native:liquid-glass-native-ui` need to learn the new forms (see Breaking). Both Codex and Claude will need to re-install the plugin from the marketplace.
+- **Subagent invocation changes.** Anyone calling `liquid-glass-native-auditor` should call `apple-app-reviewer`. Anyone calling `liquid-glass-native-implementer` should call `liquid-glass-implementer`.
+- **No audit ID changes.** A1–A27, B1, F1–F5 are unchanged. Existing findings still pin to the same IDs.
+- **No token / numeric changes.** All `spec/tokens/*.yaml` values are unchanged.
+
 ## 0.5.0 — T4 pass · accessibility-first framing (#12) + Mac craft beyond glass (#14)
 
 ### Added (#12 — accessibility-first Liquid Glass)

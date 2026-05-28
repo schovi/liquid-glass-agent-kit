@@ -4,7 +4,7 @@ Paste this block once before your UI request in any AI tool: ChatGPT, Claude web
 
 This is a **frosted-glass approximation** of Apple's Liquid Glass for the web. It cannot reproduce Apple's real-time backdrop sampling, displacement, or motion-driven parallax. What it can do is enforce the same layout discipline, tokens, and accessibility rules so your output stays consistent across tools and runs.
 
-For a real macOS app with the actual `glassEffect` API, install the `liquid-glass-native` plugin in Claude Code or Codex instead.
+For a real macOS app with the actual `glassEffect` API, install the `apple-agent-kit` plugin in Claude Code or Codex instead.
 
 ---
 
@@ -113,6 +113,25 @@ For a real macOS app with the actual `glassEffect` API, install the `liquid-glas
 > - **Accessible name on icon-only actions (A27).** Every `<button>` or `<summary>` rendered as an icon-only glass control (`lg-icon-button`, `lg-toolbar-pill__item`, `lg-floating-hud__item`, `lg-sidebar-toggle`, `lg-stepper__button`, `lg-toolbar-button`) MUST carry `aria-label`, `aria-labelledby`, or `title`. WCAG 4.1.2.
 > - **Touch targets** — minimum 44×44 px hit area (`button.minHeight`, `icon-button.size`). WCAG 2.5.5 (AAA).
 > - **Color is never the only signal** — pair state changes with an icon, label, or shape change. WCAG 1.4.1.
+>
+> **Window-chrome mockup (Electron / Tauri / web-as-Mac).**
+>
+> When the output simulates a real Mac window inside an HTML container (a `.lg-window` grid or an Electron / Tauri shell), additionally:
+>
+> - Mark the top **50 px** of the window chrome as draggable: `-webkit-app-region: drag` on the titlebar surface, and `-webkit-app-region: no-drag` on every interactive child inside it (buttons, search field, traffic-light cluster). Keep the drag region uncluttered — no dense controls.
+> - Traffic lights live inside the chrome (top bar or first sidebar row), never floating free over content. Vertical center aligns to the first sidebar row, not the titlebar text baseline.
+> - Do not bake `border-radius` into the document root; the host shell paints the outer squircle. Inside the window, the outer corner radius is the glass-window token (28).
+>
+> **Behavioral conformance (when the output is a full pseudo-app, not a single component).**
+>
+> If the prompt asks for a full Mac-style web app shell, also:
+>
+> - Show empty states explicitly. A primary surface with nothing in it gets a calm placeholder, not blank space.
+> - Every primary action has a keyboard shortcut and a visible affordance. Don't hide commands behind hover-only menus.
+> - Drag-and-drop content **in** *and* **out** where it has any persistence semantics. The HTML5 drag API works in both directions.
+> - Onboarding teaches through doing — interactive steps with one click per step — not a wall of modal text.
+>
+> Full HIG conformance (menu bar order, multi-window, file management, system primitives) is out of scope for a web mockup; build the real Mac app with the `apple-agent-kit` plugin's `macos-app-design` skill instead.
 >
 > **Output discipline.**
 >

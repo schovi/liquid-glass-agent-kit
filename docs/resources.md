@@ -448,7 +448,7 @@ is committed scope; treat as a backlog for prioritization.
    - **T3**: WebGL backdrop sampling with full chromatic dispersion + specular.
 
    Ship them as named profiles in `spec/tokens/material.yaml`; let the prompt select a tier from stated browser support.
-9. **A Metal-shader companion on the native side.** Document `layerEffect` / `colorEffect` recipes against Victor Baro's SDF + refraction math; link Inferno. New subagent: `liquid-glass-native-shader-implementer`.
+9. **A Metal-shader companion on the native side.** Document `layerEffect` / `colorEffect` recipes against Victor Baro's SDF + refraction math; link Inferno. New subagent: `liquid-glass-shader-implementer`.
 10. **Style Dictionary export pipeline.** Add `spec/build/` step emitting Swift extensions, CSS custom properties, and Tailwind config from one source. Optional Tokens Studio sync.
 11. **A Figma kit derived from the same tokens.** Mirror `spec/` into a `kit-figma/` file; community Figma kits as visual reference. Round-trips with designers; pairs naturally with O.3 #10.
 

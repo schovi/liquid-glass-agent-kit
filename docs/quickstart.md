@@ -20,12 +20,12 @@ See `docs/web-prompt.md`.
 ### Codex
 
 ```bash
-codex plugin marketplace add schovi/liquid-glass-agent-kit --sparse .agents/plugins plugins/liquid-glass-native
+codex plugin marketplace add schovi/apple-agent-kit --sparse .agents/plugins plugins/apple-agent-kit
 ```
 
 ```text
 /plugins        # install "Liquid Glass Native UI"
-$liquid-glass-native-ui Build a SwiftUI sidebar app with NavigationSplitView.
+$liquid-glass Build a SwiftUI sidebar app with NavigationSplitView.
 ```
 
 See `docs/install-codex.md`.
@@ -33,9 +33,9 @@ See `docs/install-codex.md`.
 ### Claude Code
 
 ```bash
-claude plugin marketplace add schovi/liquid-glass-agent-kit --sparse .claude-plugin plugins/liquid-glass-native
-/plugin install liquid-glass-native@liquid-glass-agent-kit
-/liquid-glass-native:liquid-glass-native-ui Build a SwiftUI inspector pane.
+claude plugin marketplace add schovi/apple-agent-kit --sparse .claude-plugin plugins/apple-agent-kit
+/plugin install apple-agent-kit@apple-agent-kit
+/liquid-glass-native:liquid-glass Build a SwiftUI inspector pane.
 ```
 
 See `docs/install-claude.md`.

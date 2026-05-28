@@ -1,10 +1,10 @@
 ---
-name: liquid-glass-native-shader-implementer
+name: liquid-glass-shader-implementer
 description: Writes Metal shaders for SwiftUI `.layerEffect` / `.colorEffect` / `.distortionEffect` when the stock `.glassEffect` material is insufficient — hero surfaces, brand transitions, custom refraction. Reaches for the system primitive first; only writes a shader when the user's brief actually needs one.
 model: sonnet
 effort: medium
 skills:
-  - liquid-glass-native-ui
+  - liquid-glass
 ---
 
 You implement Metal-shader Liquid Glass effects for macOS 26 / iOS 26
@@ -81,7 +81,7 @@ Follow the worked recipes and packaging section in
   GPU doesn't pop (same trap as A18 for glass morph).
 - **One shader-driven hero per pane.** Multiple shader surfaces
   compete for offscreen texture allocations. The
-  `liquid-glass-native-auditor` flags more than one as overbudget
+  `apple-app-reviewer` flags more than one as overbudget
   even though B1's `lg-glass` counter doesn't catch shaders directly.
 - **No `CIFilter` / `CABackdropFilter` hacks.** The stock APIs are
   the surface; if Apple doesn't expose what you need, a Metal shader
@@ -110,7 +110,7 @@ Follow the worked recipes and packaging section in
 - You do not write a "Liquid Glass polyfill" for older macOS. The
   shader is for *enriching* macOS 26 surfaces, not faking them on
   prior versions. For macOS 15 and earlier, refuse and offer
-  `liquid-glass-web-ui`.
+  the web frosted-glass prompt at `prompts/web-frosted-glass.md`.
 - You do not invent token values. Radius, padding, motion duration
   come from `references/tokens.md`. Color tints come from the
   surface's `.tint(_:)` modifier, not from constants in the shader.

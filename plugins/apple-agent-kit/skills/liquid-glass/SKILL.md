@@ -1,18 +1,15 @@
 ---
-name: liquid-glass-native-ui
-description: Build authentic macOS 26 (Tahoe) Liquid Glass apps in SwiftUI or AppKit. Use when the user asks to make a real Mac app with Liquid Glass, port a web mockup to SwiftUI, or write AppKit using NSGlassEffectView / NSGlassEffectContainerView. Do not use for web HTML/CSS — that's the sibling skill `liquid-glass-web-ui`.
+name: liquid-glass
+description: Build authentic macOS 26 (Tahoe) Liquid Glass surfaces in SwiftUI or AppKit. Use when the user asks to add Liquid Glass to a Mac app, port a web glass mockup to SwiftUI, or write AppKit using NSGlassEffectView / NSGlassEffectContainerView. Material-focused — for HIG conformance, menu bar, multi-window, keyboard shortcuts, system primitives, app icon, or general Mac UX, use the sibling skill `macos-app-design` instead.
 ---
 
-# Liquid Glass — native macOS UI
+# Liquid Glass — macOS 26 material
 
-This skill turns "build a macOS 26 Liquid Glass app" into deterministic
-SwiftUI or AppKit code that uses the *real* Apple APIs (`.glassEffect`,
-`NSGlassEffectView`, `NavigationSplitView`, `NSSplitViewController`,
-`ConcentricRectangle`, `.buttonStyle(.glassProminent)`, etc.) — not a
-web approximation.
+This skill turns "build a Liquid Glass surface" into deterministic SwiftUI or AppKit code that uses the *real* Apple APIs (`.glassEffect`, `NSGlassEffectView`, `ConcentricRectangle`, `.buttonStyle(.glassProminent)`, etc.) — not a web approximation.
 
-If the user wants the web profile instead, use the sibling skill
-`liquid-glass-web-ui`.
+**Scope is the material only.** Layout primitives, menu bar conformance, multi-window scenes, keyboard shortcuts, system primitives (alerts/dialogs/tooltips), app icon, and general accessibility live in the sibling skill `macos-app-design`. Compose the two: most Mac apps need both.
+
+If the user wants a web frosted-glass approximation, use the repo prompt `prompts/web-frosted-glass.md` (not a plugin skill).
 
 ## Required workflow
 
@@ -25,7 +22,7 @@ If the user wants the web profile instead, use the sibling skill
 3. **Put glass where it belongs** — see `references/where-glass-goes.md`.
 4. **Honor concentricity** — outer corner radius = inner pill radius + inset. Use `ConcentricRectangle()` + `.containerShape(...)` in SwiftUI; manual radii in AppKit.
 5. **Apply tokens** — read radius, spacing, motion from `references/tokens.md`. Do not invent new values.
-6. **Accessibility flags are system-driven** — AppKit / SwiftUI auto-degrade vibrancy when `reduceTransparency`, `increaseContrast`, `reduceMotion` are on. Do not fight them.
+6. **Accessibility flags are system-driven** — AppKit / SwiftUI auto-degrade vibrancy when `reduceTransparency`, `increaseContrast`, `reduceMotion` are on. Do not fight them. (Full WCAG mapping for non-glass surfaces: `macos-app-design/references/accessibility.md`.)
 7. **Avoid every anti-pattern** in `references/anti-patterns.md`.
 
 ## Output rules
@@ -34,19 +31,19 @@ If the user wants the web profile instead, use the sibling skill
 - Prefer Regular glass. Use Clear only over rich media with a dim layer behind it.
 - Never put one glass surface inside another (`GlassEffectContainer` merges into ONE shared sampling pass, not nesting).
 - Never put glass behind body text, forms, dense tables, or page backgrounds.
-- Use the system-provided treatment — don't hand-roll a CGAffineTransform or layer hack to imitate Liquid Glass. If the user is on macOS < 26, the answer is "this feature requires macOS 26", not "fake it".
+- Use the system-provided treatment — don't hand-roll a `CGAffineTransform` or layer hack to imitate Liquid Glass. If the user is on macOS < 26, the answer is "this feature requires macOS 26", not "fake it".
 - Never claim "Apple-official" or "Apple-certified".
 
 ## When to refuse or downgrade
 
-- If the user asks for "Liquid Glass on macOS 14" — refuse. Liquid Glass needs macOS 26. Offer the web profile via `liquid-glass-web-ui` if they want approximation.
+- If the user asks for "Liquid Glass on macOS 14" — refuse. Liquid Glass needs macOS 26. Offer the web frosted-glass prompt if they want approximation.
 - If the user asks to put glass behind a long article — refuse and propose a solid surface.
 - If the user asks for Clear glass without a dim layer — silently switch to Regular.
 - If the user removes `.sidebar` material expecting Liquid Glass to disappear — explain: on macOS 26, *removing* the legacy `.sidebar` material is what *enables* Liquid Glass on the sidebar.
 
 ## Self-audit before returning
 
-Before returning code, check against `references/anti-patterns.md`:
+Check against `references/anti-patterns.md`:
 
 Core (A1-A10):
 
@@ -100,8 +97,9 @@ Forbidden surfaces (`references/when-not-to-use-glass.md`, review-only):
 
 - Not an Apple-official design system.
 - Not a port of Apple internal rendering values — Apple publishes none.
-- Not a web HTML profile. For web, use `liquid-glass-web-ui`.
+- Not a web HTML profile. For web, use the prompt `prompts/web-frosted-glass.md`.
 - Not a Liquid Glass polyfill for older macOS — the APIs only exist on macOS 26.
+- Not the place for HIG conformance, menu bar, file management, multi-window, keyboard shortcuts, icon, or general accessibility — see `macos-app-design`.
 
 ## Reference map
 
@@ -111,29 +109,13 @@ Forbidden surfaces (`references/when-not-to-use-glass.md`, review-only):
 - `references/performance-budget.md` — cap on live-blurred surfaces per pane (B1).
 - `references/swiftui.md` — SwiftUI cheat-sheet with signatures.
 - `references/appkit.md` — AppKit cheat-sheet with class / enum names.
-- `references/anti-patterns.md` — the ten things to never ship.
+- `references/anti-patterns.md` — the rule space (A1–A24, plus web-only A25–A27 noted).
 - `references/example.md` — pointer to `examples/macos-native-swift/`.
+- `references/accessibility.md` — glass-specific accessibility: auto-degradation table for `reduceTransparency` / `increaseContrast` / `reduceMotion`, native scope of A9 / A26 / A27. For generic WCAG (labels, focus, target size, color signals) see `macos-app-design/references/accessibility.md`.
+- `references/metal-shaders.md` — `.layerEffect` / `.colorEffect` / `.distortionEffect` recipes for hero surfaces and brand transitions when `.glassEffect` is insufficient. Used by the `liquid-glass-shader-implementer` subagent.
 - `references/components/` — one focused recipe per component:
-  - `popover.md`, `menu.md`, `search-field.md`, `toggle.md`, `slider.md`,
-    `progress.md`, `badge.md`.
-- `references/patterns/` — one focused recipe per pattern:
-  - `form-rows.md`, `inset-list.md`, `disclosure-group.md`, `stepper.md`,
-    `titlebar-accessory.md`, `floating-hud.md`, `morphing.md`,
-    `scroll-edge-effects.md`, `command-palette.md`,
-    `sidebar.md`, `window-chrome.md`.
-  - Mac craft beyond glass: `menu-bar-extra.md`, `multi-window.md`,
-    `keyboard-shortcuts.md`.
-- `references/system-primitives.md` — alerts, confirmation dialogs,
-  tooltips. "Use the system, don't restyle."
-- `references/icon.md` — app-icon guidance: Icon Composer, squircle
-  grid, light / dark / tinted variants.
-- `references/accessibility.md` — WCAG mapping (1.4.3 contrast, 2.4.7
-  focus, 2.5.5 target size, 4.1.2 name / role / value, 2.3.3 motion),
-  SwiftUI / AppKit equivalents, the auto-degradation table, and the
-  native scope of A2 / A8 / A9 / A26 / A27. **The kit's headline rule.**
-- `references/metal-shaders.md` — `.layerEffect` / `.colorEffect` /
-  `.distortionEffect` recipes for hero surfaces and brand
-  transitions when `.glassEffect` is insufficient. Used by the
-  `liquid-glass-native-shader-implementer` subagent.
+  - `popover.md`, `menu.md`, `search-field.md`, `toggle.md`, `slider.md`, `progress.md`, `badge.md`.
+- `references/patterns/` — glass-specific patterns:
+  - `morphing.md`, `scroll-edge-effects.md`, `floating-hud.md`, `command-palette.md`, `sidebar.md`.
 
 All claims trace to `docs/resources.md` at the repo root.

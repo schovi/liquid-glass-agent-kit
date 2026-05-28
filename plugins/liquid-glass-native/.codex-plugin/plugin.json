@@ -1,6 +1,0 @@
-{
-  "name": "liquid-glass-native",
-  "version": "0.5.0",
-  "description": "Build authentic macOS 26 (Tahoe) Mac apps: Liquid Glass materials, NavigationSplitView, NSGlassEffectView, toolbars, Cmd-K palette, menu-bar extras, multi-window scenes, keyboard shortcuts, app icons, accessibility ladder, anti-patterns. Liquid Glass is the headline, plus the rest of the Mac craft chapters.",
-  "skills": "./skills/"
-}

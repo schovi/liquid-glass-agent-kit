@@ -1,15 +1,15 @@
 {
-  "name": "liquid-glass-agent-kit",
+  "name": "apple-agent-kit",
   "interface": {
-    "displayName": "Liquid Glass Agent Kit"
+    "displayName": "Apple Agent Kit"
   },
   "plugins": [
     {
-      "name": "liquid-glass-native",
+      "name": "apple-agent-kit",
       "source": {
         "source": "git-subdir",
-        "url": "https://github.com/schovi/liquid-glass-agent-kit.git",
-        "path": "./plugins/liquid-glass-native",
+        "url": "https://github.com/schovi/apple-agent-kit.git",
+        "path": "./plugins/apple-agent-kit",
         "ref": "main"
       },
       "policy": {

@@ -1,20 +1,20 @@
 {
-  "name": "liquid-glass-agent-kit",
-  "owner": { "name": "liquid-glass-agent-kit contributors" },
+  "name": "apple-agent-kit",
+  "owner": { "name": "apple-agent-kit contributors" },
   "plugins": [
     {
-      "name": "liquid-glass-native",
+      "name": "apple-agent-kit",
       "source": {
         "source": "git-subdir",
-        "url": "schovi/liquid-glass-agent-kit",
-        "path": "plugins/liquid-glass-native",
+        "url": "schovi/apple-agent-kit",
+        "path": "plugins/apple-agent-kit",
         "ref": "main"
       },
-      "description": "Build authentic macOS 26 (Tahoe) Mac apps with SwiftUI and AppKit: Liquid Glass, Cmd-K palette, menu-bar extras, multi-window, keyboard shortcuts, app icons, accessibility ladder",
-      "version": "0.5.0",
+      "description": "Build authentic Apple apps for agents. macos-app-design (HIG, menu bar, multi-window, shortcuts, system primitives, icon, accessibility) + liquid-glass (macOS 26 glass material, anti-patterns, performance budget, shaders).",
+      "version": "0.6.0",
       "license": "MIT",
       "category": "Design",
-      "tags": ["liquid-glass", "macos", "tahoe", "swiftui", "appkit", "design-system", "mac-craft", "accessibility"]
+      "tags": ["apple", "macos", "tahoe", "hig", "swiftui", "appkit", "liquid-glass", "design-system", "mac-craft", "accessibility"]
     }
   ]
 }

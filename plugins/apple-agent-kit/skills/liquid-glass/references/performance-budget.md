@@ -45,7 +45,7 @@ own cost class and their own cap:
 - **Shaders do not auto-degrade** on `accessibilityReduceTransparency`.
   Branch on the environment value and provide a fallback yourself.
 
-The `liquid-glass-native-shader-implementer` subagent enforces this
+The `liquid-glass-shader-implementer` subagent enforces this
 when it produces shader code. The auditor flags shader-driven heroes
 that exceed one-per-pane even though B1's `lg-glass` counter doesn't
 see them directly.
@@ -63,14 +63,14 @@ see them directly.
 
 ## When to fail review
 
-`liquid-glass-native-auditor` rejects a screen when:
+`apple-app-reviewer` rejects a screen when:
 
 - a single visible pane carries more than `budget.max` (6) live-blurred
   surfaces, **or**
 - the screen rests above `budget.recommended` (3) with no transient
   reason (no open popover / HUD / sheet).
 
-Recommendation is a soft rule for `liquid-glass-native-implementer`:
+Recommendation is a soft rule for `liquid-glass-implementer`:
 if the design needs more than 3 floating elements at rest, the
 implementer should propose grouping (`GlassEffectContainer`) or
 downgrading before adding `.glassEffect` calls.

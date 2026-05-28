@@ -7,14 +7,14 @@ This installs the **native macOS 26** plugin. For web Liquid Glass UI in Claude 
 Inside Claude Code:
 
 ```
-/plugin marketplace add schovi/liquid-glass-agent-kit
-/plugin install liquid-glass-native@liquid-glass-agent-kit
+/plugin marketplace add schovi/apple-agent-kit
+/plugin install apple-agent-kit@apple-agent-kit
 ```
 
 Or from the shell:
 
 ```bash
-claude plugin marketplace add schovi/liquid-glass-agent-kit --sparse .claude-plugin plugins/liquid-glass-native
+claude plugin marketplace add schovi/apple-agent-kit --sparse .claude-plugin plugins/apple-agent-kit
 ```
 
 ## Local development
@@ -22,31 +22,31 @@ claude plugin marketplace add schovi/liquid-glass-agent-kit --sparse .claude-plu
 Run the plugin straight out of this repo:
 
 ```bash
-claude --plugin-dir ./plugins/liquid-glass-native
+claude --plugin-dir ./plugins/apple-agent-kit
 ```
 
 Then:
 
 ```
-/liquid-glass-native:liquid-glass-native-ui Build a SwiftUI app with NavigationSplitView, a glass toolbar, and an inspector.
+/liquid-glass-native:liquid-glass Build a SwiftUI app with NavigationSplitView, a glass toolbar, and an inspector.
 ```
 
 ## How this plugin is laid out
 
-`plugins/liquid-glass-native/` contains `.claude-plugin/plugin.json` (which Claude Code reads) and `.codex-plugin/plugin.json` (which Codex reads). Both manifests point at the same `skills/liquid-glass-native-ui` directory. Claude Code additionally reads `agents/`; Codex ignores that folder.
+`plugins/apple-agent-kit/` contains `.claude-plugin/plugin.json` (which Claude Code reads) and `.codex-plugin/plugin.json` (which Codex reads). Both manifests point at the same `skills/liquid-glass` directory. Claude Code additionally reads `agents/`; Codex ignores that folder.
 
 ## Subagents shipped with the plugin
 
-- `liquid-glass-native-auditor` — read-only review of generated SwiftUI / AppKit.
-- `liquid-glass-native-implementer` — token-strict implementer.
+- `apple-app-reviewer` — read-only review of generated SwiftUI / AppKit.
+- `liquid-glass-implementer` — token-strict implementer.
 
-Both reference the canonical `liquid-glass-native-ui` skill.
+Both reference the canonical `liquid-glass` skill.
 
 ## Update
 
 ```
 /plugin marketplace update liquid-glass-agent-kit
-/plugin install liquid-glass-native@liquid-glass-agent-kit
+/plugin install apple-agent-kit@apple-agent-kit
 ```
 
 After local skill edits, re-run `/reload-plugins`.

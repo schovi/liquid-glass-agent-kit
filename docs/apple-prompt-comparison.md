@@ -20,9 +20,9 @@ Files read from `AdditionalDocumentation/`:
 Compared against (in this repo):
 
 - `prompts/web-frosted-glass.md`
-- `plugins/liquid-glass-native/skills/liquid-glass-native-ui/SKILL.md`
-- `plugins/liquid-glass-native/skills/liquid-glass-native-ui/references/{tokens,swiftui,appkit,where-glass-goes,anti-patterns,system-primitives}.md`
-- `plugins/liquid-glass-native/skills/liquid-glass-native-ui/references/patterns/{scroll-edge-effects,morphing}.md`
+- `plugins/apple-agent-kit/skills/liquid-glass/SKILL.md`
+- `plugins/apple-agent-kit/skills/liquid-glass/references/{tokens,swiftui,appkit,where-glass-goes,anti-patterns,system-primitives}.md`
+- `plugins/apple-agent-kit/skills/liquid-glass/references/patterns/{scroll-edge-effects,morphing}.md`
 - `spec/rules/{apple-principles,layout-rules,anti-patterns,accessibility-rules}.md`
 
 ## What Apple's prompts emphasize about Liquid Glass / SwiftUI / AppKit
@@ -155,7 +155,7 @@ Best practices repeated verbatim across docs
 
 ## Gaps in our native skill
 
-`plugins/liquid-glass-native/skills/liquid-glass-native-ui/`:
+`plugins/apple-agent-kit/skills/liquid-glass/`:
 
 1. **`references/swiftui.md` — add `searchToolbarBehavior(.minimize)`**. Apple quote: "renders the search field as a button-like control that expands when tapped, optimizing space in the toolbar." Currently the file only says `.searchable(text: $query, placement: .toolbar)`. Add:
 
@@ -210,18 +210,18 @@ Best practices repeated verbatim across docs
 
 ## Recommended edits (priority-ordered)
 
-1. In `plugins/liquid-glass-native/skills/liquid-glass-native-ui/references/swiftui.md`, add a `searchToolbarBehavior(.minimize)` example in the Segmented / search / popover section, because Apple's prompt says "renders the search field as a button-like control that expands when tapped, optimizing space in the toolbar."
-2. In `plugins/liquid-glass-native/skills/liquid-glass-native-ui/references/swiftui.md`, add a Toolbar subsection for `DefaultToolbarItem(kind:placement:)` because Apple's prompt says `DefaultToolbarItem` "allows you to reposition the search field within the toolbar" and shows it being used with `.sidebar`, `.search`.
-3. In `plugins/liquid-glass-native/skills/liquid-glass-native-ui/references/swiftui.md`, document both `ToolbarSpacer(.fixed)` and `ToolbarSpacer(.flexible)` (we only have `.flexible`). Apple: "fixed-width space" vs "flexible space that pushes items apart."
-4. In `plugins/liquid-glass-native/skills/liquid-glass-native-ui/references/swiftui.md`, add `ToolbarItem(placement: .largeSubtitle)` plus `navigationSubtitle(_:)`. Apple: "The `.largeSubtitle` placement takes precedence over the value provided to the `navigationSubtitle(_:)` modifier."
-5. In `plugins/liquid-glass-native/skills/liquid-glass-native-ui/references/swiftui.md`, add `scrollExtensionMode(.underSidebar)` for horizontal scrolling under sidebars/inspectors. Apple: "To extend horizontal scroll views under a sidebar or inspector."
-6. In `plugins/liquid-glass-native/skills/liquid-glass-native-ui/references/appkit.md`, add an `NSGlassEffectView` z-order caveat. Apple: "Only the contentView of NSGlassEffectView is guaranteed to be inside the glass effect. Arbitrary subviews may not have consistent z-order behavior."
-7. In `plugins/liquid-glass-native/skills/liquid-glass-native-ui/references/appkit.md`, note `NSGlassEffectContainerView.spacing` defaults to `0`. Apple: "Default value (0) is suitable for batch processing while avoiding distortion."
-8. In `plugins/liquid-glass-native/skills/liquid-glass-native-ui/references/swiftui.md`, expand `glassEffectUnion` with the dynamic-view use case. Apple: "useful when creating views dynamically or with views that live outside of an HStack or VStack."
+1. In `plugins/apple-agent-kit/skills/liquid-glass/references/swiftui.md`, add a `searchToolbarBehavior(.minimize)` example in the Segmented / search / popover section, because Apple's prompt says "renders the search field as a button-like control that expands when tapped, optimizing space in the toolbar."
+2. In `plugins/apple-agent-kit/skills/liquid-glass/references/swiftui.md`, add a Toolbar subsection for `DefaultToolbarItem(kind:placement:)` because Apple's prompt says `DefaultToolbarItem` "allows you to reposition the search field within the toolbar" and shows it being used with `.sidebar`, `.search`.
+3. In `plugins/apple-agent-kit/skills/liquid-glass/references/swiftui.md`, document both `ToolbarSpacer(.fixed)` and `ToolbarSpacer(.flexible)` (we only have `.flexible`). Apple: "fixed-width space" vs "flexible space that pushes items apart."
+4. In `plugins/apple-agent-kit/skills/liquid-glass/references/swiftui.md`, add `ToolbarItem(placement: .largeSubtitle)` plus `navigationSubtitle(_:)`. Apple: "The `.largeSubtitle` placement takes precedence over the value provided to the `navigationSubtitle(_:)` modifier."
+5. In `plugins/apple-agent-kit/skills/liquid-glass/references/swiftui.md`, add `scrollExtensionMode(.underSidebar)` for horizontal scrolling under sidebars/inspectors. Apple: "To extend horizontal scroll views under a sidebar or inspector."
+6. In `plugins/apple-agent-kit/skills/liquid-glass/references/appkit.md`, add an `NSGlassEffectView` z-order caveat. Apple: "Only the contentView of NSGlassEffectView is guaranteed to be inside the glass effect. Arbitrary subviews may not have consistent z-order behavior."
+7. In `plugins/apple-agent-kit/skills/liquid-glass/references/appkit.md`, note `NSGlassEffectContainerView.spacing` defaults to `0`. Apple: "Default value (0) is suitable for batch processing while avoiding distortion."
+8. In `plugins/apple-agent-kit/skills/liquid-glass/references/swiftui.md`, expand `glassEffectUnion` with the dynamic-view use case. Apple: "useful when creating views dynamically or with views that live outside of an HStack or VStack."
 9. In `prompts/web-frosted-glass.md`, add a sentence about a minimizing search field (web translation of `searchToolbarBehavior(.minimize)`) so AI tools targeting the web profile produce an icon-collapses-to-field control. Quote Apple: "renders the search field as a button-like control that expands when tapped."
 10. In `prompts/web-frosted-glass.md`, add a sentence distinguishing fixed vs flexible toolbar spacers — Apple's distinction is "fixed-width space" vs "flexible space that pushes items apart" — so a single web prompt can produce both behaviors.
 11. In `prompts/web-frosted-glass.md`, add one line on background extension: hero media extends full-bleed under a floating sidebar / inspector. Apple's pattern: "stretch content behind a sidebar or inspector with the background extension effect."
-12. *(Optional)* In `plugins/liquid-glass-native/skills/liquid-glass-native-ui/SKILL.md` reference map, add a note that the skill is macOS-focused and that iOS / iPadOS use `UIGlassEffect` / `UIGlassContainerEffect` / `UIScrollEdgeEffect`; cross-reference the UIKit doc names in case a user asks. (Today the SKILL says "Build authentic macOS 26 (Tahoe) Liquid Glass apps in SwiftUI or AppKit" — explicit macOS scope is good. Don't broaden, just acknowledge.)
+12. *(Optional)* In `plugins/apple-agent-kit/skills/liquid-glass/SKILL.md` reference map, add a note that the skill is macOS-focused and that iOS / iPadOS use `UIGlassEffect` / `UIGlassContainerEffect` / `UIScrollEdgeEffect`; cross-reference the UIKit doc names in case a user asks. (Today the SKILL says "Build authentic macOS 26 (Tahoe) Liquid Glass apps in SwiftUI or AppKit" — explicit macOS scope is good. Don't broaden, just acknowledge.)
 
 ## Don't adopt
 

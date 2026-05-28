@@ -14,8 +14,8 @@ surfaces and they must move together:
 3. **Web prompt** — `prompts/web-frosted-glass.md` (token block at the top)
 4. **Web showcase** — `examples/macos-web/` (HTML/CSS reference output)
 5. **Audit** — `audit/liquid-glass-audit.mjs` + `audit/README.md` (paired — when you add a check, update both)
-6. **Native plugin skill** — `plugins/liquid-glass-native/skills/liquid-glass-native-ui/` (`SKILL.md` reference map + `references/*.md`)
-7. **Native plugin agents** — `plugins/liquid-glass-native/agents/*.md` (implementer + auditor enumerate audit IDs; refresh when IDs change)
+6. **Native plugin skills** — `plugins/apple-agent-kit/skills/liquid-glass/` (glass material) and `plugins/apple-agent-kit/skills/macos-app-design/` (HIG + Mac craft). Each has `SKILL.md` + `references/*.md`.
+7. **Native plugin agents** — `plugins/apple-agent-kit/agents/*.md` (`liquid-glass-implementer`, `liquid-glass-shader-implementer`, `apple-app-reviewer`). The reviewer is read-only and enumerates audit IDs across both skills; refresh when IDs change.
 8. **Native showcase** — `examples/macos-native-swift/` (real SwiftUI on macOS 26)
 9. **Changelog** — `CHANGELOG.md` (one entry per shipped change)
 
@@ -101,7 +101,7 @@ Audit ID prefixes: **A** (anti-patterns), **B** (budget), **F** (forbidden surfa
 
 If only token values shifted (no new check, no new ID), this step is often unchanged.
 
-### 6. Native plugin references (`plugins/liquid-glass-native/.../references/`)
+### 6. Native plugin references (`plugins/apple-agent-kit/.../references/`)
 
 Update the references the native skill loads on demand:
 
@@ -110,7 +110,7 @@ Update the references the native skill loads on demand:
 - `anti-patterns.md` — if the change introduces a new anti-pattern.
 - `where-glass-goes.md` — if the change affects the "yes / no" surface list.
 
-### 7. Native plugin agents (`plugins/liquid-glass-native/agents/*.md`)
+### 7. Native plugin agents (`plugins/apple-agent-kit/agents/*.md`)
 
 If the audit ID space or rule structure changed, update the implementer / auditor agent definitions so their `What to check` sections enumerate the new IDs. Pure value tweaks (a different blur number) often don't need this.
 
@@ -184,8 +184,8 @@ The web side is a community approximation. Numeric values are labeled as such in
 This skill does not:
 
 - Generate code from the spec. The repo has no build step; updates are LLM-orchestrated.
-- Implement individual components from scratch. For native, use the per-plugin implementer agent (`liquid-glass-native-implementer`). For web, the prompt is itself the implementer.
-- Review for anti-patterns in isolation. For native, use the auditor agent (`liquid-glass-native-auditor`). For web, use `audit/liquid-glass-audit.mjs`.
+- Implement individual components from scratch. For native, use the `liquid-glass-implementer` (or `liquid-glass-shader-implementer` for Metal) subagent. For web, the prompt is itself the implementer.
+- Review for anti-patterns in isolation. For native, use the `apple-app-reviewer` subagent (covers both glass and HIG). For web, use `audit/liquid-glass-audit.mjs`.
 
 This skill is the *coordinator*.
 
@@ -196,6 +196,6 @@ This skill is the *coordinator*.
 - Web prompt: `prompts/web-frosted-glass.md`
 - Web showcase: `examples/macos-web/`
 - Web audit: `audit/liquid-glass-audit.mjs`
-- Native plugin: `plugins/liquid-glass-native/`
+- Native plugin: `plugins/apple-agent-kit/`
 - Native showcase: `examples/macos-native-swift/`
 - Provenance / source URLs: `docs/resources.md`

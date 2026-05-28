@@ -1,6 +1,6 @@
 // Metal shaders for the Liquid Glass showcase's hero surface.
 //
-// Companion to plugins/liquid-glass-native/skills/liquid-glass-native-ui/references/metal-shaders.md.
+// Companion to plugins/apple-agent-kit/skills/liquid-glass/references/metal-shaders.md.
 // SwiftPM auto-compiles .metal files in the target's source directory and
 // exposes their [[ stitchable ]] functions via ShaderLibrary.default, so
 // ShaderHeroSection.swift can call `ShaderLibrary.lensRefract(...)`

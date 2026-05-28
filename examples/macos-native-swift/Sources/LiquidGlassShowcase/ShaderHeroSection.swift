@@ -2,7 +2,7 @@ import SwiftUI
 
 // Hero surface that calls Apple's `.layerEffect` modifier with the
 // `lensRefract` Metal shader from Shaders.metal. Documented end-to-end
-// in plugins/liquid-glass-native/skills/liquid-glass-native-ui/references/metal-shaders.md.
+// in plugins/apple-agent-kit/skills/liquid-glass/references/metal-shaders.md.
 //
 // What the section demonstrates:
 //   - When to reach for `.layerEffect` instead of `.glassEffect` (only

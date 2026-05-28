@@ -7,7 +7,7 @@ You are an agent making changes to this repo. Read this before editing.
 This repo ships Apple-inspired Liquid Glass guidance in **two delivery modes** from one canonical spec:
 
 - **Web** — a paste-once prompt (`prompts/web-frosted-glass.md`) that any AI tool can consume, plus a showcase (`examples/macos-web/`) and a standalone audit (`audit/`).
-- **Native macOS 26** — a Codex + Claude Code plugin (`plugins/liquid-glass-native/`) wrapping the real `glassEffect` / `NavigationSplitView` / `ConcentricRectangle` APIs, plus a showcase (`examples/macos-native-swift/`).
+- **Native macOS 26** — a Codex + Claude Code plugin (`plugins/apple-agent-kit/`) shipping two skills: `liquid-glass` (the macOS 26 material) and `macos-app-design` (HIG conformance, menu bar, multi-window, keyboard shortcuts, system primitives, icon, accessibility). Plus a showcase (`examples/macos-native-swift/`).
 
 There is no runtime build step (the showcases load directly). One *optional* dev-time build does exist: `spec/build/build-tokens.mjs` regenerates the platform-specific token exports under `dist/`. Run it after any change to `spec/tokens/*.yaml`. The plugin folder serves both Codex (`.codex-plugin/`) and Claude Code (`.claude-plugin/`) from one place.
 
@@ -15,8 +15,10 @@ Edit only:
 
 - `spec/` (including `spec/build/` — the token generator)
 - `prompts/web-frosted-glass.md`
-- `plugins/liquid-glass-native/skills/liquid-glass-native-ui/`
-- `plugins/liquid-glass-native/agents/` (Claude subagents)
+- `plugins/apple-agent-kit/skills/liquid-glass/`
+- `plugins/apple-agent-kit/skills/macos-app-design/`
+- `plugins/apple-agent-kit/skills/ios-app-design/` (placeholder stub)
+- `plugins/apple-agent-kit/agents/` (Claude subagents)
 - `examples/`
 - `audit/`
 - `docs/`
@@ -38,8 +40,8 @@ Order of operations (lockstep — skipping a step is the bug):
 3. **`prompts/web-frosted-glass.md`** — token block + rule reminders.
 4. **`examples/macos-web/`** — HTML / CSS / JS that exercises the new state.
 5. **`audit/`** — if a new check or audit ID is added: update `audit/liquid-glass-audit.mjs` *and* `audit/README.md` (these are paired). If only token values shifted, often unchanged.
-6. **`plugins/liquid-glass-native/skills/liquid-glass-native-ui/`** — `SKILL.md` reference map + `references/*.md`.
-7. **`plugins/liquid-glass-native/agents/*.md`** — if the audit ID space, anti-pattern list, or rule structure changed, update the implementer / auditor agent definitions so they enumerate the new IDs.
+6. **`plugins/apple-agent-kit/skills/liquid-glass/`** and **`plugins/apple-agent-kit/skills/macos-app-design/`** — `SKILL.md` reference map + `references/*.md`. Glass-specific changes land in `liquid-glass`; HIG / Mac craft / accessibility changes land in `macos-app-design`.
+7. **`plugins/apple-agent-kit/agents/*.md`** — if the audit ID space, anti-pattern list, or HIG rule structure changed, update `apple-app-reviewer` (read-only, covers both skills), `liquid-glass-implementer`, and `liquid-glass-shader-implementer` so they enumerate the new IDs.
 8. **`examples/macos-native-swift/`** — Tokens / Sections / ContentView wiring.
 9. **`CHANGELOG.md`** — one entry per shipped change with paths touched.
 
@@ -101,7 +103,7 @@ Never invent a blur, saturation, opacity, shadow, padding, or radius value. If a
 
 ## Token discipline (native)
 
-Use the native materials and view modifiers documented in `plugins/liquid-glass-native/skills/liquid-glass-native-ui/references/`. Do not hard-code colors or blur values. Use the SwiftUI / AppKit material APIs.
+Use the native materials and view modifiers documented in `plugins/apple-agent-kit/skills/liquid-glass/references/`. Do not hard-code colors or blur values. Use the SwiftUI / AppKit material APIs.
 
 ## Apple
 
@@ -109,27 +111,31 @@ Do not claim any output is "Apple-official" or "Apple-certified". The web prompt
 
 ## Native plugin layout
 
-`plugins/liquid-glass-native/` contains:
+`plugins/apple-agent-kit/` contains:
 
 - `.claude-plugin/plugin.json` — Claude reads this.
 - `.codex-plugin/plugin.json` — Codex reads this; declares `skills = "./skills/"`.
-- `skills/liquid-glass-native-ui/` — ONE skill folder used by both Codex and Claude.
+- `skills/liquid-glass/` — macOS 26 glass material (anti-patterns A1–A24, B1, F1–F5, tokens, accessibility auto-degradation, shaders, glass-specific components and patterns).
+- `skills/macos-app-design/` — HIG conformance and Mac craft (principles, menu bar, file management, multi-window, keyboard shortcuts, menu bar extra, window chrome, system primitives, icon, generic WCAG accessibility, structural patterns). May reference `liquid-glass` for the material layer.
+- `skills/ios-app-design/` — placeholder stub.
 - `agents/` — Claude-only subagents; Codex ignores.
 
-Both marketplace catalogs (`.agents/plugins/marketplace.json`, `.claude-plugin/marketplace.json`) point at this folder. The two dotfile manifests do not collide, so there is no need to duplicate the skill.
+Both marketplace catalogs (`.agents/plugins/marketplace.json`, `.claude-plugin/marketplace.json`) point at this folder. The two dotfile manifests do not collide.
 
 ## Slash command naming
 
-| Codex                       | Claude Code                                       |
-| --------------------------- | ------------------------------------------------- |
-| `$liquid-glass-native-ui …` | `/liquid-glass-native:liquid-glass-native-ui …`   |
+| Codex                 | Claude Code                                |
+| --------------------- | ------------------------------------------ |
+| `$liquid-glass …`     | `/apple-agent-kit:liquid-glass …`          |
+| `$macos-app-design …` | `/apple-agent-kit:macos-app-design …`      |
 
 ## Subagent boundaries (native)
 
-- `liquid-glass-native-auditor` is read-only (`disallowedTools: Write, Edit`). Keep it that way.
-- `liquid-glass-native-implementer` may write.
-- Both reference the canonical `liquid-glass-native-ui` skill.
+- `apple-app-reviewer` is read-only (`disallowedTools: Write, Edit`). Covers HIG conformance + Liquid Glass anti-patterns. Keep it read-only.
+- `liquid-glass-implementer` may write. Loads `liquid-glass` + `macos-app-design`.
+- `liquid-glass-shader-implementer` may write. Loads `liquid-glass`.
 
 ## History
 
-Earlier versions of this kit also shipped a `liquid-glass-web` plugin (Codex + Claude). That plugin was removed in v0.2 in favor of the portable web prompt; native stays a plugin because skill-supporting tools are where native devs work. See `CHANGELOG.md`.
+- v0.6 (this revision) — repo + plugin rebranded from `liquid-glass-agent-kit` / `liquid-glass-native` to `apple-agent-kit`. The single `liquid-glass` skill split into `liquid-glass` (material) + `macos-app-design` (HIG / Mac craft). Subagents `liquid-glass-native-auditor` / `liquid-glass-native-implementer` / `liquid-glass-native-shader-implementer` replaced by `apple-app-reviewer` (read-only, broader scope) / `liquid-glass-implementer` / `liquid-glass-shader-implementer`. iOS placeholder added.
+- v0.2 — the `liquid-glass-web` plugin was removed in favor of the portable web prompt; native stays a plugin because skill-supporting tools are where native devs work. See `CHANGELOG.md`.

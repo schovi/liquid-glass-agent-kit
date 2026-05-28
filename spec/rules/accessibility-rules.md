@@ -153,7 +153,7 @@ Do NOT override these by force. The audit anti-pattern A9 covers code
 that fights the system flags (e.g. ignoring `@Environment(\.accessibilityReduceTransparency)`
 and re-applying a custom blur on top).
 
-See `plugins/liquid-glass-native/skills/liquid-glass-native-ui/references/accessibility.md`
+See `plugins/apple-agent-kit/skills/liquid-glass/references/accessibility.md`
 for SwiftUI / AppKit examples.
 
 ## Audit coverage
